@@ -8,7 +8,7 @@ using Debugger # REPL: Debugger.@run function(); @bp
 using MATLAB
 using Statistics
 
-export plot_ellipse_pressure_2d, random_aspect_ratio_check_2d
+export plot_ellipse_pressure_2d, random_aspect_ratio_check_2d, simulation_2d
 
 function main()
     gamma_value = 1
@@ -16,7 +16,7 @@ function main()
     # common_rows = random_aspect_ratio_check()
 end
 
-function plot_ellipse_pressure_2d(gamma_value)
+function plot_ellipse_pressure_2d(data_frame, gamma_value)
 
     # Define parameters to plot
     pressure_list = sort(unique(data_frame.input_pressure))
@@ -143,5 +143,21 @@ function random_aspect_ratio_check_2d()
 
     return common_rows    
 end
+
+function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
+    mat"""
+    addpath('src/matlab_functions/')
+    K = double($(K))
+    M = double($(M))
+    Bv = double($(Bv))
+    w_D = double($(w_D))
+    N =double($(N))
+    P = double($(P))
+    W = double($(W))
+    seed = double($(seed))
+    simulation_2d(K, M, Bv, w_D, N, P, W, seed)
+    """
+end
+
 
 end
