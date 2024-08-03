@@ -26,11 +26,11 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     
     % Create the packing name with the exact number format for P
-    packing_name = sprintf('N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
+    packing_name = sprintf('2D_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
     
     % Create the filename
     % filename_output = sprintf('%s_K%d_Bv%d_wD%d_M%d.mat', packing_name, K, Bv, w_D, M);
-    filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
+    filename_output = sprintf('2D_%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
     
     % if exist(filename_output)
     %     return
