@@ -291,7 +291,6 @@ Plots ωγ vs α / ω
 
 # Arguments
 - `data_frame::DataFrame`: This is the output from the "process_outputs_2d.m" function You will need to load the data using "data_frame = CSV.read("out/processed_simulation/your_file_name.csv", DataFrame)
-.
 - `gamma_value::Float65`: γ value that you want to plot.
 - `flag::Any`: Add a third flag if you want to use MATLAB to plot.
 
