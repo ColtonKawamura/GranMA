@@ -11,6 +11,25 @@ using Printf
 
 export plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, plot_ωγ_attenuation_2d_matlab
 
+"""
+Runs a 2D simulation using MATLAB functions.
+
+# Arguments
+- `K::Int`: Spring constant.
+- `M::Int`: Mass.
+- `Bv::Float64`: Viscous damping coefficient.
+- `w_D::Int`: Driving frequency.
+- `N::Int`: Number of particles.
+- `P::Float64`: Pressure parameter.
+- `W::Int`: Width of the simulation area.
+- `seed::Int`: Random seed for reproducibility.
+
+# Example Function
+simulation_2d(100, 1, .5, 1, 5000, .01, 5, 1)
+
+# NOTE
+Need to ensure you have the corresponding input files in the ./in/ directory 
+"""
 function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     mat"""
     addpath('src/matlab_functions/')
@@ -26,7 +45,22 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     """
 end
 
-# Ellipse Stats
+
+"""
+Plots ωγ vs Ellipse Data
+
+# Arguments
+- `data_frame::DataFrame`: This is the output from the "process_outputs_2d.m" function You will need to load the data using "data_frame = CSV.read("out/processed_simulation/your_file_name.csv", DataFrame)
+.
+- `gamma_value::Float65`: γ value that you want to plot.
+- `flag::Any`: Add a third flag if you want to use MATLAB to plot.
+
+# Example Function
+plot_ellipse_ωγ_2d(data_frame, .1)
+
+# NOTE
+Need to ensure you have the corresponding input files in the ./in/ directory 
+"""
 function plot_ellipse_ωγ_2d(data_frame, gamma_value)
 
     # Define parameters to plot
@@ -252,22 +286,21 @@ function random_aspect_ratio_check_2d()
     return common_rows    
 end
 
-function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
-    mat"""
-    addpath('src/matlab_functions/')
-    K = double($(K))
-    M = double($(M))
-    Bv = double($(Bv))
-    w_D = double($(w_D))
-    N =double($(N))
-    P = double($(P))
-    W = double($(W))
-    seed = double($(seed))
-    simulation_2d(K, M, Bv, w_D, N, P, W, seed)
-    """
-end
+"""
+Plots ωγ vs α / ω
 
-# Attenuation
+# Arguments
+- `data_frame::DataFrame`: This is the output from the "process_outputs_2d.m" function You will need to load the data using "data_frame = CSV.read("out/processed_simulation/your_file_name.csv", DataFrame)
+.
+- `gamma_value::Float65`: γ value that you want to plot.
+- `flag::Any`: Add a third flag if you want to use MATLAB to plot.
+
+# Example Function
+plot_ωγ_attenuation_2d(data_frame, .1)
+
+# NOTE
+Need to ensure you have the corresponding input files in the ./in/ directory 
+"""
 function plot_ωγ_attenuation_2d(data_frame, gamma_value)
 
     # Define parameters to plot
@@ -427,7 +460,21 @@ function plot_ωγ_attenuation_2d(data_frame, gamma_value, flag::Any) # using MA
     """
 end
 
-# Wavespeed
+"""
+Plots ωγ vs c
+
+# Arguments
+- `data_frame::DataFrame`: This is the output from the "process_outputs_2d.m" function You will need to load the data using "data_frame = CSV.read("out/processed_simulation/your_file_name.csv", DataFrame)
+.
+- `gamma_value::Float65`: γ value that you want to plot.
+- `flag::Any`: Add a third flag if you want to use MATLAB to plot.
+
+# Example Function
+plot_ωγ_wavespeed_2d(data_frame, .1)
+
+# NOTE
+Need to ensure you have the corresponding input files in the ./in/ directory 
+"""
 function plot_ωγ_wavespeed_2d(data_frame, gamma_value)
 
     # Define parameters to plot
