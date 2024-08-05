@@ -9,7 +9,7 @@ using MATLAB
 using Statistics
 using Printf
 
-export plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, plot_ωγ_attenuation_2d_matlab
+export plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d
 
 """
 Runs a 2D simulation using MATLAB functions.
@@ -145,11 +145,17 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value)
             jvalue_mean_aspect_ratio = mean(jloop_data_frame.mean_aspect_ratio)
             jvalue_mean_rotation_angle = mean(jloop_data_frame.mean_rotation_angles)
             jvalue_mean_alphaoveromega = mean(jloop_data_frame.alphaoveromega)
+            # Check if the value is negative
+            if jvalue_mean_alphaoveromega < 0
+                push!(loop_mean_attenuation_list, NaN)  # Append NaN for negative values
+            else
+                push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)  # Append the actual value
+            end
 
             # Append values using push!
             push!(loop_mean_aspect_ratio_list, jvalue_mean_aspect_ratio)
             push!(loop_mean_rotation_angles, jvalue_mean_rotation_angle)
-            push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
+            # push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
         end
         iloop_pressure_value = round.(iloop_pressure_value, sigdigits=3)
         scatterlines!(ax1, iloop_omega_gamma_list, loop_mean_rotation_angles, color=marker_color, label=L"\hat{P} = %$(iloop_pressure_value), \hat{\gamma}=%$(gamma_value)")
@@ -340,7 +346,14 @@ function plot_ωγ_attenuation_2d(data_frame, gamma_value)
         xlabel=L"\hat{\omega}\hat{\gamma}",
         ylabel=L"\frac{\hat{\alpha}}{\hat{\omega}}", 
         xscale = log10,
-        yscale = log10)
+        yscale = log10,
+        ylabelrotation=0,
+        xminorticksvisible = true,
+        xminorgridvisible = true,
+        xminorticks = IntervalsBetween(10),
+        yminorticksvisible = true,
+        yminorgridvisible = true,
+        yminorticks = IntervalsBetween(10))
     lines!(ax,theory_x, theory_y)
 
     # Normalize the gamma values
@@ -418,13 +431,12 @@ function plot_ωγ_attenuation_2d(data_frame, gamma_value, flag::Any) # using MA
     """
 
     # Normalize the gamma values
-    normalized_variable = (plot_pressure .- minimum(plot_pressure)) ./ (maximum(plot_pressure) .- minimum(plot_pressure))
+    normalized_variable = (log.(plot_pressure) .- minimum(log.(plot_pressur)e)) ./ (maximum(log.()plot_pressure) .- minimum(log.(plot_pressure)))
 
     # Create a line for each gamma value across all pressure_list
     for idx in eachindex(plot_pressure)
 
-        marker_color = RGB(normalized_variable[idx], 0, 1-normalized_variable[idx])
-        color_array = [red(marker_color), green(marker_color), blue(marker_color)]
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]];
 
         # For idx, only show current pressure data
         iloop_pressure_value = plot_pressure[idx]
@@ -457,14 +469,14 @@ function plot_ωγ_attenuation_2d(data_frame, gamma_value, flag::Any) # using MA
         mean_attenuation_x = $(loop_mean_attenuation_list);
         iloop_pressure_value = $(iloop_pressure_value);
         plot_gamma = $(plot_gamma);
+        marker_color= $(marker_color)
         pressure_label = sprintf('Pressure = %.2f, Gamma = %.2f (Aspect Ratio)', $(iloop_pressure_value), $(plot_gamma));
         % pressure_label = "\$ \\alpha x^2 \$ = iloop_pressure_value, \\gamma = plot_gamma \\mathrm{(Attenuation)}"
         pressure_label2 = sprintf('Pressure = %.2f, Gamma = %.2f (Attenuation)', $(iloop_pressure_value), $(plot_gamma));
-        color = $(color_array);
         
         figure(figure_attenuation);
         set(gca, 'Yscale', 'log');
-        plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', color, 'Color', color, 'DisplayName', pressure_label2);
+        plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label2);
         """
     end
 
