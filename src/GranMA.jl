@@ -275,7 +275,18 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # using MATLAB
     """
 end
 
+"""
+Picks 5 random lines within a pre-loaded data frame that only vary by seed.
 
+# Arguments
+- None.
+
+# Example Function
+random_aspect_ratio_check_2d()
+
+# NOTE
+Need to ensure you have the corresponding input files in the ./in/ directory 
+"""
 function random_aspect_ratio_check_2d()
     # pick a random row 
     random_row = data_frame[rand(1:nrow(data_frame)) ,:]
