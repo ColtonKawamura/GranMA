@@ -183,6 +183,12 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # using MATLAB
     combined_index = matching_gamma_index
     filtered_data_frame = data_frame[combined_index, :]
 
+    # Limit range to data
+    upper_limit_line_x = [1*gamma_value; 1*gamma_value]
+    upper_limit_line_y = [1E-5; 1]
+    lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
+    lower_limit_line_y = [1E-5; 1]
+
     # Start MATLAB session
     mat"""
     % Initialize the MATLAB figure for aspect ratio
@@ -190,6 +196,8 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # using MATLAB
     hold on;
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel('\$ \\overline{\\frac{b}{a}} \$', "FontSize", 20, "Interpreter", "latex");
+    plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
+    plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
     set(gca, 'XScale', 'log');
     set(get(gca, 'ylabel'), 'rotation', 0);
     grid on;
@@ -254,7 +262,7 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # using MATLAB
         mean_attenuation_x = $(loop_mean_attenuation_list);
         iloop_pressure_value = $(iloop_pressure_value);
         plot_gamma = $(plot_gamma);
-        marker_color = $(marker_color)
+        marker_color = $(marker_color);
         pressure_label = sprintf('Pressure = %.2f, Gamma = %.2f (Aspect Ratio)', $(iloop_pressure_value), $(plot_gamma));
         % pressure_label = "\$ \\alpha x^2 \$ = iloop_pressure_value, \\gamma = plot_gamma \\mathrm{(Attenuation)}"
         pressure_label2 = sprintf('Pressure = %.2f, Gamma = %.2f (Attenuation)', $(iloop_pressure_value), $(plot_gamma));
@@ -283,6 +291,8 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # using MATLAB
     legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
 
     figure(figure_rotation_angle);
+    plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
+    plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
     legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
 end
@@ -416,11 +426,17 @@ function plot_ωγ_attenuation_2d(data_frame, gamma_value, flag::Any) # using MA
     # Define the plot limits to match the 1D theory plot curves
     theory_x = collect(3E-4:1E-5:3)
     theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
+    upper_limit_line_x = [1*gamma_value; 1*gamma_value]
+    upper_limit_line_y = [1E-5; 1]
+    lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
+    lower_limit_line_y = [1E-5; 1]
 
     # Intialized the plots to loop over
     mat"""
     figure_attenuation = figure;
     loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory'), hold on
+    plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
+    plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
     hold on;
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
@@ -431,7 +447,7 @@ function plot_ωγ_attenuation_2d(data_frame, gamma_value, flag::Any) # using MA
     """
 
     # Normalize the gamma values
-    normalized_variable = (log.(plot_pressure) .- minimum(log.(plot_pressur)e)) ./ (maximum(log.()plot_pressure) .- minimum(log.(plot_pressure)))
+    normalized_variable = (log.(plot_pressure) .- minimum(log.(plot_pressure))) ./ (maximum(log.(plot_pressure)) .- minimum(log.(plot_pressure)))
 
     # Create a line for each gamma value across all pressure_list
     for idx in eachindex(plot_pressure)
@@ -469,7 +485,7 @@ function plot_ωγ_attenuation_2d(data_frame, gamma_value, flag::Any) # using MA
         mean_attenuation_x = $(loop_mean_attenuation_list);
         iloop_pressure_value = $(iloop_pressure_value);
         plot_gamma = $(plot_gamma);
-        marker_color= $(marker_color)
+        marker_color= $(marker_color);
         pressure_label = sprintf('Pressure = %.2f, Gamma = %.2f (Aspect Ratio)', $(iloop_pressure_value), $(plot_gamma));
         % pressure_label = "\$ \\alpha x^2 \$ = iloop_pressure_value, \\gamma = plot_gamma \\mathrm{(Attenuation)}"
         pressure_label2 = sprintf('Pressure = %.2f, Gamma = %.2f (Attenuation)', $(iloop_pressure_value), $(plot_gamma));
@@ -596,11 +612,17 @@ function plot_ωγ_wavespeed_2d(data_frame, gamma_value, flag::Any) # using MATL
     # Define the plot limits to match the 1D theory plot curves
     theory_x = collect(3E-4:1E-5:3)
     theory_y = 1 ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(0.5) ./ (1 .+ theory_x.^2);
+    upper_limit_line_x = [1*gamma_value; 1*gamma_value]
+    upper_limit_line_y = [9E-1; 2]
+    lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
+    lower_limit_line_y = [9E-1; 2]
 
     # Intialized the plots to loop over
     mat"""
     figure_wavespeed = figure;
     loglog($(theory_x), 1./$(theory_y), 'k', 'DisplayName', '1-D Theory'), hold on
+    plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
+    plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
     hold on;
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel('\$\\hat{c} \$', "FontSize", 20, "Interpreter", "latex");
@@ -616,8 +638,7 @@ function plot_ωγ_wavespeed_2d(data_frame, gamma_value, flag::Any) # using MATL
     # Create a line for each gamma value across all pressure_list
     for idx in eachindex(plot_pressure)
 
-        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
-        # color_array = [red(marker_color), green(marker_color), blue(marker_color)]
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]];
 
         # For idx, only show current pressure data
         iloop_pressure_value = plot_pressure[idx]
@@ -650,7 +671,7 @@ function plot_ωγ_wavespeed_2d(data_frame, gamma_value, flag::Any) # using MATL
         mean_wavespeed_x = $(loop_mean_wavespeed_list);
         iloop_pressure_value = $(iloop_pressure_value);
         plot_gamma = $(plot_gamma);
-        marker_color = $(marker_color)
+        marker_color = $(marker_color);
         pressure_label = sprintf('Wavespeed X = %.2f, Gamma = %.2f (Aspect Ratio)', $(iloop_pressure_value), $(plot_gamma));
         % pressure_label = "\$ \\alpha x^2 \$ = iloop_pressure_value, \\gamma = plot_gamma \\mathrm{(Attenuation)}"
         pressure_label2 = sprintf('Pressure = %.2f, Gamma = %.2f (Wavespeed X)', $(iloop_pressure_value), $(plot_gamma));
