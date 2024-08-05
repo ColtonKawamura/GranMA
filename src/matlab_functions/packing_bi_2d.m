@@ -27,10 +27,10 @@ Nbig = N/2; % Number of big
 Dn=rand(1,N); %randomize diameter
 [~, i]=sort(Dn);
 for k=1:Nsmall
-    Dn(i(k))=D;
+    Dn(i(k))=D; %starting with the smallest diameter of Small particles, assign a diamter
 end
 for k=1:Nbig
-    Dn(i(k+Nsmall))=D*G;
+    Dn(i(k+Nsmall))=D*G; %starting with the smallest diameter of Big particles, assign a diamter
 end
 
 %% Physical Parameters

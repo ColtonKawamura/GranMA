@@ -9,7 +9,46 @@ using MATLAB
 using Statistics
 using Printf
 
-export plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d
+export plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d
+
+"""
+Creates a 2D polydisperse packing of particles with diameters ranging uniformly from `D` to `D + G`.
+
+## Arguments
+- `N::Int`: The number of particles to simulate.
+- `K::Int`: The spring constant used in the simulation.
+- `D::Float64`: The minimum diameter of the particles.
+- `G::Float64`: The range added to `D` to determine the maximum particle diameter (`D + G`).
+- `M::Float64`: The mass of each particle.
+- `P_target::Float64`: The target pressure for the system.
+- `W_factor::Float64`: The width factor of the simulation area.
+- `seed::Int`: The random seed for reproducibility of the simulation.
+- `plotit::Bool`: Flag indicating whether to plot the results (`true` for plotting, `false` otherwise).
+
+## Description
+The `pack_poly_2d` function sets up a 2D simulation environment for polydisperse particle packing. 
+It uses a uniform distribution of particle diameters within the specified range and applies physical 
+properties like spring constant and mass to simulate interactions. 
+
+## Example
+```julia
+pack_poly_2d(5000, 100, 1.0, 0.5, 1.0, 0.01, 5.0, 1, true)
+"""
+function pack_poly_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
+    mat"""
+    addpath('src/matlab_functions/')
+    N =double($(N))
+    K = double($(K))
+    M = double($(M))
+    D = double($(D))
+    G = double($(G))
+    P_target = double($(P_target))
+    W_factor = double($(W_factor))
+    seed = double($(seed))
+    plotit = double($(plotit))
+    packing_poly_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
+    """
+end
 
 """
 Runs a 2D simulation using MATLAB functions.
