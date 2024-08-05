@@ -90,7 +90,8 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value)
         yaxisposition = :right,
         yminorticksvisible = true,
         yminorticks = IntervalsBetween(10),
-        xscale = log10)
+        xscale = log10,
+        yscale = log10)
         hidespines!(ax2)
         hidexdecorations!(ax2)
     ax3= Axis(fig[1,2],
@@ -107,7 +108,8 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value)
         yaxisposition = :right,
         yminorticksvisible = true,
         yminorticks = IntervalsBetween(10),
-        xscale = log10)
+        xscale = log10,
+        yscale = log10)
         hidespines!(ax4)
         hidexdecorations!(ax4)
 
