@@ -88,6 +88,8 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value)
         ylabel=L"\frac{\hat{\alpha}}{\hat{\omega}}",
         ylabelrotation=0, 
         yaxisposition = :right,
+        yminorticksvisible = true,
+        yminorticks = IntervalsBetween(10),
         xscale = log10)
         hidespines!(ax2)
         hidexdecorations!(ax2)
@@ -103,6 +105,8 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value)
         ylabel=L"\frac{\hat{\alpha}}{\hat{\omega}}",
         ylabelrotation=0, 
         yaxisposition = :right,
+        yminorticksvisible = true,
+        yminorticks = IntervalsBetween(10),
         xscale = log10)
         hidespines!(ax4)
         hidexdecorations!(ax4)
