@@ -1,4 +1,4 @@
-function packing_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
+function packing_bi_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
 %Function to create 2D packing with following input parameters:
 % N, Number of Particles
 % K, spring constant

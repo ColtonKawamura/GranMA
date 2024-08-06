@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=2D_packing_job
-#SBATCH --array=1-50%50
+#SBATCH --array=1-20%20
 #SBATCH --nodes=4
 #SBATCH --ntasks=4
 #SBATCH --time=72:00:00

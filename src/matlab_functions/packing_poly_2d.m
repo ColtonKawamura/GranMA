@@ -1,4 +1,4 @@
-function packing_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
+function packing_poly_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
 %Function to create 2D packing with following input parameters:
 % N, Number of Particles
 % K, spring constant
@@ -11,7 +11,7 @@ function packing_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
 %% Set up section
 rng(seed)
 
-filename = ['in/2D_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
+filename = ['in/2D_poly_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
 if exist(filename)
     return
 end
