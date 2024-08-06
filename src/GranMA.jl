@@ -200,7 +200,7 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # using MATLAB
         end
 
         # Filter data to include only points where omega_gamma <= gamma_value
-        valid_indices = iloop_omega_gamma_list .<= gamma_value
+        valid_indices = iloop_omega_gamma_list .<= gamma_value.*2
         iloop_omega_gamma_list = iloop_omega_gamma_list[valid_indices]
         loop_mean_aspect_ratio_list = loop_mean_aspect_ratio_list[valid_indices]
         loop_mean_rotation_angles = loop_mean_rotation_angles[valid_indices]
