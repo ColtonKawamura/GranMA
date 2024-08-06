@@ -1,0 +1,27 @@
+Loading compile/gcc/7.2.0
+  Loading requirement:
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/bzip2-1.0.6-57y
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/libunistring-0.9.7-hks
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/xz-5.2.3-hw2
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/zlib-1.2.11-tkt
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/libxml2-2.9.4-bfo
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/ncurses-6.0-3zr
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/tar-1.29-fd6
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/gettext-0.19.8.1-mci
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/binutils-2.28-muv
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/gmp-6.1.2-bra
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/isl-0.18-fou
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/mpfr-3.1.5-wso
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/mpc-1.0.3-rph
+    /share/spack/modules/linux-centos7-x86_64/gcc-7.2.0/gcc-7.2.0-yuh
+ 
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2023 The MathWorks, Inc.
+                  R2023b (23.2.0.2365128) 64-bit (glnxa64)
+                              August 23, 2023
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
