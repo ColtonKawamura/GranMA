@@ -131,6 +131,7 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # using MATLAB
     % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
     set(ax_attenuation, 'XScale', 'log');
+    set(ax_attenuation, 'YScale', 'log')
     set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
     grid(ax_attenuation, 'on');
     box(ax_attenuation, 'on');
@@ -221,7 +222,7 @@ function plot_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # using MATLAB
         pressure_label = $(pressure_label);
 
         % Plot Attenuation
-        plot(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         
         % Plot Rotation Angle
         plot(ax_rotation, omega_gamma, mean_rotation_angles, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
@@ -671,7 +672,7 @@ function plot_collapsed_ellipse_ωγ_2d(data_frame, gamma_value, flag::Any) # us
     figure_rotation_angle = figure;
     hold on;
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ \\left|\\overline{\\theta} \\right|\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$\\overline{  \\left| \\theta \\right|}\$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
     set(get(gca, 'ylabel'), 'rotation', 0);
     grid on;
