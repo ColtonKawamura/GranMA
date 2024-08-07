@@ -13,6 +13,14 @@ mutable struct ellipse_data
     rot_ang_bins::Vector{Float64}
     omega_gamma::Float64
     seed::Float64
+    pressure_actual::Float64
+    attenuation_x::Float64
+    attenuation_y::Float64
+    wavespeed_x::Float64
+    wavenumber_x::Float64
+    mean_aspect_ratio::Float64
+    mean_rotation_angles::Float64
+    fft_limit_x::Float64
 end
 
 function main()
@@ -80,7 +88,15 @@ function ellipse_cruncher()
             rot_ang_counts,
             rot_ang_bins,
             iloop_file_data["driving_angular_frequency_dimensionless"]* iloop_file_data["gamma_dimensionless"],
-            iloop_file_data["seed"]
+            iloop_file_data["seed"],
+            iloop_file_data["pressure_dimensionless"],
+            -iloop_file_data["attenuation_x_dimensionless"],
+            -iloop_file_data["attenuation_y_dimensionless"],
+            iloop_file_data["wavespeed_x"],
+            iloop_file_data["wavenumber_x"],
+            iloop_file_data["mean_aspect_ratio"],
+            iloop_file_data["mean_rotation_angles"],
+            maximum(iloop_file_data["initial_distance_from_oscillation_output_x_fft"])
         )
 
         push!(simulation_data, data_entry)
