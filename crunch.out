@@ -209,5 +209,5 @@ Skipping file due to NaN values: out/simulation_2d/bi_K100_all_seeds/N5000_P0.1_
 Skipping file due to NaN values: out/simulation_2d/bi_K100_all_seeds/N5000_P0.1_Width5_Seed2_K100_Bv6.951928e-01_wD100.00_M1.mat
 Skipping file due to NaN values: out/simulation_2d/bi_K100_all_seeds/N5000_P0.1_Width5_Seed2_K100_Bv7.847600e+00_wD100.00_M1.mat
 Skipping file due to NaN values: out/simulation_2d/bi_K100_all_seeds/N5000_P0.1_Width5_Seed2_K100_Bv8.858668e-01_wD100.00_M1.mat
-Data saved to out/processed_simulation/2d_K100.jld2
+Data saved to out/processed/2d_K100.jld2
 Data reloaded successfully. Number of entries: 17070

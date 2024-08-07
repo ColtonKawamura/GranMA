@@ -2,7 +2,7 @@ module GranMA
 
 using DataFrames
 using CSV
-using GLMakie
+# using GLMakie
 using LaTeXStrings
 using Debugger # REPL: Debugger.@run function(); @bp
 using MATLAB
@@ -12,7 +12,7 @@ using MAT
 using Glob
 using JLD2
 
-export load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
+export crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
 
 mutable struct file_data
     pressure::Float64
@@ -35,6 +35,16 @@ mutable struct file_data
     ellipse_stats::Matrix{Float64}
     fft_limit_y::Float64
     wavenumber_y::Float64
+end
+
+function crunch_and_save()
+    K = 100
+    simulation_data = crunch()
+    save_data(simulation_data, K)
+    
+    # Load the data back to verify
+    reloaded_data = load_data(K)
+    println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
 end
 
 function crunch()
