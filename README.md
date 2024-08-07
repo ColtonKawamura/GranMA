@@ -10,8 +10,6 @@ The GranMA ecosystem includes a variety of functionalities:
 - **Visualization:** Create detailed plots to visualize the results, aiding in the understanding of complex dynamics.
 
 
-To learn more, we invite you to visit the documentation at [docs.granma.org](http://docs.granma.org/stable/).
-
 ## Installation
 
 To get started with GranMA, install the package using Julia's package manager. You can install the latest release of GranMA as follows:
@@ -33,16 +31,9 @@ Start using the package:
 using GranMA
 ```
 
-## Developing GranMA
-
-<details>
-  <summary><span style="color:red"> 🔥 Click for more 🔥</span></summary>
-
-GranMA is developed as a modular system, allowing easy customization and extension. To contribute to its development, follow these steps:
-
 ```julia
 # Clone the repository locally
-git clone https://github.com/yourusername/GranMA.git
+git clone https://github.com/coltonkawamura/GranMA.git
 
 # Enter the package directory
 cd GranMA
@@ -63,7 +54,7 @@ Feel free to explore the code, submit issues, and contribute improvements via pu
 
 ## Examples
 
-Here are a few examples to get you started with GranMA. For more detailed information, please refer to [the documentation](http://docs.granma.org/stable/).
+Here are a few examples to get you started with GranMA.
 
 ### Basic Simulation
 
@@ -102,7 +93,3 @@ frequency_results = analyze_frequencies(data)
 plot_frequency_spectrum(frequency_results)
 ```
 </details>
-
-## Sponsors
-
-We are grateful to our sponsors for supporting the development of GranMA. Their generous contributions help us continue our mission to provide high-quality tools for granular material analysis.
