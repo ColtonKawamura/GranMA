@@ -2,7 +2,7 @@ module GranMA
 
 using DataFrames
 using CSV
-# using GLMakie
+using GLMakie # Not supported on HPC. Need to comment out before running on HPC
 using LaTeXStrings
 using Debugger # REPL: Debugger.@run function(); @bp
 using MATLAB
@@ -12,7 +12,7 @@ using MAT
 using Glob
 using JLD2
 
-export crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
+export plot_ellipse_pdf, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
 
 mutable struct file_data
     pressure::Float64
@@ -1038,78 +1038,115 @@ function plot_ellipse_low_pressure(data_frame, gamma_values, pressure_value)
     """
 end
 
-function process_outputs_2d(directory)
-    # Define the directory containing the .mat files
-   # directory = "outputs/seed_job_ellipse_edit/"
+function plot_ellipse_pdf(simulation_data, ω_value, γ_value)
+
+    # filter the data based on those that are close to gamma_value
+    closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+    closest_γ_value = simulation_data[closest_γ_index].gamma
+    matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+
+    # filter the data based on those that are close to gamma_value
+    closest_ω_index = argmin(abs.([idx.omega for idx in matching_γ_data] .- ω_value))
+    closest_ω_value = matching_γ_data[closest_ω_index].omega
+    matching_ωγ_data = filter(entry -> entry.omega == closest_ω_value, matching_γ_data)
+
+    # Get a list of unique input pressures
+    pressure_list = unique([entry.pressure for entry in matching_ωγ_data]) # goes through each entry of simulation_data and get the P value at that entry
     
-    # Get a list of all .mat files in the directory
-    mat_files = glob("*.mat", directory)
-    
-    # Initialize a DataFrame to store all data
-    data_table = DataFrame(
-        pressure = Float64[],
-        omega = Float64[],
-        gamma = Float64[],
-        attenuation_x = Float64[],
-        attenuation_y = Float64[],
-        wavespeed_x = Float64[],
-        wavenumber_x = Float64[],
-        seed = Int[],
-        mean_aspect_ratio = Float64[],
-        mean_rotation_angles = Float64[],
-        attenuation_limit_x = Float64[],
-        input_pressure = Float64[]
-    )
-    
-    # Loop through each file and load data into the DataFrame
-    for file_name in mat_files
-        # Load the data
-        file_data = matread(file_name)
+    # get a range for plotting color from 0 to 1
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Intialized the plots to loop over
+    mat"""
+    figure_aspect_ratio = figure;
+    xlabel('\$ b/a \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ p(b/a) \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'YScale', 'log');
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    grid on;
+    box on;
+    hold on
+
+    figure_rotation_angle = figure;
+    xlabel('\$ \\theta \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ p(\\theta) \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'YScale', 'log');
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    grid on;
+    box on;
+    hold on
+    """
+
+    # Create a line for each pressure
+    for pressure_value in pressure_list
+
+        # Only look at data for current pressure value
+        matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_ωγ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
         
-        # Check if attenuation_fit_line_x is not empty
-        if haskey(file_data, "attenuation_fit_line_x") && !isempty(file_data["attenuation_fit_line_x"])
-            # Extract relevant data from the file
-            pressure = file_data["pressure_dimensionless"]
-            omega = file_data["driving_angular_frequency_dimensionless"]
-            gamma = file_data["gamma_dimensionless"]
-            attenuation_x = -file_data["attenuation_x_dimensionless"]
-            attenuation_y = file_data["attenuation_y_dimensionless"]
-            wavespeed_x = -file_data["wavespeed_x"]
-            wavenumber_x = -file_data["wavenumber_x_dimensionless"]
-            seed = file_data["seed"]
-            mean_aspect_ratio = file_data["mean_aspect_ratio"]
-            mean_rotation_angles = file_data["mean_rotation_angles"]
-            attenuation_limit_x = file_data["initial_distance_from_oscillation_output_x_fft"][end]
-            input_pressure = file_data["input_pressure"]
-            
-            # Create a new row with the data
-            new_row = DataFrame(
-                pressure = [pressure],
-                omega = [omega],
-                gamma = [gamma],
-                attenuation_x = [attenuation_x],
-                attenuation_y = [attenuation_y],
-                wavespeed_x = [wavespeed_x],
-                wavenumber_x = [wavenumber_x],
-                seed = [seed],
-                mean_aspect_ratio = [mean_aspect_ratio],
-                mean_rotation_angles = [mean_rotation_angles],
-                attenuation_limit_x = [attenuation_limit_x],
-                input_pressure = [input_pressure]
-            )
-            
-            # Append the new row to the DataFrame
-            append!(data_table, new_row)
-        end
+        # Assign a color
+        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+        
+        # Each omega gamma value spans all seeds **** can get rd
+        # ωγ_list = unique([entry.omega_gamma for entry in matching_pressure_data])
+
+
+        # mean(matrix, dims=2) means across rows. Dims = 1 is cross columns, dims =3 is into the screen
+        #  If you have an array [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]], splatting converts this into calling hcat([a1, a2, a3], [b1, b2, b3], [c1, c2, c3]).
+        mean_asp_rat_counts = mean(hcat([entry.asp_rat_counts for entry in matching_pressure_data]...), dims=2)
+        mean_asp_rat_bins = mean(hcat([entry.asp_rat_bins for entry in matching_pressure_data]...), dims=2)
+        mean_rot_ang_counts = mean(hcat([entry.rot_ang_counts for entry in matching_pressure_data]...), dims=2)
+        mean_rot_ang_bins = mean(hcat([entry.rot_ang_bins for entry in matching_pressure_data]...), dims=2)
+
+        # Normalize for PDF
+        mean_asp_rat_counts = (mean_asp_rat_counts ./ sum(mean_asp_rat_counts))
+        mean_rot_ang_counts = (mean_rot_ang_counts ./ sum(mean_rot_ang_counts))
+
+        @bp
+        # When the data was made, there was more bins than counts...
+        # Trim counts to match bins length
+        mean_asp_rat_bins = mean_asp_rat_bins[1:length(mean_asp_rat_counts)]
+        mean_rot_ang_bins = mean_rot_ang_bins[1:length(mean_rot_ang_counts)]
+
+        # # Average the data across all seeds for each omega_gamma value
+        # for ωγ_value in ωγ_list
+
+        #     matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data)
+        #     @bp
+        #     # mean(matrix, dims=2) means across rows. Dims = 1 is cross columns, dims =3 is into the screen
+        #     #  If you have an array [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]], splatting converts this into calling hcat([a1, a2, a3], [b1, b2, b3], [c1, c2, c3]).
+        #     mean_asp_rat_counts = mean(hcat([entry.asp_rat_counts for entry in matching_omega_gamma_data]...), dims=2)
+        #     mean_asp_rat_bins = mean(hcat([entry.asp_rat_bins for entry in matching_omega_gamma_data]...), dims=2)
+        #     mean_rot_ang_counts = mean(hcat([entry.rot_ang_counts for entry in matching_omega_gamma_data]...), dims=2)
+        #     mean_rot_ang_bins = mean(hcat([entry.rot_ang_bins for entry in matching_omega_gamma_data]...), dims=2)
+
+        # end
+
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        pressure_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", pressure_value, γ_value, ω_value)
+
+        mat"""
+        mean_asp_rat_counts = $(mean_asp_rat_counts);
+        mean_asp_rat_bins = $(mean_asp_rat_bins);
+        mean_rot_ang_counts = $(mean_rot_ang_counts);
+        mean_rot_ang_bins = $(mean_rot_ang_bins);
+        marker_color = $(marker_color);
+        pressure_label = $(pressure_label);
+        
+        figure(figure_aspect_ratio);
+        plot(mean_asp_rat_bins, mean_asp_rat_counts, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+
+        figure(figure_rotation_angle);
+        plot(mean_rot_ang_bins, mean_rot_ang_counts, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        """
     end
+    mat"""
+    figure(figure_aspect_ratio);
+    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
 
-    # Add new columns to the DataFrame for plotting
-    data_table[!, :omegagamma] = data_table[!, :omega] .* data_table[!, :gamma]
-    data_table[!, :alphaoveromega] = data_table[!, :attenuation_x] ./ data_table[!, :omega]
-    
-    # Write the DataFrame to a CSV file
-    CSV.write("out/processed_simulation/2d_K100_ellipse_edits.csv", data_table)
+    figure(figure_rotation_angle);
+    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    """
 end
-
 
 end
