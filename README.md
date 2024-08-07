@@ -1,5 +1,5 @@
 
-# Granula Material Analysis (GranMA)
+# Granular Material Analysis (GranMA)
 
 GranMA is an advanced simulation and data analysis package for the [Julia programming language](https://julialang.org/), designed to provide insights into granular material dynamics. It is compatible with Windows, Linux, and MacOS platforms.
 
