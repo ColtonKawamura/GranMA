@@ -2,7 +2,7 @@ module GranMA
 
 using DataFrames
 using CSV
-using GLMakie # Not supported on HPC. Need to comment out before running on HPC
+# using GLMakie # Not supported on HPC. Need to comment out before running on HPC
 using LaTeXStrings
 using Debugger # REPL: Debugger.@run function(); @bp
 using MATLAB
@@ -49,6 +49,7 @@ end
 
 function crunch()
     directory = "out/simulation_2d/bi_K100_all_seeds/"
+    # directory = "out/simulation_2d/"
     mat_files = glob("*.mat", directory)
     simulation_data = file_data[]
     
