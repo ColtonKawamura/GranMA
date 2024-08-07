@@ -23,4 +23,8 @@ plot_ellipse_low_pressure(data_frame, [.01, .1, .25, .5, .75, 1], .001)
 process_outputs_2d("outputs/seed_job_ellipse_edit/")
 
 simulation_data = load_data(100)
-plot_ellipse_pdf(simulation_data, .1)
+plot_ellipse_pdf(simulation_data, .1, 1)
+
+simulation_data = load_data2(100)
+
+crunch_and_save()
