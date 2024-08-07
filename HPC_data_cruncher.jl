@@ -29,10 +29,10 @@ end
 function main()
     K = 100
     simulation_data = crunch()
-    save_data_to_jld2(simulation_data, K)
+    save_data(simulation_data, K)
     
     # Load the data back to verify
-    reloaded_data = load_data_from_jld2(K)
+    reloaded_data = load_data(K)
     println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
 end
 
