@@ -21,6 +21,8 @@ mutable struct ellipse_data
     mean_aspect_ratio::Float64
     mean_rotation_angles::Float64
     fft_limit_x::Float64
+    ellipse_stats::Matrix{Float64}
+    fft_limit_y::Float64
 end
 
 function main()
@@ -62,7 +64,7 @@ end
 function ellipse_cruncher()
 
 
-    directory = "out/simulation_2d/"
+    directory = "out/simulation_2d/bi_K100_all_seeds/"
 
     mat_files = glob("*.mat", directory)
 
@@ -96,7 +98,9 @@ function ellipse_cruncher()
             iloop_file_data["wavenumber_x"],
             iloop_file_data["mean_aspect_ratio"],
             iloop_file_data["mean_rotation_angles"],
-            maximum(iloop_file_data["initial_distance_from_oscillation_output_x_fft"])
+            maximum(iloop_file_data["initial_distance_from_oscillation_output_x_fft"]),
+            iloop_file_data["ellipse_stats_nonzero"],
+            maximum(iloop_file_data["initial_distance_from_oscillation_output_y_fft"])
         )
 
         push!(simulation_data, data_entry)

@@ -1,0 +1,1 @@
+julia -e 'include("HPC_data_cruncher.jl"); main()'
