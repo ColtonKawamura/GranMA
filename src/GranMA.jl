@@ -12,7 +12,7 @@ using MAT
 using Glob
 using JLD2
 
-export plot_ellipse_pdf, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
+export save_data2, load_data2, file_data, plot_ellipse_pdf, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
 
 mutable struct file_data
     pressure::Float64
@@ -38,9 +38,9 @@ mutable struct file_data
 end
 
 function crunch_and_save()
-    K = 100
+    K = 10
     simulation_data = crunch()
-    save_data(simulation_data, K)
+    save_data2(simulation_data, K)
     
     # Load the data back to verify
     reloaded_data = load_data(K)
@@ -126,11 +126,31 @@ function save_data(simulation_data::Vector{file_data}, K::Int)
     println("Data saved to $file_name")
 end
 
+function save_data2(simulation_data::Vector{GranMA.file_data}, K::Int)
+    file_name = "out/processed/2d_K$(K).jld2"
+    @save file_name simulation_data
+    println("Data saved to $file_name")
+end
+
 function load_data(K::Int)::Vector{file_data}
     file_name = "out/processed/2d_K$(K).jld2"
     @load file_name simulation_data
     return simulation_data
 end
+
+function load_data2(K::Int)::Vector{file_data}
+    file_name = "out/processed/2d_K$(K).jld2"
+    simulation_data = JLD2.load(file_name, "simulation_data")
+    
+    # Convert to the correct type
+    return [file_data(d.pressure, d.omega, d.gamma, d.asp_rat_counts, d.asp_rat_bins,
+                      d.rot_ang_counts, d.rot_ang_bins, d.omega_gamma, d.seed,
+                      d.pressure_actual, d.attenuation_x, d.attenuation_y, d.wavespeed_x,
+                      d.wavenumber_x, d.mean_aspect_ratio, d.mean_rotation_angles,
+                      d.fft_limit_x, d.ellipse_stats, d.fft_limit_y, d.wavenumber_y)
+            for d in simulation_data]
+end
+
 
 
 """
@@ -1098,38 +1118,29 @@ function plot_ellipse_pdf(simulation_data, ω_value, γ_value)
         mean_rot_ang_counts = mean(hcat([entry.rot_ang_counts for entry in matching_pressure_data]...), dims=2)
         mean_rot_ang_bins = mean(hcat([entry.rot_ang_bins for entry in matching_pressure_data]...), dims=2)
 
-        # Normalize for PDF
-        mean_asp_rat_counts = (mean_asp_rat_counts ./ sum(mean_asp_rat_counts))
-        mean_rot_ang_counts = (mean_rot_ang_counts ./ sum(mean_rot_ang_counts))
-
         @bp
-        # When the data was made, there was more bins than counts...
-        # Trim counts to match bins length
-        mean_asp_rat_bins = mean_asp_rat_bins[1:length(mean_asp_rat_counts)]
-        mean_rot_ang_bins = mean_rot_ang_bins[1:length(mean_rot_ang_counts)]
+        
+        # Calculate bin widths
+        asp_rat_bin_widths = diff(mean_asp_rat_bins, dims=1)
+        rot_ang_bin_widths = diff(mean_rot_ang_bins, dims=1)
 
-        # # Average the data across all seeds for each omega_gamma value
-        # for ωγ_value in ωγ_list
-
-        #     matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data)
-        #     @bp
-        #     # mean(matrix, dims=2) means across rows. Dims = 1 is cross columns, dims =3 is into the screen
-        #     #  If you have an array [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]], splatting converts this into calling hcat([a1, a2, a3], [b1, b2, b3], [c1, c2, c3]).
-        #     mean_asp_rat_counts = mean(hcat([entry.asp_rat_counts for entry in matching_omega_gamma_data]...), dims=2)
-        #     mean_asp_rat_bins = mean(hcat([entry.asp_rat_bins for entry in matching_omega_gamma_data]...), dims=2)
-        #     mean_rot_ang_counts = mean(hcat([entry.rot_ang_counts for entry in matching_omega_gamma_data]...), dims=2)
-        #     mean_rot_ang_bins = mean(hcat([entry.rot_ang_bins for entry in matching_omega_gamma_data]...), dims=2)
-
-        # end
+        # Normalize counts to get probabilities, considering the bin widths
+        total_asp_count = sum(mean_asp_rat_counts .* asp_rat_bin_widths)
+        total_rot_count = sum(mean_rot_ang_counts .* rot_ang_bin_widths)
+        
+        probabilities_asp = (mean_asp_rat_counts ./ total_asp_count) ./ asp_rat_bin_widths
+        probabilities_rot = (mean_rot_ang_counts ./ total_rot_count) ./ rot_ang_bin_widths
+        plot_bins_asp = mean_asp_rat_bins[1:end-1]
+        plot_bins_rot = mean_rot_ang_bins[1:end-1]
 
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", pressure_value, γ_value, ω_value)
 
         mat"""
-        mean_asp_rat_counts = $(mean_asp_rat_counts);
-        mean_asp_rat_bins = $(mean_asp_rat_bins);
-        mean_rot_ang_counts = $(mean_rot_ang_counts);
-        mean_rot_ang_bins = $(mean_rot_ang_bins);
+        mean_asp_rat_counts = $(probabilities_asp);
+        mean_asp_rat_bins = $(plot_bins_asp);
+        mean_rot_ang_counts = $(probabilities_rot);
+        mean_rot_ang_bins = $(plot_bins_rot);
         marker_color = $(marker_color);
         pressure_label = $(pressure_label);
         
