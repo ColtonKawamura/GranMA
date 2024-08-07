@@ -12,7 +12,7 @@ using MAT
 using Glob
 using JLD2
 
-export save_data2, load_data2, file_data, plot_ellipse_pdf, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
+export load_data2, file_data, plot_ellipse_pdf, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
 
 mutable struct file_data
     pressure::Float64
@@ -38,9 +38,9 @@ mutable struct file_data
 end
 
 function crunch_and_save()
-    K = 10
+    K = 100
     simulation_data = crunch()
-    save_data2(simulation_data, K)
+    save_data(simulation_data, K)
     
     # Load the data back to verify
     reloaded_data = load_data(K)
@@ -122,12 +122,6 @@ function crunch()
 end
 
 function save_data(simulation_data::Vector{file_data}, K::Int)
-    file_name = "out/processed/2d_K$(K).jld2"
-    @save file_name simulation_data
-    println("Data saved to $file_name")
-end
-
-function save_data2(simulation_data::Vector{GranMA.file_data}, K::Int)
     file_name = "out/processed/2d_K$(K).jld2"
     @save file_name simulation_data
     println("Data saved to $file_name")
