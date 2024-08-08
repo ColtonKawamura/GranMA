@@ -62,9 +62,9 @@ function generate_simulation_jobs(filename::String, K_values::Vector{T1}, M_valu
     W_values = Int64.(W_values)
     seeds = Int64.(seeds)
 
-    # Function to generate the MATLAB command
+    # Function to generate the MATLAB command EXAMPLE simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     function generate_matlab_command(K, M, Bv, w_D, N, P, W, seed)
-        return "matlab -nodisplay -nosplash -r \"addpath('./src/matlab_functions/'); packing_bi_2d($K, $M, $Bv, $w_D, $N, $P, $W, $seed, false); exit\""
+        return "matlab -nodisplay -nosplash -r \"addpath('./src/matlab_functions/'); packing_bi_2d($K, $M, $Bv, $w_D, $N, $P, $W, $seed); exit\""
     end
 
     # Generate all combinations of parameters using IterTools.product
