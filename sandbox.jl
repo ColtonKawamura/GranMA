@@ -351,7 +351,7 @@ function plot_ωγ_attenuation_2d(gamma_value)  # Need to fix the legend
     """
 end
 
-function plot_ωγ_wavespeed_2d(gamma_value) # Need to fix wavepseed, lgend
+function plot_ωγ_wavespeed_2d(gamma_value) # Need to fix lgend
 
     # filter the data based on those that are close to gamma_value
     closest_gamma_index = argmin(abs.([idx.gamma for idx in simulation_data] .- gamma_value))
@@ -410,7 +410,7 @@ function plot_ωγ_wavespeed_2d(gamma_value) # Need to fix wavepseed, lgend
             matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
             @bp
             # Get the mean over all seeds
-            loop_mean_wavespeed = -mean(entry.:wavespeed_x for entry in matching_omega_gamma_data)
+            loop_mean_wavespeed = mean(entry.:wavespeed_x for entry in matching_omega_gamma_data)
             @bp
             # Append values
             push!(loop_mean_wavespeed_list, loop_mean_wavespeed)
