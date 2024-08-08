@@ -11,7 +11,7 @@ using DataFrames
 # Read the data table
 data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
-simulation_data = load_data(100)
+simulation_data = load_data("out/processed/2d_K100.jld2")
 
 
 
