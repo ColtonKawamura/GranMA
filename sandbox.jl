@@ -73,17 +73,19 @@ function plot_ellipse_pdf(ω_value, γ_value)
 
         @bp
         
-        # Calculate bin widths
-        asp_rat_bin_widths = diff(mean_asp_rat_bins, dims=1)
-        rot_ang_bin_widths = diff(mean_rot_ang_bins, dims=1)
+        # # Calculate bin widths
+        # asp_rat_bin_widths = diff(mean_asp_rat_bins, dims=1)
+        # rot_ang_bin_widths = diff(mean_rot_ang_bins, dims=1)
 
-        # Normalize counts to get probabilities, considering the bin widths
-        total_asp_count = sum(mean_asp_rat_counts .* asp_rat_bin_widths)
-        total_rot_count = sum(mean_rot_ang_counts .* rot_ang_bin_widths)
-        probabilities_asp = (mean_asp_rat_counts ./ total_asp_count) ./ asp_rat_bin_widths
-        probabilities_rot = (mean_rot_ang_counts ./ total_rot_count) ./ rot_ang_bin_widths
+        # # Normalize counts to get probabilities, considering the bin widths
+        # total_asp_count = sum(mean_asp_rat_counts .* asp_rat_bin_widths)
+        # total_rot_count = sum(mean_rot_ang_counts .* rot_ang_bin_widths)
+        # probabilities_asp = (mean_asp_rat_counts ./ total_asp_count) ./ asp_rat_bin_widths
+        # probabilities_rot = (mean_rot_ang_counts ./ total_rot_count) ./ rot_ang_bin_widths
         plot_bins_asp = mean_asp_rat_bins[1:end-1]
         plot_bins_rot = mean_rot_ang_bins[1:end-1]
+        probabilities_asp = mean_asp_rat_counts
+        probabilities_rot = mean_rot_ang_counts
 
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", pressure_value, γ_value, ω_value)
