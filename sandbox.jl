@@ -1,19 +1,17 @@
 include("src/GranMA.jl")
 
 using .GranMA
-using MATLAB
-using Debugger
-using Printf
-using Statistics
 using CSV
 using DataFrames
+using Debugger
+using MATLAB
+using Printf
+using Statistics
 
 # Read the data table
 data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
-simulation_data = load_data("out/processed/2d_K100.jld2")
-
-
+simulation_data = load_data("out/processed/2d_bi_K100_W20.jld2")
 
 function plot_ellipse_pdf(ω_value, γ_value)
 
