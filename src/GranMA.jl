@@ -21,7 +21,9 @@ export  generate_simulation_jobs,
         crunch,
         save_data,
         simulation_2d,
-        plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, process_outputs_2d
+        pack_poly_2d, 
+        plot_ellipse_low_pressure,
+        process_outputs_2d
 
 mutable struct file_data
     pressure::Float64
@@ -165,13 +167,13 @@ function crunch()
 end
 
 function save_data(simulation_data::Vector{file_data}, K::Int)
-    file_name = "out/processed/2d_K$(K)_alpha.jld2"
+    file_name = "out/processed/2d_K$(K).jld2"
     @save file_name simulation_data
     println("Data saved to $file_name")
 end
 
 function load_data(K::Int)::Vector{file_data}
-    file_name = "out/processed/2d_K$(K)_alpha.jld2"
+    file_name = "out/processed/2d_K$(K).jld2"
     @load file_name simulation_data
     return simulation_data
 end
@@ -579,179 +581,81 @@ end
 
 # end
 
+# function plot_ωγ_wavespeed_2d(data_frame, gamma_value)
 
+#     # Define parameters to plot
+#     pressure_list = sort(unique(data_frame.input_pressure))
+#     plot_pressure = pressure_list
+#     gamma_list = sort(unique(data_frame.gamma))
+#     closest_gamma_match_index = argmin(abs.(gamma_list .- gamma_value))
+#     plot_gamma = gamma_list[closest_gamma_match_index]
 
+#     # Filter the table to only those data
+#     matching_gamma_index = in.(data_frame.gamma, Ref(plot_gamma))
+#     combined_index = matching_gamma_index
+#     filtered_data_frame = data_frame[combined_index, :]
 
-function plot_ωγ_wavespeed_2d(data_frame, gamma_value)
+#     # Define the plot limits to match the 1D theory plot curves
+#     theory_x = collect(3E-4:1E-5:3)
+#     theory_y = 1 ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(0.5) ./ (1 .+ theory_x.^2);
 
-    # Define parameters to plot
-    pressure_list = sort(unique(data_frame.input_pressure))
-    plot_pressure = pressure_list
-    gamma_list = sort(unique(data_frame.gamma))
-    closest_gamma_match_index = argmin(abs.(gamma_list .- gamma_value))
-    plot_gamma = gamma_list[closest_gamma_match_index]
+#     fig = Figure()
+#     ax = Axis(fig[1,1],
+#         xlabel=L"\hat{\omega}\hat{\gamma}",
+#         ylabel=L"\hat{c}", 
+#         xscale = log10,
+#         yscale = log10,
+#         yminorticksvisible = true,
+#         yminorgridvisible = true,
+#         yminorticks = IntervalsBetween(5),
+#         xminorticksvisible = true,
+#         xminorgridvisible = true,
+#         xminorticks = IntervalsBetween(5))
 
-    # Filter the table to only those data
-    matching_gamma_index = in.(data_frame.gamma, Ref(plot_gamma))
-    combined_index = matching_gamma_index
-    filtered_data_frame = data_frame[combined_index, :]
+#         lines!(ax,theory_x, 1 ./theory_y)
 
-    # Define the plot limits to match the 1D theory plot curves
-    theory_x = collect(3E-4:1E-5:3)
-    theory_y = 1 ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(0.5) ./ (1 .+ theory_x.^2);
+#     # Normalize the gamma values
+#     normalized_variable = (log.(plot_pressure) .- log.(minimum(plot_pressure))) ./ (maximum(log.(plot_pressure)) .- minimum(log.(plot_pressure)))
 
-    fig = Figure()
-    ax = Axis(fig[1,1],
-        xlabel=L"\hat{\omega}\hat{\gamma}",
-        ylabel=L"\hat{c}", 
-        xscale = log10,
-        yscale = log10,
-        yminorticksvisible = true,
-        yminorgridvisible = true,
-        yminorticks = IntervalsBetween(5),
-        xminorticksvisible = true,
-        xminorgridvisible = true,
-        xminorticks = IntervalsBetween(5))
+#     # Create a line for each gamma value across all pressure_list
+#     for idx in eachindex(plot_pressure)
 
-        lines!(ax,theory_x, 1 ./theory_y)
+#         marker_color = RGBf(normalized_variable[idx], 0, 1-normalized_variable[idx]);
 
-    # Normalize the gamma values
-    normalized_variable = (log.(plot_pressure) .- log.(minimum(plot_pressure))) ./ (maximum(log.(plot_pressure)) .- minimum(log.(plot_pressure)))
+#         # For idx, only show current pressure data
+#         iloop_pressure_value = plot_pressure[idx]
+#         iloop_pressure_index = in.(filtered_data_frame.input_pressure, Ref(iloop_pressure_value))
+#         iloop_combined_index = iloop_pressure_index
+#         iloop_data_frame = filtered_data_frame[iloop_combined_index, :]
 
-    # Create a line for each gamma value across all pressure_list
-    for idx in eachindex(plot_pressure)
+#         # Initizalized vectors for just this pressure
+#         loop_mean_wavespeed_list = Float64[];
+#         loop_omegagamma_plot_list = Float64[];
 
-        marker_color = RGBf(normalized_variable[idx], 0, 1-normalized_variable[idx]);
+#         # Look at a single omega gamma value since each one spans all seeds
+#         iloop_omega_gamma_list = sort(unique(iloop_data_frame.omegagamma))
 
-        # For idx, only show current pressure data
-        iloop_pressure_value = plot_pressure[idx]
-        iloop_pressure_index = in.(filtered_data_frame.input_pressure, Ref(iloop_pressure_value))
-        iloop_combined_index = iloop_pressure_index
-        iloop_data_frame = filtered_data_frame[iloop_combined_index, :]
+#         for jdx in eachindex(iloop_omega_gamma_list)
 
-        # Initizalized vectors for just this pressure
-        loop_mean_wavespeed_list = Float64[];
-        loop_omegagamma_plot_list = Float64[];
+#             # Get the idex for the current omega gamma value
+#             matching_jdx = in.(iloop_data_frame.omegagamma, Ref(iloop_omega_gamma_list[jdx]))
+#             jloop_data_frame = iloop_data_frame[matching_jdx,:]
 
-        # Look at a single omega gamma value since each one spans all seeds
-        iloop_omega_gamma_list = sort(unique(iloop_data_frame.omegagamma))
+#             # get the mean over all seeds
+#             jvalue_mean_wavespeed = mean(jloop_data_frame.wavespeed_x)
 
-        for jdx in eachindex(iloop_omega_gamma_list)
+#             # Append values only if they are positive
+#             if jvalue_mean_wavespeed >= 0
+#                 push!(loop_mean_wavespeed_list, jvalue_mean_wavespeed)
+#                 push!(loop_omegagamma_plot_list, iloop_omega_gamma_list[jdx])
+#             end
+#         end
+#         scatterlines!(ax, loop_omegagamma_plot_list, loop_mean_wavespeed_list, color=marker_color, label=L"\hat{P} = %$(iloop_pressure_value), \hat{\gamma}=%$(gamma_value)")
 
-            # Get the idex for the current omega gamma value
-            matching_jdx = in.(iloop_data_frame.omegagamma, Ref(iloop_omega_gamma_list[jdx]))
-            jloop_data_frame = iloop_data_frame[matching_jdx,:]
-
-            # get the mean over all seeds
-            jvalue_mean_wavespeed = mean(jloop_data_frame.wavespeed_x)
-
-            # Append values only if they are positive
-            if jvalue_mean_wavespeed >= 0
-                push!(loop_mean_wavespeed_list, jvalue_mean_wavespeed)
-                push!(loop_omegagamma_plot_list, iloop_omega_gamma_list[jdx])
-            end
-        end
-        scatterlines!(ax, loop_omegagamma_plot_list, loop_mean_wavespeed_list, color=marker_color, label=L"\hat{P} = %$(iloop_pressure_value), \hat{\gamma}=%$(gamma_value)")
-
-    end
-    axislegend(position = :lt)
-    fig
-end
-
-function plot_ωγ_wavespeed_2d(data_frame, gamma_value, flag::Any) # using MATLAB
-
-    # Define parameters to plot
-    pressure_list = sort(unique(data_frame.input_pressure))
-    plot_pressure = pressure_list
-    gamma_list = sort(unique(data_frame.gamma))
-    closest_gamma_match_index = argmin(abs.(gamma_list .- gamma_value))
-    plot_gamma = gamma_list[closest_gamma_match_index]
-
-    # Filter the table to only those data
-    matching_gamma_index = in.(data_frame.gamma, Ref(plot_gamma))
-    combined_index = matching_gamma_index
-    filtered_data_frame = data_frame[combined_index, :]
-
-    # Define the plot limits to match the 1D theory plot curves
-    theory_x = collect(3E-4:1E-5:3)
-    theory_y = 1 ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(0.5) ./ (1 .+ theory_x.^2);
-    upper_limit_line_x = [1*gamma_value; 1*gamma_value]
-    upper_limit_line_y = [9E-1; 2]
-    lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
-    lower_limit_line_y = [9E-1; 2]
-
-    # Intialized the plots to loop over
-    mat"""
-    figure_wavespeed = figure;
-    loglog($(theory_x), 1./$(theory_y), 'k', 'DisplayName', '1-D Theory'), hold on
-    plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
-    plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
-    hold on;
-    xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$\\hat{c} \$', "FontSize", 20, "Interpreter", "latex");
-    set(gca, 'XScale', 'log');
-    set(get(gca, 'ylabel'), 'rotation', 0);
-    grid on;
-    box on;
-    """
-
-    # Normalize the gamma values
-    normalized_variable = (plot_pressure .- minimum(plot_pressure)) ./ (maximum(plot_pressure) .- minimum(plot_pressure))
-
-    # Create a line for each gamma value across all pressure_list
-    for idx in eachindex(plot_pressure)
-
-        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]];
-
-        # For idx, only show current pressure data
-        iloop_pressure_value = plot_pressure[idx]
-        iloop_pressure_index = in.(filtered_data_frame.input_pressure, Ref(iloop_pressure_value))
-        iloop_combined_index = iloop_pressure_index
-        iloop_data_frame = filtered_data_frame[iloop_combined_index, :]
-
-        # Initizalized vectors for just this pressure
-        loop_mean_wavespeed_list = Float64[];
-
-        # Look at a single omega gamma value since each one spans all seeds
-        iloop_omega_gamma_list = sort(unique(iloop_data_frame.omegagamma))
-
-        for jdx in eachindex(iloop_omega_gamma_list)
-
-            # Get the idex for the current omega gamma value
-            matching_jdx = in.(iloop_data_frame.omegagamma, Ref(iloop_omega_gamma_list[jdx]))
-            jloop_data_frame = iloop_data_frame[matching_jdx,:]
-
-            # get the mean over all seeds
-            jvalue_mean_wavespeed = mean(jloop_data_frame.wavespeed_x)
-            @bp
-            # Append values using push!
-            push!(loop_mean_wavespeed_list, jvalue_mean_wavespeed)
-        end
-        
-        # Transfer data to MATLAB
-        mat"""
-        omega_gamma = $(iloop_omega_gamma_list);
-        mean_wavespeed_x = $(loop_mean_wavespeed_list);
-        iloop_pressure_value = $(iloop_pressure_value);
-        plot_gamma = $(plot_gamma);
-        marker_color = $(marker_color);
-        pressure_label = sprintf('Wavespeed X = %.2f, Gamma = %.2f (Aspect Ratio)', $(iloop_pressure_value), $(plot_gamma));
-        % pressure_label = "\$ \\alpha x^2 \$ = iloop_pressure_value, \\gamma = plot_gamma \\mathrm{(Attenuation)}"
-        pressure_label2 = sprintf('Pressure = %.2f, Gamma = %.2f (Wavespeed X)', $(iloop_pressure_value), $(plot_gamma));
-        
-        figure(figure_wavespeed);
-        set(gca, 'Yscale', 'log');
-        plot(omega_gamma, mean_wavespeed_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label2);
-        """
-    end
-
-    # Add legends to the plots
-    mat"""
-    % Add legends to the MATLAB plots
-    figure(figure_wavespeed);
-    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-    """
-end
+#     end
+#     axislegend(position = :lt)
+#     fig
+# end
 
 
 function plot_ellipse_low_pressure(data_frame, gamma_values, pressure_value)
