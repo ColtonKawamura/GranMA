@@ -351,6 +351,7 @@ function plot_ωγ_attenuation_2d(gamma_value)
     legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
 end
+
 # Construction Zone ------------------
 simulation_2d(100, 1, .1, 1, 5000, .1, 5, 5)
 
