@@ -185,29 +185,6 @@ end
 
 
 
-"""
-Creates a 2D polydisperse packing of particles with diameters ranging uniformly from `D` to `D + G`.
-
-## Arguments
-- `N::Int`: The number of particles to simulate.
-- `K::Int`: The spring constant used in the simulation.
-- `D::Float64`: The minimum diameter of the particles.
-- `G::Float64`: The range added to `D` to determine the maximum particle diameter (`D + G`).
-- `M::Float64`: The mass of each particle.
-- `P_target::Float64`: The target pressure for the system.
-- `W_factor::Float64`: The width factor of the simulation area.
-- `seed::Int`: The random seed for reproducibility of the simulation.
-- `plotit::Bool`: Flag indicating whether to plot the results (`true` for plotting, `false` otherwise).
-
-## Description
-The `pack_poly_2d` function sets up a 2D simulation environment for polydisperse particle packing. 
-It uses a uniform distribution of particle diameters within the specified range and applies physical 
-properties like spring constant and mass to simulate interactions. 
-
-## Example
-```julia
-pack_poly_2d(5000, 100, 1.0, 0.5, 1.0, 0.01, 5.0, 1, true)
-"""
 function pack_poly_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
     mat"""
     addpath('src/matlab_functions/')
@@ -224,25 +201,6 @@ function pack_poly_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
     """
 end
 
-"""
-Runs a 2D simulation using MATLAB functions.
-
-# Arguments
-- `K::Int`: Spring constant.
-- `M::Int`: Mass.
-- `Bv::Float64`: Viscous damping coefficient.
-- `w_D::Int`: Driving frequency.
-- `N::Int`: Number of particles.
-- `P::Float64`: Pressure parameter.
-- `W::Int`: Width of the simulation area.
-- `seed::Int`: Random seed for reproducibility.
-
-# Example Function
-simulation_2d(100, 1, .5, 1, 5000, .01, 5, 1)
-
-# NOTE
-Need to ensure you have the corresponding input files in the ./in/ directory 
-"""
 function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     mat"""
     addpath('src/matlab_functions/')
@@ -259,21 +217,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
 end
 
 
-"""
-Plots ωγ vs Ellipse Data
 
-# Arguments
-- `data_frame::DataFrame`: This is the output from the "process_outputs_2d.m" function You will need to load the data using "data_frame = CSV.read("out/processed_simulation/your_file_name.csv", DataFrame)
-.
-- `gamma_value::Float65`: γ value that you want to plot.
-- `flag::Any`: Add a third flag if you want to use twin axis.
-
-# Example Function
-plot_ellipse_ωγ_2d(data_frame, .1)
-
-# NOTE
-Need to ensure you have the corresponding input files in the ./in/ directory 
-"""
 function plot_ellipse_ωγ_2d(data_frame, gamma_value) # using MATLAB
 
     # Define parameters to plot
