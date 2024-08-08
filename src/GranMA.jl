@@ -11,8 +11,9 @@ using Printf
 using MAT
 using Glob
 using JLD2
+using IterTools
 
-export save_data2, load_data2, file_data, plot_ellipse_pdf, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
+export generate_simulation_jobs, save_data2, load_data2, file_data, plot_ellipse_pdf, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
 
 mutable struct file_data
     pressure::Float64
@@ -38,6 +39,39 @@ mutable struct file_data
     alphaoveromega_x::Float64
     alphaoveromega_y::Float64
 end
+
+function generate_simulation_jobs(filename::String, K_values::Vector{T1}, M_values::Vector{T2}, Bv_values::Vector{T3}, w_D_values::Vector{T4}, N_values::Vector{T5}, P_values::Vector{T6}, W_values::Vector{T7}, seeds::Vector{T8}) where {T1, T2, T3, T4, T5, T6, T7, T8}
+    # generate_simulation_jobs("testfile.txt", [100],[1],exp10.(-4:.5:1),exp10.(-4:.5:1),[10000],[.1],[10,20,50,100],[1,2,3,4,5])
+    # Convert input vectors to the required types
+    K_values = Int64.(K_values)
+    M_values = Int64.(M_values)
+    Bv_values = Float64.(Bv_values)
+    w_D_values = Float64.(w_D_values)
+    N_values = Float64.(N_values)
+    P_values = Float64.(P_values)
+    W_values = Int64.(W_values)
+    seeds = Int64.(seeds)
+
+    # Function to generate the MATLAB command
+    function generate_matlab_command(K, M, Bv, w_D, N, P, W, seed)
+        return "matlab -nodisplay -nosplash -r \"addpath('./src/matlab_functions/'); packing_bi_2d($K, $M, $Bv, $w_D, $N, $P, $W, $seed, false); exit\""
+    end
+
+    # Generate all combinations of parameters using IterTools.product
+    combinations = IterTools.product(K_values, M_values, Bv_values, w_D_values, N_values, P_values, W_values, seeds)
+
+    # Open a file to write the MATLAB commands
+    open(filename, "w") do file
+        for combo in combinations
+            command = generate_matlab_command(combo...)
+            println(file, command)
+        end
+    end
+
+    println("Commands written to $filename")
+end
+
+
 
 function crunch_and_save()
     K = 100
