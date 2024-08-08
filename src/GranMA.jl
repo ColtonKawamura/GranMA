@@ -12,7 +12,7 @@ using MAT
 using Glob
 using JLD2
 
-export load_data2, file_data, plot_ellipse_pdf, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
+export load_data2, file_data, crunch_and_save, crunch, save_data, load_data, plot_ellipse_ωγ_2d, random_aspect_ratio_check_2d, simulation_2d, plot_ωγ_attenuation_2d, plot_ωγ_wavespeed_2d, pack_poly_2d, plot_ellipse_low_pressure, plot_ellipse_pdf, process_outputs_2d
 
 mutable struct file_data
     pressure::Float64
