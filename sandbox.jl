@@ -118,7 +118,7 @@ function plot_ellipse_pdf(ω_value, γ_value)
 end
 
 
-function plot_ellipse_ωγ_2d(γ_value) # need to change over to struct
+function plot_ellipse_ωγ_2d(γ_value) 
 
     # filter the data based on those that are close to gamma_value
     closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
@@ -256,8 +256,7 @@ function plot_ellipse_ωγ_2d(γ_value) # need to change over to struct
     """
 end
 
-
-function plot_ωγ_attenuation_2d(gamma_value) 
+function plot_ωγ_attenuation_2d(gamma_value)  # Need to fix the legend
 
     # filter the data based on those that are close to gamma_value
     closest_gamma_index = argmin(abs.([idx.gamma for idx in simulation_data] .- gamma_value))
@@ -352,8 +351,7 @@ function plot_ωγ_attenuation_2d(gamma_value)
     """
 end
 
-# Construction Zone ------------------
-function plot_ωγ_wavespeed_2d(gamma_value)
+function plot_ωγ_wavespeed_2d(gamma_value) # Need to fix wavepseed, lgend
 
     # filter the data based on those that are close to gamma_value
     closest_gamma_index = argmin(abs.([idx.gamma for idx in simulation_data] .- gamma_value))
@@ -412,7 +410,7 @@ function plot_ωγ_wavespeed_2d(gamma_value)
             matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
             @bp
             # Get the mean over all seeds
-            loop_mean_wavespeed = mean(entry.:wavespeed_x for entry in matching_omega_gamma_data)
+            loop_mean_wavespeed = -mean(entry.:wavespeed_x for entry in matching_omega_gamma_data)
             @bp
             # Append values
             push!(loop_mean_wavespeed_list, loop_mean_wavespeed)
@@ -446,100 +444,9 @@ function plot_ωγ_wavespeed_2d(gamma_value)
     legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
 end
-function plot_ωγ_wavespeed_2d(data_frame, gamma_value, flag::Any) # using MATLAB
+# Construction Zone ------------------
 
-    # Define parameters to plot
-    pressure_list = sort(unique(data_frame.input_pressure))
-    plot_pressure = pressure_list
-    gamma_list = sort(unique(data_frame.gamma))
-    closest_gamma_match_index = argmin(abs.(gamma_list .- gamma_value))
-    plot_gamma = gamma_list[closest_gamma_match_index]
 
-    # Filter the table to only those data
-    matching_gamma_index = in.(data_frame.gamma, Ref(plot_gamma))
-    combined_index = matching_gamma_index
-    filtered_data_frame = data_frame[combined_index, :]
-
-    # Define the plot limits to match the 1D theory plot curves
-    theory_x = collect(3E-4:1E-5:3)
-    theory_y = 1 ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(0.5) ./ (1 .+ theory_x.^2);
-    upper_limit_line_x = [1*gamma_value; 1*gamma_value]
-    upper_limit_line_y = [9E-1; 2]
-    lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
-    lower_limit_line_y = [9E-1; 2]
-
-    # Intialized the plots to loop over
-    mat"""
-    figure_wavespeed = figure;
-    loglog($(theory_x), 1./$(theory_y), 'k', 'DisplayName', '1-D Theory'), hold on
-    plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
-    plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
-    hold on;
-    xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$\\hat{c} \$', "FontSize", 20, "Interpreter", "latex");
-    set(gca, 'XScale', 'log');
-    set(get(gca, 'ylabel'), 'rotation', 0);
-    grid on;
-    box on;
-    """
-
-    # Normalize the gamma values
-    normalized_variable = (plot_pressure .- minimum(plot_pressure)) ./ (maximum(plot_pressure) .- minimum(plot_pressure))
-
-    # Create a line for each gamma value across all pressure_list
-    for idx in eachindex(plot_pressure)
-
-        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]];
-
-        # For idx, only show current pressure data
-        iloop_pressure_value = plot_pressure[idx]
-        iloop_pressure_index = in.(filtered_data_frame.input_pressure, Ref(iloop_pressure_value))
-        iloop_combined_index = iloop_pressure_index
-        iloop_data_frame = filtered_data_frame[iloop_combined_index, :]
-
-        # Initizalized vectors for just this pressure
-        loop_mean_wavespeed_list = Float64[];
-
-        # Look at a single omega gamma value since each one spans all seeds
-        iloop_omega_gamma_list = sort(unique(iloop_data_frame.omegagamma))
-
-        for jdx in eachindex(iloop_omega_gamma_list)
-
-            # Get the idex for the current omega gamma value
-            matching_jdx = in.(iloop_data_frame.omegagamma, Ref(iloop_omega_gamma_list[jdx]))
-            jloop_data_frame = iloop_data_frame[matching_jdx,:]
-
-            # get the mean over all seeds
-            jvalue_mean_wavespeed = mean(jloop_data_frame.wavespeed_x)
-            @bp
-            # Append values using push!
-            push!(loop_mean_wavespeed_list, jvalue_mean_wavespeed)
-        end
-        
-        # Transfer data to MATLAB
-        mat"""
-        omega_gamma = $(iloop_omega_gamma_list);
-        mean_wavespeed_x = $(loop_mean_wavespeed_list);
-        iloop_pressure_value = $(iloop_pressure_value);
-        plot_gamma = $(plot_gamma);
-        marker_color = $(marker_color);
-        pressure_label = sprintf('Wavespeed X = %.2f, Gamma = %.2f (Aspect Ratio)', $(iloop_pressure_value), $(plot_gamma));
-        % pressure_label = "\$ \\alpha x^2 \$ = iloop_pressure_value, \\gamma = plot_gamma \\mathrm{(Attenuation)}"
-        pressure_label2 = sprintf('Pressure = %.2f, Gamma = %.2f (Wavespeed X)', $(iloop_pressure_value), $(plot_gamma));
-        
-        figure(figure_wavespeed);
-        set(gca, 'Yscale', 'log');
-        plot(omega_gamma, mean_wavespeed_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label2);
-        """
-    end
-
-    # Add legends to the plots
-    mat"""
-    % Add legends to the MATLAB plots
-    figure(figure_wavespeed);
-    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-    """
-end
 
 simulation_2d(100, 1, .1, 1, 5000, .1, 5, 5)
 
