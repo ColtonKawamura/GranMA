@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=crunch
-#SBATCH --array=1-1%1
+#SBATCH --array=1-3%3
 #SBATCH --nodes=4
 #SBATCH --ntasks=4
 #SBATCH --time=72:00:00
