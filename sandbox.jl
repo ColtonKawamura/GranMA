@@ -12,10 +12,15 @@ using DataFrames
 data_frame = CSV.read("out/processed_simulation/K100_ellipse_edits.csv", DataFrame)
 data_frame = CSV.read("out/processed_simulation/2d_K100_ellipse_edits.csv", DataFrame)
 
+simulation_data = load_data(100)
+
+function main()
+
+    plot_ellipse_pdf(1 , 1)
+end
 
 
-
-function plot_ellipse_pdf(simulation_data, ω_value, γ_value)
+function plot_ellipse_pdf(ω_value, γ_value)
 
     # filter the data based on those that are close to gamma_value
     closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
@@ -63,10 +68,6 @@ function plot_ellipse_pdf(simulation_data, ω_value, γ_value)
         # Assign a color
         idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
         marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
-        
-        # Each omega gamma value spans all seeds **** can get rd
-        # ωγ_list = unique([entry.omega_gamma for entry in matching_pressure_data])
-
 
         # mean(matrix, dims=2) means across rows. Dims = 1 is cross columns, dims =3 is into the screen
         #  If you have an array [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]], splatting converts this into calling hcat([a1, a2, a3], [b1, b2, b3], [c1, c2, c3]).
@@ -118,6 +119,152 @@ function plot_ellipse_pdf(simulation_data, ω_value, γ_value)
 end
 
 
+function plot_ellipse_ωγ_2d(γ_value) # need to change over to struct
+
+    # filter the data based on those that are close to gamma_value
+    closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+    closest_γ_value = simulation_data[closest_γ_index].gamma
+    matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+    plot_gamma = γ_value
+    gamma_value = γ_value
+
+    # Get a list of unique input pressures
+    pressure_list = unique([entry.pressure for entry in matching_γ_data]) # goes through each entry of simulation_data and get the P value at that entry
+    
+
+    # Limit range to data
+    upper_limit_line_x = [1*γ_value; 1*γ_value]
+    upper_limit_line_y = [1E-5; 1]
+    lower_limit_line_x = [.1*γ_value; .1*γ_value]
+    lower_limit_line_y = [1E-5; 1]
+
+    # Start MATLAB session
+    mat"""
+    figure_main = figure;
+    tiled_main = tiledlayout(3, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 3 rows, 1 column
+
+    % Axes for Attenuation
+    ax_attenuation = nexttile;
+    hold(ax_attenuation, 'on');
+    % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
+    set(ax_attenuation, 'XScale', 'log');
+    set(ax_attenuation, 'YScale', 'log')
+    set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
+    grid(ax_attenuation, 'on');
+    box(ax_attenuation, 'on');
+    %plot(ax_attenuation, $(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$');
+    %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
+    set(ax_attenuation, 'XTickLabel', []);
+
+    % Axes for Rotation Angle
+    ax_rotation = nexttile;
+    hold(ax_rotation, 'on');
+    % xlabel(ax_rotation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_rotation, '\$ \\left|\\overline{\\theta} \\right|\$', "FontSize", 20, "Interpreter", "latex");
+    set(ax_rotation, 'XScale', 'log');
+    set(get(ax_rotation, 'ylabel'), 'rotation', 0);
+    grid(ax_rotation, 'on');
+    box(ax_rotation, 'on');
+    set(ax_rotation, 'XTickLabel', []);
+
+    % Axes for Aspect Ratio
+    ax_aspect_ratio = nexttile;
+    hold(ax_aspect_ratio, 'on');
+    xlabel(ax_aspect_ratio, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_aspect_ratio, '\$ \\overline{\\frac{b}{a}} \$', "FontSize", 20, "Interpreter", "latex");
+    set(ax_aspect_ratio, 'XScale', 'log');
+    set(get(ax_aspect_ratio, 'ylabel'), 'rotation', 0);
+    grid(ax_aspect_ratio, 'on');
+    box(ax_aspect_ratio, 'on');
+    """
+
+    # get a range for plotting color from 0 to 1
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Create a line for each pressure
+    for pressure_value in pressure_list
+
+        # Assign a color
+        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Only look at data for current pressure value
+        matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_γ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+        # Initizalized vectors for just this pressure
+        loop_mean_aspect_ratio_list = Float64[];
+        loop_mean_rotation_angles = Float64[];
+        loop_mean_attenuation_list = Float64[];
+
+        # Look at a single omega gamma value since each one spans all seeds
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
+
+        for omega_gamma_value in matching_omega_gamma_list
+
+            # Only look at data for current pressure value
+            matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+            @bp
+            # Get the mean over all seeds
+            jvalue_mean_aspect_ratio = mean(entry.mean_aspect_ratio for entry in matching_omega_gamma_data)
+            jvalue_mean_rotation_angle = mean(entry.mean_rotation_angles for entry in matching_omega_gamma_data)
+            # jvalue_mean_alphaoveromega = mean(entry.alphaoveromega for entry in matching_omega_gamma_data)
+            jvalue_mean_alpha = mean(entry.attenuation_x for entry in matching_omega_gamma_data_filtered)
+            jvalue_omega = mean(entry.omega for entry in matching_omega_gamma_data_filtered)
+            jvalue_alphaoveromega = jvalue_mean_alpha ./ jvalue_omega
+            
+            # Append values using push!
+            push!(loop_mean_aspect_ratio_list, jvalue_mean_aspect_ratio)
+            push!(loop_mean_rotation_angles, jvalue_mean_rotation_angle)
+            push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
+        end
+
+        # Filter data to include only points where omega_gamma <= gamma_value * 2
+        valid_indices = [entry.omega_gamma <= gamma_value * 2 for entry in matching_omega_gamma_data]
+
+        # Apply the filter to all relevant lists
+        matching_omega_gamma_data_filtered = matching_omega_gamma_data[valid_indices]
+
+        # Extract the mean over all seeds for the filtered data
+        jvalue_mean_aspect_ratio = mean(entry.mean_aspect_ratio for entry in matching_omega_gamma_data_filtered)
+        jvalue_mean_rotation_angle = mean(entry.mean_rotation_angle for entry in matching_omega_gamma_data_filtered)
+        jvalue_mean_alpha = mean(entry.attenuation_x for entry in matching_omega_gamma_data_filtered)
+        jvalue_omega = mean(entry.omega for entry in matching_omega_gamma_data_filtered)
+        jvalue_alphaoveromega = jvalue_mean_alpha ./ jvalue_omega
+
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        pressure_label = @sprintf("\$\\hat{P} = %.3f, \\hat{\\gamma} = %.2f\$", iloop_pressure_value, plot_gamma)
+
+        # Transfer data to MATLAB
+        mat"""
+        omega_gamma = $(iloop_omega_gamma_list);
+        mean_aspect_ratio = $(loop_mean_aspect_ratio_list);
+        mean_rotation_angles = $(loop_mean_rotation_angles);
+        mean_attenuation_x = $(loop_mean_attenuation_list);
+        iloop_pressure_value = $(iloop_pressure_value);
+        plot_gamma = $(plot_gamma);
+        marker_color = $(marker_color);
+        pressure_label = $(pressure_label);
+
+        % Plot Attenuation
+        loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        
+        % Plot Rotation Angle
+        plot(ax_rotation, omega_gamma, mean_rotation_angles, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        
+        % Plot Aspect Ratio
+        plot(ax_aspect_ratio, omega_gamma, mean_aspect_ratio, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        """
+    end
+
+    # Add legends to the plots
+    mat"""
+    legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    %legend(ax_rotation, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    %legend(ax_aspect_ratio, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    """
+end
+
 plot_ellipse_ωγ_2d(data_frame, .5,1)
 
 simulation_2d(100, 1, .1, 1, 5000, .1, 5, 5)
@@ -131,10 +278,5 @@ plot_ellipse_ωγ_2d(data_frame, .1, 1)
 plot_ellipse_low_pressure(data_frame, [.01, .1, .25, .5, .75, 1], .001)
 
 process_outputs_2d("outputs/seed_job_ellipse_edit/")
-
-simulation_data = load_data(100)
-plot_ellipse_pdf(simulation_data, .1, 1)
-
-simulation_data = load_data2(100)
 
 crunch_and_save()
