@@ -18,7 +18,6 @@ function main()
     plot_ellipse_pdf(1 , 1)
 end
 
-
 function plot_ellipse_pdf(ω_value, γ_value)
 
     # filter the data based on those that are close to gamma_value
@@ -84,7 +83,6 @@ function plot_ellipse_pdf(ω_value, γ_value)
         # Normalize counts to get probabilities, considering the bin widths
         total_asp_count = sum(mean_asp_rat_counts .* asp_rat_bin_widths)
         total_rot_count = sum(mean_rot_ang_counts .* rot_ang_bin_widths)
-        
         probabilities_asp = (mean_asp_rat_counts ./ total_asp_count) ./ asp_rat_bin_widths
         probabilities_rot = (mean_rot_ang_counts ./ total_rot_count) ./ rot_ang_bin_widths
         plot_bins_asp = mean_asp_rat_bins[1:end-1]
