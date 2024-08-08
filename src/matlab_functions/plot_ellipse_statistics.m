@@ -1,6 +1,6 @@
 function [mean_aspect_ratio, mean_rotation_angles] =plot_ellipse_statistics(binned_semi_minor_values, binned_semi_major_values, binned_rot_angle_values, bin_centers, max_distance_from_wall)
 
-valid_indices = bin_centers <= max_distance_from_wall;
+valid_indices = bin_centers <= .75*max_distance_from_wall;
 mean_aspect_ratio = mean(binned_semi_minor_values(valid_indices) ./ binned_semi_major_values(valid_indices));
 mean_rotation_angles = mean(abs(binned_rot_angle_values(valid_indices)));
 
