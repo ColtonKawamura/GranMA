@@ -222,21 +222,6 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
 end
 
 
-"""
-Plots ωγ vs Ellipse Data
-
-# Arguments
-- `data_frame::DataFrame`: This is the output from the "process_outputs_2d.m" function You will need to load the data using "data_frame = CSV.read("out/processed_simulation/your_file_name.csv", DataFrame)
-.
-- `gamma_value::Float65`: γ value that you want to plot.
-- `flag::Any`: Add a third flag if you want to use twin axis.
-
-# Example Function
-plot_ellipse_ωγ_2d(data_frame, .1)
-
-# NOTE
-Need to ensure you have the corresponding input files in the ./in/ directory 
-"""
 function plot_ellipse_ωγ_2d(data_frame, gamma_value) # using MATLAB
 
     # Define parameters to plot
