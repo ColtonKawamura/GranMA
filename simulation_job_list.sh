@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=2D_simulation_job
-#SBATCH --array=1-2420%2420
+#SBATCH --array=1-4050%4050
 #SBATCH --nodes=4
 #SBATCH --ntasks=4
 #SBATCH --time=172:00:00
