@@ -1,6 +1,10 @@
 include("src/GranMA.jl")
 
 using .GranMA
+using MATLAB
+using Debugger
+using Printf
+using Statistics
 using CSV
 using DataFrames
 
