@@ -98,6 +98,17 @@ for nn = index_particles(1:iskip:end)
     end
 end
 
+% Only take the first 3/4 of the data
+% Calculate the cut-off index
+n = length(amplitude_vector);
+cut_off_index = floor(0.75 * n);
+
+% Slice the vectors to keep only the first 75%
+amplitude_vector = amplitude_vector(1:cut_off_index);
+initial_distance_from_oscillation_output = initial_distance_from_oscillation_output(1:cut_off_index);
+phase_vector = phase_vector(1:cut_off_index);
+cleaned_particle_index = cleaned_particle_index(1:cut_off_index);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Attenuation Fitting and Plotting
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
