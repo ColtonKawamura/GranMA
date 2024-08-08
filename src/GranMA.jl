@@ -14,11 +14,10 @@ using JLD2
 using IterTools
 
 export  generate_simulation_jobs,
-        load_data2,
         load_data,
         file_data,
         crunch_and_save,
-        crunch,
+        crunch, 
         save_data,
         simulation_2d,
         pack_poly_2d, 
@@ -81,20 +80,19 @@ function generate_simulation_jobs(filename::String, K_values::Vector{T1}, M_valu
     println("Commands written to $filename")
 end
 
-function crunch_and_save()
-    K = 100
-    simulation_data = crunch()
-    save_data(simulation_data, K)
+function crunch_and_save(datapath::String, filepath::String)
+    simulation_data = crunch(datapath)
+    save_data(simulation_data, filepath)
     
     # Load the data back to verify
-    reloaded_data = load_data(K)
+    reloaded_data = load_data(filepath)
     println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
 end
 
-function crunch()
-    directory = "out/simulation_2d/bi_K100_all_seeds/"
+function crunch(datapath::String)
+    # directory = "out/simulation_2d/bi_K100_all_seeds/"
     # directory = "out/simulation_2d/"
-    mat_files = glob("*.mat", directory)
+    mat_files = glob("*.mat", datapath)
     simulation_data = file_data[]
     
     for file_name in mat_files
@@ -166,15 +164,16 @@ function crunch()
     return simulation_data
 end
 
-function save_data(simulation_data::Vector{file_data}, K::Int)
-    file_name = "out/processed/2d_K$(K).jld2"
-    @save file_name simulation_data
-    println("Data saved to $file_name")
+function save_data(simulation_data::Vector{file_data}, filepath::String)
+    # filepath = "out/processed/name_without_extension
+    @save filepath simulation_data
+    println("Data saved to $filepath")
 end
 
-function load_data(K::Int)::Vector{file_data}
-    file_name = "out/processed/2d_K$(K).jld2"
-    @load file_name simulation_data
+function load_data(filepath::String)::Vector{file_data}
+    # filename = "out/processed/name_without_extension
+    filepath
+    @load filepath simulation_data
     return simulation_data
 end
 

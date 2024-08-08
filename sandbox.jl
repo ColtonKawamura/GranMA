@@ -13,10 +13,7 @@ data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
 simulation_data = load_data(100)
 
-function main()
 
-    plot_ellipse_pdf(1 , 1)
-end
 
 function plot_ellipse_pdf(ω_value, γ_value)
 
