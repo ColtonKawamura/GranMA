@@ -1,3 +1,16 @@
 out/simulation_2d
 out/processed
 *.out
+HPC_scripts
+.gitignore
+packing_job_2d_bi.sh
+packing_job_2d_bi.txt
+packing_job_2d_poly.sh
+packing_job_2d_poly.txt
+simulation_job_list.sh
+simulation_job_list.txt
+simulation_width_job.sh
+simulation_width_job.txt
+HPC_scipts/crunch.sh
+HPC_scipts/crunch.txt
+HPC_scipts/organize_width.sh
