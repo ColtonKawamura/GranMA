@@ -58,6 +58,12 @@ Julia is aleady installed on the HPC, but you'll need to ensure all library depe
 After logging into the HPC via ssh, start an interactive session:
 
 ```bash
+salloc
+```
+
+The check the modules availible
+
+```bash
 module avail
 ```
 
@@ -83,9 +89,32 @@ julia
 Once in the environmnent you can see what packages you already have and load the ones you don't have, for example,
 
 ```julia
-using MAT
+using MATLAB
+```
+THis is a good example, because the MATLAB.jl package needs some more work for us to use it compared to other packages. If you followed the steps to install it, you probably got an error. Let's go through the steps to get.
+
+If you're stil in julia, exit out of it to go back to your interactive shell session,
+
+```julia
+exit()
+```
+Then load up the matlab module that appeared in the list of availible modules. Right now for me its
+
+```bash
+module load app/matlab/R2023b
+```
+Next, let's get the path to that module
+
+```bash
+which matlab
 ```
 
+Now add that root to MATLAB_ROOT. For me that path was,
+
+```bash
+export MATLAB_ROOT="/share/apps/matlab/R2023b"
+```
+Now go back into julia and you'll be able to load the MATLAB.jl package!
 ## Examples
 
 Here are a few examples to get you started with GranMA.
