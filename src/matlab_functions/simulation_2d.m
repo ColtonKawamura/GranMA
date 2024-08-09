@@ -15,14 +15,14 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     
     % % Script Variables for debugging
-    K = 100;
-    M = 1;
-    Bv = .1;
-    w_D = 0.36; % 
-    N = 5000;
-    P = 0.001; % 0.021544 0.046416
-    W = 5;
-    seed = 1;
+    % K = 100;
+    % M = 1;
+    % Bv = .1;
+    % w_D = 0.36; % 
+    % N = 5000;
+    % P = 0.001; % 0.021544 0.046416
+    % W = 5;
+    % seed = 1;
     
     
     % Create the packing name with the exact number format for P
@@ -30,7 +30,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     % Create the filename
     % filename_output = sprintf('%s_K%d_Bv%d_wD%d_M%d.mat', packing_name, K, Bv, w_D, M);
-    filename_output = sprintf('2D_%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
+    filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
     
     % if exist(filename_output)
     %     return
