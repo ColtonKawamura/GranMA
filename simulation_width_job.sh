@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=simulation_width_job
-#SBATCH --array=1-39200%39200
+#SBATCH --array=1-62220%62220
 #SBATCH --nodes=4
 #SBATCH --ntasks=4
 #SBATCH --time=172:00:00
