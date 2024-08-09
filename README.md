@@ -52,6 +52,40 @@ pkg> test
 Feel free to explore the code, submit issues, and contribute improvements via pull requests!
 </details>
 
+## Julia on HPC
+Julia is aleady installed on the HPC, but you'll need to ensure all library depedences for GranMA are installed. Here's how to do it:
+
+After logging into the HPC via ssh, start an interactive session:
+
+```bash
+module avail
+```
+
+This will bring up all the modules that are availible on the HPC. Look for Julia. At the time on writing this, you might see
+
+```bash
+lang/julia/1.9.3   
+```
+
+Whatever version is on the HPC is what you'll want to load for the next command you'll put in to load Julia:
+
+```bash
+module load lang/julia/1.9.3
+```
+
+or whatever version you see.
+
+After this command you can start a julia session with:
+
+```bash
+julia
+```
+Once in the environmnent you can see what packages you already have and load the ones you don't have, for example,
+
+```julia
+using MAT
+```
+
 ## Examples
 
 Here are a few examples to get you started with GranMA.
