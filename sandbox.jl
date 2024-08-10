@@ -11,7 +11,7 @@ using Statistics
 # Read the data table
 data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
-simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
+simulation_data = load_data("out/processed/2d_bi2_K100_W5.jld2")
 
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
 
