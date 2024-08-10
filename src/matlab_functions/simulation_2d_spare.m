@@ -285,11 +285,11 @@ function simulation_2d_spare(K, M, Bv, w_D, N, P, W, seed)
 
     tvec = (1:Nt)*dt;
     %  Only analyze data that passed fft_x check
-    % x_all = x_all(cleaned_particle_index_x,:);
-    % y_all = y_all(cleaned_particle_index_x, :);
-    % x0 = x0(cleaned_particle_index_x);
-    % y0 = y0(cleaned_particle_index_x);
-    % N = length(x0);
+    x_all = x_all(cleaned_particle_index_x,:);
+    y_all = y_all(cleaned_particle_index_x, :);
+    x0 = x0(cleaned_particle_index_x);
+    y0 = y0(cleaned_particle_index_x);
+    N = length(x0);
 
     ellipse_stats = process_ellipse(tvec, N , x_all, y_all, x0, y0, left_wall_list, A)
     
