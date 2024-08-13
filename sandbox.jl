@@ -7,11 +7,13 @@ using Debugger
 using MATLAB
 using Printf
 using Statistics
+using MLJ
+using MLJModels
 
 # Read the data table
 data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
-simulation_data = load_data("out/processed/2d_bi2_K100_W5.jld2")
+simulation_data = load_data("out/processed/2d_biredo_K100_W5.jld2")
 
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
 
@@ -557,7 +559,7 @@ function plot_attenuation_width_effect(γ_value)
         simulation_data = load_data("out/processed/2d_bi_K100_W$(width).jld2")
         matching_omega_gamma_list, loop_mean_attenuation_list = plot_ωγ_attenuation_2d(γ_value, plot=false, simulation_data=simulation_data)
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        legend_label = @sprintf("\$ \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", width, γ_value, ω_value)
+        legend_label = @sprintf("\$ \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", width, γ_value)
 
         mat"""
         matching_omega_gamma_list = $(matching_omega_gamma_list);
@@ -575,3 +577,29 @@ function plot_attenuation_width_effect(γ_value)
     legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
 end
+
+
+function ML_train_ellispe()
+    # CLEAN THE DATA
+    # Remove rows with missing values
+    dataframe_clean = filter(row -> all(x -> !(x isa Number && isnan(x)), row), data_frame) 
+    dataframe_clean = dropmissing(dataframe_clean)
+
+    # SPLIT THE DATA
+    # choose the data that will be the features and targets
+    feature_matrix, target_vector = unpack(dataframe_clean, ==(:mean_aspect_ratio), colname -> colname in [:mean_rotation_angles])
+    feature_matrix = DataFrame(mean_rotation_angles = feature_matrix)
+
+    # Add a new label column based on the mean_aspect_ratio
+    dataframe_clean.label = ifelse.(dataframe_clean.mean_aspect_ratio .> 0.5, "high", "low")
+
+    # NORMALIZE DATA
+    standardizer = Standardizer()
+    fit!(feature_matrix)
+    feature_matrix = MLJModels.fit_transform!(standardizer, feature_matrix)
+
+
+
+end
+
+
