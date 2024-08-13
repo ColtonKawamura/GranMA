@@ -56,7 +56,7 @@ function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulat
         hold on
 
         figure_rotation_angle = figure;
-        xlabel('\$ \\theta \$', "FontSize", 20, "Interpreter", "latex");
+        xlabel('\$ \\overline{ \\left| \\theta \\right| } \$', "FontSize", 20, "Interpreter", "latex");
         ylabel('\$ p(\\theta) \$', "FontSize", 20, "Interpreter", "latex");
         set(gca, 'YScale', 'log');
         set(get(gca, 'ylabel'), 'rotation', 0);
@@ -170,7 +170,7 @@ function plot_ellipse_ωγ_2d(γ_value)
     ax_rotation = nexttile;
     hold(ax_rotation, 'on');
     % xlabel(ax_rotation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_rotation, '\$ \\left|\\overline{\\theta} \\right|\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_rotation, '\$ \\overline{ \\left| \\theta \\right| }  \$', "FontSize", 20, "Interpreter", "latex");
     set(ax_rotation, 'XScale', 'log');
     set(get(ax_rotation, 'ylabel'), 'rotation', 0);
     grid(ax_rotation, 'on');
