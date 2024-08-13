@@ -32,7 +32,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     % filename_output = sprintf('%s_K%d_Bv%d_wD%d_M%d.mat', packing_name, K, Bv, w_D, M);
     filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
     
-    % if exist(filename_output)
+    % if exist(char("out/simulation_2d/K100_no_last_quarter/" + filename_output), 'file')
     %     return
     % end
     input_pressure = P;
