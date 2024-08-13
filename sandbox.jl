@@ -234,7 +234,7 @@ function plot_ellipse_ωγ_2d(γ_value)
         loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
 
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        pressure_label = @sprintf("\$\\hat{P} = %.3f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
+        pressure_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
 
         # Transfer data to MATLAB
         mat"""
