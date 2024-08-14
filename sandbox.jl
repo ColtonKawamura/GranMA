@@ -139,7 +139,6 @@ function plot_ellipse_ωγ_2d(γ_value)
 
     # Get a list of unique input pressures
     pressure_list = unique([entry.pressure for entry in matching_γ_data]) # goes through each entry of simulation_data and get the P value at that entry
-    
 
     # Limit range to data
     upper_limit_line_x = [1*γ_value; 1*γ_value]
@@ -195,7 +194,7 @@ function plot_ellipse_ωγ_2d(γ_value)
     for pressure_value in pressure_list
 
         # Assign a color
-        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        idx = findfirst(element -> element == pressure_value, pressure_list) # find the first index that matches
         marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
 
         # Only look at data for current pressure value
@@ -215,8 +214,8 @@ function plot_ellipse_ωγ_2d(γ_value)
             matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
 
             # Get the mean over all seeds
-            jvalue_mean_aspect_ratio = mean(entry.mean_aspect_ratio for entry in matching_omega_gamma_data)
-            jvalue_mean_rotation_angle = mean(entry.mean_rotation_angles for entry in matching_omega_gamma_data)
+            jvalue_mean_aspect_ratio = mean(entry.mean_aspect_ratio for entry in matching_omega_gamma_data) #./ (omega_gamma_value ./ γ_value)
+            jvalue_mean_rotation_angle = mean(entry.mean_rotation_angles for entry in matching_omega_gamma_data) #./ (omega_gamma_value ./ γ_value)
             jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
 
             
