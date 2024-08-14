@@ -527,9 +527,6 @@ function plot_ellipse_width_effect(ω_value, γ_value)
     """
 end
 
-# Construction Zone ------------------
-
-
 function plot_attenuation_width_effect(γ_value)
     width_list = [10, 20 , 50]
 
@@ -539,7 +536,7 @@ function plot_attenuation_width_effect(γ_value)
     mat"""
     figure_attenuation = figure;
     xlabel('\$ \\hat{\\omega}\\hat{\\gamma} \$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ \\frac{\\alpha}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'YScale', 'log');
     set(gca, 'XScale', 'log')
     set(get(gca, 'ylabel'), 'rotation', 0);
@@ -550,7 +547,7 @@ function plot_attenuation_width_effect(γ_value)
     """
     
     for width in width_list
-
+        @bp
         # Assign a color
         idx = findfirst(idx -> idx ==width, width_list) # find the first index that matches
         marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
@@ -558,7 +555,7 @@ function plot_attenuation_width_effect(γ_value)
         simulation_data = load_data("out/processed/2d_bi_K100_W$(width).jld2")
         matching_omega_gamma_list, loop_mean_attenuation_list = plot_ωγ_attenuation_2d(γ_value, plot=false, simulation_data=simulation_data)
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        legend_label = @sprintf("\$ \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", width, γ_value)
+        legend_label = @sprintf("\$ \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f \$", width, γ_value)
 
         mat"""
         matching_omega_gamma_list = $(matching_omega_gamma_list);
@@ -577,7 +574,7 @@ function plot_attenuation_width_effect(γ_value)
     """
 end
 
-
+# Construction Zone ------------------
 function ML_train_ellispe()
     # CLEAN THE DATA
     # Remove rows with missing values
