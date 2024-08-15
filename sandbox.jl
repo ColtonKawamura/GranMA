@@ -7,8 +7,8 @@ using Debugger
 using MATLAB
 using Printf
 using Statistics
-using MLJ
-using MLJModels
+# using MLJ
+# using MLJModels«
 
 # Read the data table
 data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
@@ -575,6 +575,19 @@ function plot_attenuation_width_effect(γ_value)
 end
 
 # Construction Zone ------------------
+
+function plot_phase(pressure_value, gamma_value, omega_value, seed)
+    # find the closest values
+    gamma_value_closest = simulation_data[argmin(abs.([entry.gamma for entry in simulation_data] .- gamma_value))].gamma
+    pressure_value_closest = simulation_data[argmin(abs.([entry.pressure for entry in simulation_data] .- pressure_value))].pressure
+    omega_value_closest = simulation_data[argmin(abs.([entry.omega for entry in simulation_data] .- omega_value))].omega    
+    filtered_data = filter(entry -> entry.pressure == pressure_value_closest .&& entry.gamma == gamma_value_closest .&&  entry.omega == omega_value_closest .&& entry.seed == seed, simulation_data)
+
+    # Phase vector is not an output inthe matlab function....
+end
+
+
+
 function ML_train_ellispe()
     # CLEAN THE DATA
     # Remove rows with missing values

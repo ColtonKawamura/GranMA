@@ -252,7 +252,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of attenuation / wavenumber, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+    unwrapped_phase_vector_x = abs(mod(unwrapped_phase_vector, 2*pi));
     % plot_white_paper(initial_distance_from_oscillation_output_y_fft, initial_distance_from_oscillation_output_x_fft, amplitude_vector_x, amplitude_vector_y, unwrapped_phase_vector_x, unwrapped_phase_vector_y, cleaned_particle_index_x, cleaned_particle_index_y, x_all, y_all)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
