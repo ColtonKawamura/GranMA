@@ -7,6 +7,8 @@ using Debugger
 using MATLAB
 using Printf
 using Statistics
+using StatsBase
+using Plots
 # using MLJ
 # using MLJModels«
 
@@ -576,39 +578,70 @@ end
 
 # Construction Zone ------------------
 
-function plot_phase(pressure_value, gamma_value, omega_value, seed)
-    # find the closest values
-    gamma_value_closest = simulation_data[argmin(abs.([entry.gamma for entry in simulation_data] .- gamma_value))].gamma
-    pressure_value_closest = simulation_data[argmin(abs.([entry.pressure for entry in simulation_data] .- pressure_value))].pressure
-    omega_value_closest = simulation_data[argmin(abs.([entry.omega for entry in simulation_data] .- omega_value))].omega    
-    filtered_data = filter(entry -> entry.pressure == pressure_value_closest .&& entry.gamma == gamma_value_closest .&&  entry.omega == omega_value_closest .&& entry.seed == seed, simulation_data)
+function bin_plot_y_energy() 
+    # Need to change to make "vars" as input, where vars = matread("simdata.mat")
+    
+    # Get input for this simulation
+    amp_vector = vec(vars["amplitude_vector_y"])
+    phase_vector = vec(vars["unwrapped_phase_vector_y"])
+    distance_vector = vec(vars["initial_distance_from_oscillation_output_y_fft"])
+    omega = vars["w_D"]
+    gamma = vars["Bv"]
 
-    # Phase vector is not an output inthe matlab function....
+    # Using fit(Histogram) to divide distance_vector from 1 to max distance away from wall (including itself)
+    # bins.weights is how many particles fall into that bin
+    bins = fit(Histogram, distance_vector, 1:maximum(distance_vector)+1)
+
+    # Initialize vectors to store bin centers and energy losses for plotting
+    bin_centers = Float64[]
+    energy_losses = Float64[]
+
+    # Assign a total energy loss for each bin
+    for i in 1:length(bins.weights)
+
+        # Find indices of particles in the current bin
+        # boolean for distance_vector falls between bin edges of i and i+1
+        indices = findall(bins.edges[1][i] .<= distance_vector .< bins.edges[1][i+1])
+
+        # Calculate the center of the bin for plotting
+        push!(bin_centers, (bins.edges[1][i] + bins.edges[1][i+1]) / 2)
+        
+        # If there are enough particles in the bin, calculate the total energy loss
+        if length(indices) > 1
+            amp_bin = amp_vector[indices]
+            phase_bin = phase_vector[indices]
+            push!(energy_losses, total_energy_loss_in_bin(amp_bin, phase_bin, gamma, omega))
+        else
+            push!(energy_losses, 0.0)  # No energy loss if only one or no particles in the bin
+        end
+    end
+
+
+    # Plotting the results using MATLAB
+    mat"""
+    set(groot, 'defaultTextInterpreter', 'latex');  % Set for text objects
+    set(groot, 'defaultLegendInterpreter', 'latex');  % Set for legends
+    set(groot, 'defaultAxesTickLabelInterpreter', 'latex');  % Set for axes tick labels
+    set(groot, 'defaultColorbarTickLabelInterpreter', 'latex');  % Set for colorbar tick labels
+    set(groot, 'defaultTextarrowshapeInterpreter', 'latex');  % Set for text arrows in annotations
+
+    scatter($(bin_centers), $(energy_losses))
+    set(gca, 'yscale', 'log')
+    xlabel(' \$ x- \$ Distance from Oscillation')
+    ylabel(' \$ \\left< E_x \\right> \$', 'Rotation', 0)
+    """
 end
 
 
-
-function ML_train_ellispe()
-    # CLEAN THE DATA
-    # Remove rows with missing values
-    dataframe_clean = filter(row -> all(x -> !(x isa Number && isnan(x)), row), data_frame) 
-    dataframe_clean = dropmissing(dataframe_clean)
-
-    # SPLIT THE DATA
-    # choose the data that will be the features and targets
-    feature_matrix, target_vector = unpack(dataframe_clean, ==(:mean_aspect_ratio), colname -> colname in [:mean_rotation_angles])
-    feature_matrix = DataFrame(mean_rotation_angles = feature_matrix)
-
-    # Add a new label column based on the mean_aspect_ratio
-    dataframe_clean.label = ifelse.(dataframe_clean.mean_aspect_ratio .> 0.5, "high", "low")
-
-    # NORMALIZE DATA
-    standardizer = Standardizer()
-    fit!(feature_matrix)
-    feature_matrix = MLJModels.fit_transform!(standardizer, feature_matrix)
-
-
-
+function total_energy_loss_in_bin(amps, phases, gamma, omega)
+    N = length(amps)
+    total_loss = 0.0
+    for j in 1:(N-1)
+        total_loss += energy_loss_time_avg(amps[j], phases[j], amps[j+1], phases[j+1], gamma, omega)
+    end
+    return total_loss
 end
 
-
+function energy_loss_time_avg(amp_j, phi_j, amp_k, phi_k, gamma, omega)
+    return (gamma * omega^2 ) * ((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k))
+end
