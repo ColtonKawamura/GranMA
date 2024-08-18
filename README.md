@@ -10,133 +10,62 @@ The GranMA ecosystem includes a variety of functionalities:
 - **Visualization:** Create detailed plots to visualize the results, aiding in the understanding of complex dynamics.
 
 
-## Installation
+## Creating Position Vector Structures
 
-To get started with GranMA, install the package using Julia's package manager. You can install the latest release of GranMA as follows:
-
-```julia
-julia>]
-pkg> add GranMA
-```
-
-Check the installed version:
+The majoritiy of the time we'll spend are with vectors that are either 2D or 3D. We can save significant computational overhead by using `SVector`'s in to define the spatial component of particles.
 
 ```julia
-]st GranMA
+using StaticArrays
+
+struct Vec2D{T} <: FieldVector{2,T}
+    x::T
+    y::T
+end
 ```
 
-Start using the package:
+We define a specific structure for our position vectors called `Vec2D` that is parameterized be a type `T`.  The type T could be anything, like Float64, Int, etc. The struct will contain two fields, x and y, which will both have the type T. The `<:` symbol indicates that Vec2D is a subtype of `FieldVector{2,T}`, which is an abstract type from `StaticArrays.jl`. We do this so that our `Vec2D` inherits  all the functionalities of a FieldVector, such as element access, iteration, and mathematical operations.
+
+In practice, we simply feed the structure `Vec2D` a type `T` and an `x` and `y` that are type `T` vector is defined.
 
 ```julia
-using GranMA
+julia> Vec2D{Float64}(1,2)
+2-element Vec2D{Float64} with indices SOneTo(2):
+ 1.0
+ 2.0
 ```
+## Creating Random Vectors
+
+Next, for the sake of making examples, let's create a functions that creates random vectors using the `Vec2D` structure.
 
 ```julia
-# Clone the repository locally
-git clone https://github.com/coltonkawamura/GranMA.git
-
-# Enter the package directory
-cd GranMA
-
-# Start the Julia REPL and activate the environment
-julia --project=.
-
-# Install dependencies
-julia>]
-pkg> instantiate
-
-# Run tests
-pkg> test
+function VecRandom(::Type{VecType},range) where VecType 
+    T = eltype(VecType)
+    dimensions = length(VecType)
+    VecRandomOut = VecType(range[begin] + rand(T)*(range[end]-range[begin]) for dim in 1:dimensions)
+    return VecRandomOut
+end
 ```
 
-Feel free to explore the code, submit issues, and contribute improvements via pull requests!
-</details>
 
-## Julia on HPC
-Julia is aleady installed on the HPC, but you'll need to ensure all library depedences for GranMA are installed. Here's how to do it:
+The arguments for our function `VecRandom` are the structure we wan the output vector `VecRandomOut` to be, and the range of the points in that vector. The `where VecType` introduces a type variable `VecType` that can be used throughout the function to refer to the specific type passed as the first argument. This allows us to use different vector types later on, for example 3D.
 
-After logging into the HPC via ssh, start an interactive session:
-
-```bash
-salloc
-```
-
-The check the modules availible
-
-```bash
-module avail
-```
-
-This will bring up all the modules that are availible on the HPC. Look for Julia. At the time on writing this, you might see
-
-```bash
-lang/julia/1.9.3   
-```
-
-Whatever version is on the HPC is what you'll want to load for the next command you'll put in to load Julia:
-
-```bash
-module load lang/julia/1.9.3
-```
-
-or whatever version you see.
-
-After this command you can start a julia session with:
-
-```bash
-julia
-```
-Once in the environmnent you can see what packages you already have and load the ones you don't have, for example,
+Here's an example of creating a random vector with this function.
 
 ```julia
-using MATLAB
-```
-THis is a good example, because the MATLAB.jl package needs some more work for us to use it compared to other packages. If you followed the steps to install it, you probably got an error. Let's go through the steps to get.
-
-If you're stil in julia, exit out of it to go back to your interactive shell session,
-
-```julia
-exit()
-```
-Then load up the matlab module that appeared in the list of availible modules. Right now for me its
-
-```bash
-module load app/matlab/R2023b
-```
-Next, let's get the path to that module
-
-```bash
-which matlab
+julia> VecRandom(Vec2D{Float64}, [0,1])
+2-element Vec2D{Float64} with indices SOneTo(2):
+ 0.07920192859937936
+ 0.8484353399165571
 ```
 
-Now add that root to MATLAB_ROOT. For me that path was,
+## Forces
 
-```bash
-export MATLAB_ROOT="/share/apps/matlab/R2023b"
-```
-Now go back into julia and you'll be able to load the MATLAB.jl package!
-## Examples
+Now that we have a computationally efficient way to define positions and a way to generate them, we can move on to defining the forces between these points. Let's start with a Hookean spring force law,
 
-Here are a few examples to get you started with GranMA.
+$$ F= -k\delta$$
 
-### Basic Simulation
+where $\delta$ is the overlap
 
-```julia
-using GranMA
-
-# Set up simulation parameters
-parameters = SimulationParameters(
-    pressure = 0.01,
-    omega = 1.0,
-    gamma = 0.1
-)
-
-# Run the simulation
-result = run_simulation(parameters)
-
-# Visualize results
-plot_results(result)
-```
 
 ### Advanced Analysis
 
