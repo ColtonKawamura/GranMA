@@ -353,4 +353,4 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %         'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', ...
     %          'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure")
 
-        save(['out/simulation_2d/K100_everything/' filename_output])
+        save(['out/simulation_2d/bi_width_effect/' filename_output])
