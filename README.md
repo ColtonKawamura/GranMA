@@ -64,10 +64,7 @@ Now that we have a computationally efficient way to define positions and a way t
 
 $$ F= -k\delta$$
 
-where $\delta$ is the overlap
-
-
-### Advanced Analysis
+where $\delta$ is the overlap. Mathemeatically, we can define 
 
 <details>
   <summary>Show Code</summary>
