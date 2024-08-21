@@ -9,6 +9,8 @@ using Printf
 using Statistics
 using StatsBase
 using Plots
+using MAT
+using Polynomials
 # using MLJ
 # using MLJModels«
 
@@ -578,44 +580,81 @@ end
 
 # Construction Zone ------------------
 
-function bin_plot_y_energy() 
-    # Need to change to make "vars" as input, where vars = matread("simdata.mat")
-    
+function bin_plot_y_energy(vars)
     # Get input for this simulation
-    amp_vector = vec(vars["amplitude_vector_y"])
-    phase_vector = vec(vars["unwrapped_phase_vector_y"])
-    distance_vector = vec(vars["initial_distance_from_oscillation_output_y_fft"])
+    amp_vector_y = vec(vars["amplitude_vector_y"])
+    phase_vector_y = vec(vars["unwrapped_phase_vector_y"])
+    distance_vector_y = vec(vars["initial_distance_from_oscillation_output_y_fft"])
     omega = vars["w_D"]
     gamma = vars["Bv"]
 
-    # Using fit(Histogram) to divide distance_vector from 1 to max distance away from wall (including itself)
-    # bins.weights is how many particles fall into that bin
-    bins = fit(Histogram, distance_vector, 1:maximum(distance_vector)+1)
+    # Using fit(Histogram) to divide distance_vector_y from 1 to max distance away from wall
+    bins_y = fit(Histogram, distance_vector_y, 1:maximum(distance_vector_y)+1)
 
     # Initialize vectors to store bin centers and energy losses for plotting
-    bin_centers = Float64[]
-    energy_losses = Float64[]
+    bin_centers_y = Float64[]
+    energy_losses_y = Float64[]
 
     # Assign a total energy loss for each bin
-    for i in 1:length(bins.weights)
-
-        # Find indices of particles in the current bin
-        # boolean for distance_vector falls between bin edges of i and i+1
-        indices = findall(bins.edges[1][i] .<= distance_vector .< bins.edges[1][i+1])
-
-        # Calculate the center of the bin for plotting
-        push!(bin_centers, (bins.edges[1][i] + bins.edges[1][i+1]) / 2)
-        
-        # If there are enough particles in the bin, calculate the total energy loss
+    for i in 1:length(bins_y.weights)
+        indices = findall(bins_y.edges[1][i] .<= distance_vector_y .< bins_y.edges[1][i+1])
+        bin_center = (bins_y.edges[1][i] + bins_y.edges[1][i+1]) / 2
         if length(indices) > 1
-            amp_bin = amp_vector[indices]
-            phase_bin = phase_vector[indices]
-            push!(energy_losses, total_energy_loss_in_bin(amp_bin, phase_bin, gamma, omega))
-        else
-            push!(energy_losses, 0.0)  # No energy loss if only one or no particles in the bin
+            amp_bin = amp_vector_y[indices]
+            phase_bin = phase_vector_y[indices]
+            energy_loss = total_energy_loss_in_bin(amp_bin, phase_bin, gamma, omega)
+            if energy_loss > 0  # Only include positive energy losses
+                push!(bin_centers_y, bin_center)
+                push!(energy_losses_y, energy_loss)
+            end
         end
     end
 
+    # ************** x Direction
+
+    amp_vector_x = vec(vars["amplitude_vector_x"])
+    phase_vector_x = vec(vars["unwrapped_phase_vector_x"])
+    distance_vector_x = vec(vars["initial_distance_from_oscillation_output_x_fft"])
+
+    bins_x = fit(Histogram, distance_vector_x, 1:maximum(distance_vector_x)+1)
+
+    bin_centers_x = Float64[]
+    energy_losses_x = Float64[]
+
+    for i in 1:length(bins_x.weights)
+        indices = findall(bins_x.edges[1][i] .<= distance_vector_x .< bins_x.edges[1][i+1])
+        bin_center = (bins_x.edges[1][i] + bins_x.edges[1][i+1]) / 2
+        if length(indices) > 1
+            amp_bin = amp_vector_x[indices]
+            phase_bin = phase_vector_x[indices]
+            energy_loss = total_energy_loss_in_bin(amp_bin, phase_bin, gamma, omega)
+            if energy_loss > 0  # Only include positive energy losses
+                push!(bin_centers_x, bin_center)
+                push!(energy_losses_x, energy_loss)
+            end
+        end
+    end
+
+    # Perform a linear fit on the log-transformed energy losses
+    if !isempty(bin_centers_y) && !isempty(energy_losses_y)
+        log_energy_losses_y = log.(energy_losses_y)
+        p_y = Polynomials.fit(bin_centers_y, log_energy_losses_y, 1)
+        slope_y = coeffs(p_y)[2]  # Get the slope from the coefficients
+        intercept_y = coeffs(p_y)[1]
+        fitted_y = exp.(intercept_y .+ slope_y .* bin_centers_y)  # Convert back to linear space
+    else
+        slope_y, fitted_y = NaN, []
+    end
+
+    if !isempty(bin_centers_x) && !isempty(energy_losses_x)
+        log_energy_losses_x = log.(energy_losses_x)
+        p_x = Polynomials.fit(bin_centers_x, log_energy_losses_x, 1)
+        slope_x = coeffs(p_x)[2]  # Get the slope from the coefficients
+        intercept_x = coeffs(p_x)[1]
+        fitted_x = exp.(intercept_x .+ slope_x .* bin_centers_x)  # Convert back to linear space
+    else
+        slope_x, fitted_x = NaN, []
+    end
 
     # Plotting the results using MATLAB
     mat"""
@@ -624,13 +663,30 @@ function bin_plot_y_energy()
     set(groot, 'defaultAxesTickLabelInterpreter', 'latex');  % Set for axes tick labels
     set(groot, 'defaultColorbarTickLabelInterpreter', 'latex');  % Set for colorbar tick labels
     set(groot, 'defaultTextarrowshapeInterpreter', 'latex');  % Set for text arrows in annotations
+    
+    % Plot for y-direction
+    scatter($(bin_centers_y), $(energy_losses_y), 'DisplayName', 'y')
+    hold on
+    if length($(fitted_y)) > 0
+        plot($(bin_centers_y), $(fitted_y), 'DisplayName', sprintf('Fit y (slope = %.3f)', $(slope_y)))
+    end
 
-    scatter($(bin_centers), $(energy_losses))
+    % Plot for x-direction
+    scatter($(bin_centers_x), $(energy_losses_x), 'DisplayName', 'x')
+    if length($(fitted_x)) > 0
+        plot($(bin_centers_x), $(fitted_x), 'DisplayName', sprintf('Fit x (slope = %.3f)', $(slope_x)))
+    end
+
+    % Set logarithmic scale, labels, and other plot settings
     set(gca, 'yscale', 'log')
-    xlabel(' \$ x- \$ Distance from Oscillation')
-    ylabel(' \$ \\left< E_x \\right> \$', 'Rotation', 0)
+    xlabel(' \$ x- \$ Distance from Oscillation', 'FontSize', 15)
+    ylabel(' \$ \\left< E \\right> \$', 'Rotation', 0, 'FontSize', 15)
+    grid on
+    box on
+    legend()
     """
 end
+
 
 
 function total_energy_loss_in_bin(amps, phases, gamma, omega)
@@ -642,6 +698,8 @@ function total_energy_loss_in_bin(amps, phases, gamma, omega)
     return total_loss
 end
 
+# This function assumes a spring constant K=100
 function energy_loss_time_avg(amp_j, phi_j, amp_k, phi_k, gamma, omega)
-    return (gamma * omega^2 ) * ((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k))
+    K = 100
+    return K*omega/2(gamma * omega^2 ) * amp_j * amp_k * sin(phi_j - phi_k) -  ((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k))
 end
