@@ -47,6 +47,12 @@ mutable struct file_data
     wavenumber_y::Float64
     alphaoveromega_x::Float64
     alphaoveromega_y::Float64
+    amplitude_vector_x::Vector{Float64}
+    amplitude_vector_y::Vector{Float64}
+    unwrapped_phase_vector_x::Vector{Float64}
+    unwrapped_phase_vector_y::Vector{Float64}
+    initial_distance_from_oscillation_output_x_fft::Vector{Float64}
+    initial_distance_from_oscillation_output_y_fft::Vector{Float64}
 end
 
 function generate_simulation_jobs(filename::String, K_values::Vector{T1}, M_values::Vector{T2}, Bv_values::Vector{T3}, w_D_values::Vector{T4}, N_values::Vector{T5}, P_values::Vector{T6}, W_values::Vector{T7}, seeds::Vector{T8}) where {T1, T2, T3, T4, T5, T6, T7, T8}
@@ -126,6 +132,39 @@ function crunch(datapath::String)
         asp_rat_bins = vec(iloop_file_data["asp_rat_bins"])
         rot_ang_counts = vec(iloop_file_data["rot_ang_counts"])
         rot_ang_bins = vec(iloop_file_data["rot_ang_bins"])
+        # Extract amplitude and unwrapped phase vectors with checks
+        amplitude_vector_x = isa(iloop_file_data["amplitude_vector_x"], Array) ? 
+                             vec(iloop_file_data["amplitude_vector_x"]) : 
+                             [iloop_file_data["amplitude_vector_x"]]
+
+        amplitude_vector_y = isa(iloop_file_data["amplitude_vector_y"], Array) ? 
+                             vec(iloop_file_data["amplitude_vector_y"]) : 
+                             [iloop_file_data["amplitude_vector_y"]]
+
+        unwrapped_phase_vector_x = haskey(iloop_file_data, "unwrapped_phase_vector_x") ? 
+                                   (isa(iloop_file_data["unwrapped_phase_vector_x"], Array) ? 
+                                       vec(iloop_file_data["unwrapped_phase_vector_x"]) : 
+                                       [iloop_file_data["unwrapped_phase_vector_x"]]) : 
+                                   Float64[]
+
+        unwrapped_phase_vector_y = haskey(iloop_file_data, "unwrapped_phase_vector_y") ? 
+                                   (isa(iloop_file_data["unwrapped_phase_vector_y"], Array) ? 
+                                       vec(iloop_file_data["unwrapped_phase_vector_y"]) : 
+                                       [iloop_file_data["unwrapped_phase_vector_y"]]) : 
+                                   Float64[]
+
+        initial_distance_from_oscillation_output_x_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_x_fft") ? 
+                                                        (isa(iloop_file_data["initial_distance_from_oscillation_output_x_fft"], Array) ? 
+                                                            vec(iloop_file_data["initial_distance_from_oscillation_output_x_fft"]) : 
+                                                            [iloop_file_data["initial_distance_from_oscillation_output_x_fft"]]) : 
+                                                        Float64[]
+
+        initial_distance_from_oscillation_output_y_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_y_fft") ? 
+                                                        (isa(iloop_file_data["initial_distance_from_oscillation_output_y_fft"], Array) ? 
+                                                            vec(iloop_file_data["initial_distance_from_oscillation_output_y_fft"]) : 
+                                                            [iloop_file_data["initial_distance_from_oscillation_output_y_fft"]]) : 
+                                                        Float64[]
+
 
         # Handle potentially empty arrays for fft limits
         fft_x = get(iloop_file_data, "initial_distance_from_oscillation_output_x_fft", [])
@@ -155,7 +194,13 @@ function crunch(datapath::String)
             fft_limit_y,
             wavenumber_y,
             -attenuation_x / omega,
-            -attenuation_y / omega
+            -attenuation_y / omega,
+            amplitude_vector_x,
+            amplitude_vector_y,
+            unwrapped_phase_vector_x,
+            unwrapped_phase_vector_y,
+            initial_distance_from_oscillation_output_x_fft,
+            initial_distance_from_oscillation_output_y_fft
         )
 
         push!(simulation_data, data_entry)

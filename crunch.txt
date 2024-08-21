@@ -1,1 +1,1 @@
-julia -e 'include("src/GranMA.jl"); using .GranMA; crunch_and_save("out/simulation_2d/K100_no_last_quarter", "out/processed/2d_biredo_K100_W5.jld2");'
+julia -e 'include("src/GranMA.jl"); using .GranMA; crunch_and_save("out/simulation_2d/K100_no_last_quarter", "out/processed/2d_bi_K100_W5_everything.jld2");'
