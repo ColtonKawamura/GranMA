@@ -583,26 +583,16 @@ end
 # vars = matread("/Users/coltonkawamura/Documents/GranMA/out/simulation_2d/2D_N5000_P0.001_Width5_Seed1_K100_Bv5_wD1.00_M1.mat")
 # vars = matread("/Users/coltonkawamura/Documents/GranMA/out/simulation_2d/2D_N5000_P0.1_Width5_Seed1_K100_Bv5_wD1.00_M1.mat")
 
-function bin_plot_y_energy(pressure_value, γ_value, ω_value, seed_value; plot=true, simulation_data=simulation_data)
-    # filter the data based on those that are close to gamma_value
-    closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
-    closest_γ_value = simulation_data[closest_γ_index].gamma
-    closest_ω_index = argmin(abs.([idx.omega for idx in simulation_data] .- ω_value))
-    closest_ω_value = simulation_data[closest_ω_index].omega
-    closest_pressure_index = argmin(abs.([idx.pressure for idx in simulation_data] .- pressure_value))
-    closest_pressure_value = simulation_data[closest_pressure_index].pressure
-    closest_seed_index = argmin(abs.([idx.seed for idx in simulation_data] .- seed_value))
-    closest_seed_value = simulation_data[closest_seed_index].seed
-    matching_γ_data = filter(entry -> entry.gamma == closest_γ_value .&&
-                                entry.omega == closest_ω_value .&&
-                                entry.pressure == closest_pressure_value, simulation_data)
+function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=true, simulation_data=simulation_data)
+
+    filtered_data = FilterData(simulation_data, pressure_value, :pressure, γ_value, :gamma, ω_value, :omega, seed_value, :seed)
     
     # Get input for this simulation
-    amp_vector_y = vec(vars["amplitude_vector_y"])
-    phase_vector_y = vec(vars["unwrapped_phase_vector_y"])
-    distance_vector_y = vec(vars["initial_distance_from_oscillation_output_y_fft"])
-    omega = vars["w_D"]
-    gamma = vars["Bv"]
+    amp_vector_y = filtered_data[1].amplitude_vector_y
+    phase_vector_y = filtered_data[1].unwrapped_phase_vector_y #vec(vars["unwrapped_phase_vector_y"])
+    distance_vector_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft #vec(vars["initial_distance_from_oscillation_output_y_fft"])
+    omega = ω_value
+    gamma = γ_value
 
     # Using fit(Histogram) to divide distance_vector_y from 1 to max distance away from wall
     bins_y = fit(Histogram, distance_vector_y, 1:maximum(distance_vector_y)+1)
@@ -628,9 +618,9 @@ function bin_plot_y_energy(pressure_value, γ_value, ω_value, seed_value; plot=
 
     # ************** x Direction
 
-    amp_vector_x = vec(vars["amplitude_vector_x"])
-    phase_vector_x = vec(vars["unwrapped_phase_vector_x"])
-    distance_vector_x = vec(vars["initial_distance_from_oscillation_output_x_fft"])
+    amp_vector_x = filtered_data[1].amplitude_vector_x
+    phase_vector_x = filtered_data[1].unwrapped_phase_vector_x #vec(vars["unwrapped_phase_vector_y"])
+    distance_vector_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft #vec(vars["initial_distance_from_oscillation_output_y_fft"])
 
     bins_x = fit(Histogram, distance_vector_x, 1:maximum(distance_vector_x)+1)
 
@@ -701,6 +691,8 @@ function bin_plot_y_energy(pressure_value, γ_value, ω_value, seed_value; plot=
     box on
     legend()
     """
+    Q_ratio = intercept_y / intercept_x
+    return Q_ratio
 end
 
 
@@ -758,7 +750,7 @@ function plot_energy(γ_value)
     %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
     set(ax_attenuation, 'XTickLabel', []);
 
-    % Axes for Rotation Angle
+    % Axes for Energy
     ax_energy = nexttile;
     hold(ax_energy, 'on');
     % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
@@ -784,7 +776,7 @@ function plot_energy(γ_value)
         matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_γ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
 
         # Initizalized vectors for just this pressure
-        loop_mean_energy_list = Float64[];
+        loop_mean_E_list = Float64[];
         loop_mean_attenuation_list = Float64[];
 
         # Look at a single omega gamma value since each one spans all seeds
@@ -795,22 +787,26 @@ function plot_energy(γ_value)
             # Only look at data for current omega_gamma value
             matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
 
-            # Get the mean over all seeds
-            jvalue_mean_aspect_ratio = mean(entry.mean_aspect_ratio for entry in matching_omega_gamma_data) #./ (omega_gamma_value ./ γ_value)
+            # Get the mean over all seeds       
             jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+            E_ratio_list = []
+            seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
+            for k_seed in seed_list
+                k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
+                k_seed_omega = k_seed_data[1].omega
+                k_E_ratio = bin_plot_energy(pressure_value, γ_value, k_seed_omega, k_seed; plot=false, simulation_data=matching_omega_gamma_data)
+                push!(E_ratio_list, k_E_ratio)
+            end
+            j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
 
-            
-            # Append values using push!
-            push!(loop_mean_aspect_ratio_list, jvalue_mean_aspect_ratio)
-            push!(loop_mean_rotation_angles, jvalue_mean_rotation_angle)
+            push!(loop_mean_E_list, j_E_ratio)
             push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
         end
 
         # Filter data to include only points where omega_gamma <= gamma_value
         valid_indices = matching_omega_gamma_list .<= gamma_value.*2
         matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
-        loop_mean_aspect_ratio_list = loop_mean_aspect_ratio_list[valid_indices]
-        loop_mean_rotation_angles = loop_mean_rotation_angles[valid_indices]
+        loop_mean_E_list = loop_mean_E_list[valid_indices]
         loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
 
         # This is needed because MATLAB.jl has a hard time escaping \'s
@@ -819,8 +815,7 @@ function plot_energy(γ_value)
         # Transfer data to MATLAB
         mat"""
         omega_gamma = $(matching_omega_gamma_list);
-        mean_aspect_ratio = $(loop_mean_aspect_ratio_list);
-        mean_rotation_angles = $(loop_mean_rotation_angles);
+        loop_mean_E_list = $(loop_mean_E_list);
         mean_attenuation_x = $(loop_mean_attenuation_list);
         iloop_pressure_value = $(pressure_value);
         plot_gamma = $(plot_gamma);
@@ -830,18 +825,14 @@ function plot_energy(γ_value)
         % Plot Attenuation
         loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         
-        % Plot Rotation Angle
-        plot(ax_rotation, omega_gamma, mean_rotation_angles, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-        
         % Plot Aspect Ratio
-        plot(ax_aspect_ratio, omega_gamma, mean_aspect_ratio, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        plot(ax_energy, omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         """
     end
 
     # Add legends to the plots
     mat"""
     legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    %legend(ax_rotation, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-    %legend(ax_aspect_ratio, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    %legend(ax_energy, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
 end
