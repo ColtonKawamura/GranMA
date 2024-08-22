@@ -17,7 +17,7 @@ using Polynomials
 # Read the data table
 data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
-simulation_data = load_data("out/processed/2d_biredo_K100_W5.jld2")
+simulation_data = load_data("out/processed/2d_bi_K100_W5_everything.jld2")
 
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
 
@@ -579,8 +579,24 @@ function plot_attenuation_width_effect(γ_value)
 end
 
 # Construction Zone ------------------
+# vars = matread("/Users/coltonkawamura/Documents/GranMA/out/simulation_2d/2D_N5000_P0.01_Width5_Seed1_K100_Bv5_wD1.00_M1.mat")
+# vars = matread("/Users/coltonkawamura/Documents/GranMA/out/simulation_2d/2D_N5000_P0.001_Width5_Seed1_K100_Bv5_wD1.00_M1.mat")
+# vars = matread("/Users/coltonkawamura/Documents/GranMA/out/simulation_2d/2D_N5000_P0.1_Width5_Seed1_K100_Bv5_wD1.00_M1.mat")
 
-function bin_plot_y_energy(vars)
+function bin_plot_y_energy(pressure_value, γ_value, ω_value, seed_value; plot=true, simulation_data=simulation_data)
+    # filter the data based on those that are close to gamma_value
+    closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+    closest_γ_value = simulation_data[closest_γ_index].gamma
+    closest_ω_index = argmin(abs.([idx.omega for idx in simulation_data] .- ω_value))
+    closest_ω_value = simulation_data[closest_ω_index].omega
+    closest_pressure_index = argmin(abs.([idx.pressure for idx in simulation_data] .- pressure_value))
+    closest_pressure_value = simulation_data[closest_pressure_index].pressure
+    closest_seed_index = argmin(abs.([idx.seed for idx in simulation_data] .- seed_value))
+    closest_seed_value = simulation_data[closest_seed_index].seed
+    matching_γ_data = filter(entry -> entry.gamma == closest_γ_value .&&
+                                entry.omega == closest_ω_value .&&
+                                entry.pressure == closest_pressure_value, simulation_data)
+    
     # Get input for this simulation
     amp_vector_y = vec(vars["amplitude_vector_y"])
     phase_vector_y = vec(vars["unwrapped_phase_vector_y"])
@@ -702,4 +718,130 @@ end
 function energy_loss_time_avg(amp_j, phi_j, amp_k, phi_k, gamma, omega)
     K = 100
     return K*omega/2(gamma * omega^2 ) * amp_j * amp_k * sin(phi_j - phi_k) -  ((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k))
+end
+
+
+function plot_energy(γ_value) 
+
+    # filter the data based on those that are close to gamma_value
+    closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+    closest_γ_value = simulation_data[closest_γ_index].gamma
+    matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+    plot_gamma = γ_value
+    gamma_value = γ_value
+
+    # Get a list of unique input pressures
+    pressure_list = unique([entry.pressure for entry in matching_γ_data]) # goes through each entry of simulation_data and get the P value at that entry
+
+    # Limit range to data
+    upper_limit_line_x = [1*γ_value; 1*γ_value]
+    upper_limit_line_y = [1E-5; 1]
+    lower_limit_line_x = [.1*γ_value; .1*γ_value]
+    lower_limit_line_y = [1E-5; 1]
+
+    # Start MATLAB session
+    mat"""
+    figure_main = figure;
+    tiled_main = tiledlayout(3, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 3 rows, 1 column
+
+    % Axes for Attenuation
+    ax_attenuation = nexttile;
+    hold(ax_attenuation, 'on');
+    % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
+    set(ax_attenuation, 'XScale', 'log');
+    set(ax_attenuation, 'YScale', 'log')
+    set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
+    grid(ax_attenuation, 'on');
+    box(ax_attenuation, 'on');
+    %plot(ax_attenuation, $(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$');
+    %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
+    set(ax_attenuation, 'XTickLabel', []);
+
+    % Axes for Rotation Angle
+    ax_energy = nexttile;
+    hold(ax_energy, 'on');
+    % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_energy, '\$ \\overline{E}  \$', "FontSize", 20, "Interpreter", "latex");
+    set(ax_energy, 'XScale', 'log');
+    set(get(ax_energy, 'ylabel'), '<E>', 0);
+    grid(ax_energy, 'on');
+    box(ax_energy, 'on');
+    set(ax_energy, 'XTickLabel', []);
+    """
+
+    # get a range for plotting color from 0 to 1
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Create a line for each pressure
+    for pressure_value in pressure_list
+
+        # Assign a color
+        idx = findfirst(element -> element == pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Only look at data for current pressure value
+        matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_γ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+        # Initizalized vectors for just this pressure
+        loop_mean_energy_list = Float64[];
+        loop_mean_attenuation_list = Float64[];
+
+        # Look at a single omega gamma value since each one spans all seeds
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
+
+        for omega_gamma_value in matching_omega_gamma_list
+
+            # Only look at data for current omega_gamma value
+            matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+            # Get the mean over all seeds
+            jvalue_mean_aspect_ratio = mean(entry.mean_aspect_ratio for entry in matching_omega_gamma_data) #./ (omega_gamma_value ./ γ_value)
+            jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+
+            
+            # Append values using push!
+            push!(loop_mean_aspect_ratio_list, jvalue_mean_aspect_ratio)
+            push!(loop_mean_rotation_angles, jvalue_mean_rotation_angle)
+            push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
+        end
+
+        # Filter data to include only points where omega_gamma <= gamma_value
+        valid_indices = matching_omega_gamma_list .<= gamma_value.*2
+        matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
+        loop_mean_aspect_ratio_list = loop_mean_aspect_ratio_list[valid_indices]
+        loop_mean_rotation_angles = loop_mean_rotation_angles[valid_indices]
+        loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
+
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        pressure_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
+
+        # Transfer data to MATLAB
+        mat"""
+        omega_gamma = $(matching_omega_gamma_list);
+        mean_aspect_ratio = $(loop_mean_aspect_ratio_list);
+        mean_rotation_angles = $(loop_mean_rotation_angles);
+        mean_attenuation_x = $(loop_mean_attenuation_list);
+        iloop_pressure_value = $(pressure_value);
+        plot_gamma = $(plot_gamma);
+        marker_color = $(marker_color);
+        pressure_label = $(pressure_label);
+
+        % Plot Attenuation
+        loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        
+        % Plot Rotation Angle
+        plot(ax_rotation, omega_gamma, mean_rotation_angles, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        
+        % Plot Aspect Ratio
+        plot(ax_aspect_ratio, omega_gamma, mean_aspect_ratio, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        """
+    end
+
+    # Add legends to the plots
+    mat"""
+    legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    %legend(ax_rotation, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    %legend(ax_aspect_ratio, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    """
 end
