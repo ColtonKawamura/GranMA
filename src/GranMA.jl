@@ -1,6 +1,5 @@
 module GranMA
 
-using Distributed
 using DataFrames
 using CSV
 # using GLMakie # Not supported on HPC. Need to comment out before running on HPC
@@ -9,10 +8,11 @@ using Debugger # REPL: Debugger.@run function(); @bp
 using MATLAB
 using Statistics
 using Printf
-@everywhere using MAT
-@everywhere using Glob
-@everywhere using JLD2
+using MAT
+using Glob
+using JLD2
 using IterTools
+using Distributed
 
 export  generate_simulation_jobs,
         load_data,
@@ -25,11 +25,10 @@ export  generate_simulation_jobs,
         plot_ellipse_low_pressure,
         process_outputs_2d,
         FilterData,
-        parallel_crunchNSave,
-        parallel_crunchOuter,
-        parallel_crunch
+        para_crunch_and_save,
+        para_crunch
 
-@everywhere mutable struct file_data
+mutable struct file_data
     pressure::Float64
     omega::Float64
     gamma::Float64
@@ -59,132 +58,6 @@ export  generate_simulation_jobs,
     initial_distance_from_oscillation_output_x_fft::Vector{Float64}
     initial_distance_from_oscillation_output_y_fft::Vector{Float64}
 end
-
-@everywhere function parallel_crunch(file_name::String)
-    iloop_file_data = matread(file_name)
-
-    # Extract data fields as before...
-    input_pressure = iloop_file_data["input_pressure"]
-    omega = iloop_file_data["driving_angular_frequency_dimensionless"]
-    gamma = iloop_file_data["gamma_dimensionless"]
-    pressure_actual = iloop_file_data["pressure_dimensionless"]
-    attenuation_x = iloop_file_data["attenuation_x_dimensionless"]
-    attenuation_y = iloop_file_data["attenuation_y_dimensionless"]
-    wavespeed_x = iloop_file_data["wavespeed_x"]
-    wavenumber_x = iloop_file_data["wavenumber_x_dimensionless"]
-    mean_aspect_ratio = iloop_file_data["mean_aspect_ratio"]
-    mean_rotation_angles = iloop_file_data["mean_rotation_angles"]
-    wavenumber_y = iloop_file_data["wavenumber_y_dimensionless"]
-
-    # Check for NaN values
-    if isnan(mean_rotation_angles) || isnan(mean_aspect_ratio) || 
-       isnan(wavenumber_x) || isnan(wavenumber_y) ||
-       isnan(wavespeed_x) || isnan(input_pressure) || 
-       isnan(omega) || isnan(gamma) || isnan(pressure_actual) || 
-       isnan(attenuation_x) || isnan(attenuation_y)
-        println("Skipping file due to NaN values: $file_name")
-        return nothing
-    end
-
-    # Convert matrix-type data to vectors and handle the data...
-    asp_rat_counts = vec(iloop_file_data["asp_rat_counts"])
-    asp_rat_bins = vec(iloop_file_data["asp_rat_bins"])
-    rot_ang_counts = vec(iloop_file_data["rot_ang_counts"])
-    rot_ang_bins = vec(iloop_file_data["rot_ang_bins"])
-    
-    # Extract amplitude and unwrapped phase vectors with checks
-    amplitude_vector_x = isa(iloop_file_data["amplitude_vector_x"], Array) ? 
-                         vec(iloop_file_data["amplitude_vector_x"]) : 
-                         [iloop_file_data["amplitude_vector_x"]]
-
-    amplitude_vector_y = isa(iloop_file_data["amplitude_vector_y"], Array) ? 
-                         vec(iloop_file_data["amplitude_vector_y"]) : 
-                         [iloop_file_data["amplitude_vector_y"]]
-
-    unwrapped_phase_vector_x = haskey(iloop_file_data, "unwrapped_phase_vector_x") ? 
-                               (isa(iloop_file_data["unwrapped_phase_vector_x"], Array) ? 
-                                   vec(iloop_file_data["unwrapped_phase_vector_x"]) : 
-                                   [iloop_file_data["unwrapped_phase_vector_x"]]) : 
-                               Float64[]
-
-    unwrapped_phase_vector_y = haskey(iloop_file_data, "unwrapped_phase_vector_y") ? 
-                               (isa(iloop_file_data["unwrapped_phase_vector_y"], Array) ? 
-                                   vec(iloop_file_data["unwrapped_phase_vector_y"]) : 
-                                   [iloop_file_data["unwrapped_phase_vector_y"]]) : 
-                               Float64[]
-
-    initial_distance_from_oscillation_output_x_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_x_fft") ? 
-                                                    (isa(iloop_file_data["initial_distance_from_oscillation_output_x_fft"], Array) ? 
-                                                        vec(iloop_file_data["initial_distance_from_oscillation_output_x_fft"]) : 
-                                                        [iloop_file_data["initial_distance_from_oscillation_output_x_fft"]]) : 
-                                                    Float64[]
-
-    initial_distance_from_oscillation_output_y_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_y_fft") ? 
-                                                    (isa(iloop_file_data["initial_distance_from_oscillation_output_y_fft"], Array) ? 
-                                                        vec(iloop_file_data["initial_distance_from_oscillation_output_y_fft"]) : 
-                                                        [iloop_file_data["initial_distance_from_oscillation_output_y_fft"]]) : 
-                                                    Float64[]
-
-    fft_x = get(iloop_file_data, "initial_distance_from_oscillation_output_x_fft", [])
-    fft_y = get(iloop_file_data, "initial_distance_from_oscillation_output_y_fft", [])
-    fft_limit_x = isempty(fft_x) ? NaN : maximum(fft_x)
-    fft_limit_y = isempty(fft_y) ? NaN : maximum(fft_y)
-
-    return file_data(
-        input_pressure,
-        omega,
-        gamma,
-        asp_rat_counts,
-        asp_rat_bins,
-        rot_ang_counts,
-        rot_ang_bins,
-        omega * gamma,
-        iloop_file_data["seed"],
-        pressure_actual,
-        -attenuation_x,
-        -attenuation_y,
-        -wavespeed_x,
-        -wavenumber_x,
-        mean_aspect_ratio,
-        mean_rotation_angles,
-        fft_limit_x,
-        iloop_file_data["ellipse_stats_nonzero"],
-        fft_limit_y,
-        wavenumber_y,
-        -attenuation_x / omega,
-        -attenuation_y / omega,
-        amplitude_vector_x,
-        amplitude_vector_y,
-        unwrapped_phase_vector_x,
-        unwrapped_phase_vector_y,
-        initial_distance_from_oscillation_output_x_fft,
-        initial_distance_from_oscillation_output_y_fft
-    )
-end
-
-function parallel_crunchOuter(datapath::String)
-    mat_files = glob("*.mat", datapath)
-    
-    # Use pmap to process files in parallel
-    simulation_data = pmap(process_file, mat_files)
-    
-    # Filter out any skipped files (nothing values)
-    simulation_data = filter(x -> x !== nothing, simulation_data)
-    
-    return simulation_data
-end
-
-
-function parallel_crunchNSave(datapath::String, filepath::String)
-    simulation_data = parallel_crunchOuter(datapath)
-    save_data(simulation_data, filepath)
-    
-    # Load the data back to verify
-    reloaded_data = load_data(filepath)
-    println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
-end
-
-
 
 function generate_simulation_jobs(filename::String, K_values::Vector{T1}, M_values::Vector{T2}, Bv_values::Vector{T3}, w_D_values::Vector{T4}, N_values::Vector{T5}, P_values::Vector{T6}, W_values::Vector{T7}, seeds::Vector{T8}) where {T1, T2, T3, T4, T5, T6, T7, T8}
     # generate_simulation_jobs("testfile.txt", [100],[1],exp10.(-5:.2:2),exp10.(-5:.2:2),[10000],[.01,.001],[10,20,50],[1,2,3,4,5])
@@ -353,18 +226,6 @@ function load_data(filepath::String)::Vector{file_data}
     return simulation_data
 end
 
-# function load_data2(K::Int)::Vector{file_data}
-#     file_name = "out/processed/2d_K$(K).jld2"
-#     simulation_data = JLD2.load(file_name, "simulation_data")
-    
-#     # Convert to the correct type
-#     return [file_data(d.pressure, d.omega, d.gamma, d.asp_rat_counts, d.asp_rat_bins,
-#                       d.rot_ang_counts, d.rot_ang_bins, d.omega_gamma, d.seed,
-#                       d.pressure_actual, d.attenuation_x, d.attenuation_y, d.wavespeed_x,
-#                       d.wavenumber_x, d.mean_aspect_ratio, d.mean_rotation_angles,
-#                       d.fft_limit_x, d.ellipse_stats, d.fft_limit_y, d.wavenumber_y)
-#             for d in simulation_data]
-# end
 
 
 
@@ -419,146 +280,129 @@ function FilterData(data::Vector{file_data}, args...)
     return filtered_data
 end
 
+function para_crunch(datapath::String)
+    # directory = "out/simulation_2d/bi_K100_all_seeds/"
+    # directory = "out/simulation_2d/"
+    mat_files = glob("*.mat", datapath)
+    thread_data = [Vector{file_data}() for _ in 1:Threads.nthreads()]
+    
+    Threads.@threads for file_name in mat_files
+        iloop_file_data = matread(file_name)
 
+        # Extract data fields
+        input_pressure = iloop_file_data["input_pressure"]
+        omega = iloop_file_data["driving_angular_frequency_dimensionless"]
+        gamma = iloop_file_data["gamma_dimensionless"]
+        pressure_actual = iloop_file_data["pressure_dimensionless"]
+        attenuation_x = iloop_file_data["attenuation_x_dimensionless"]
+        attenuation_y = iloop_file_data["attenuation_y_dimensionless"]
+        wavespeed_x = iloop_file_data["wavespeed_x"]
+        wavenumber_x = iloop_file_data["wavenumber_x_dimensionless"]
+        mean_aspect_ratio = iloop_file_data["mean_aspect_ratio"]
+        mean_rotation_angles = iloop_file_data["mean_rotation_angles"]
+        wavenumber_y = iloop_file_data["wavenumber_y_dimensionless"]
 
-function plot_ellipse_low_pressure(data_frame, gamma_values, pressure_value)
-
-    # Define parameters to plot
-    pressure_list = sort(unique(data_frame.input_pressure))
-    closest_pressure_match_index = argmin(abs.(pressure_list .- pressure_value))
-    plot_pressure = pressure_list[closest_pressure_match_index]
-    gamma_list = sort(unique(data_frame.gamma))
-    plot_gamma = [gamma_list[argmin(abs.(gamma_list .- element))] for element in gamma_values]
-
-
-    # Filter the table to only those data
-    matching_gamma_index = in.(data_frame.gamma, Ref(plot_gamma))
-    matching_pressure_index = in.(data_frame.input_pressure, Ref(plot_pressure))
-    combined_index = matching_gamma_index .& matching_pressure_index
-    filtered_data_frame = data_frame[combined_index, :]
-
-    # Limit range to data (deprecated)
-    # upper_limit_line_x = [1*gamma_value; 1*gamma_value]
-    # upper_limit_line_y = [1E-5; 1]
-    # lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
-    # lower_limit_line_y = [1E-5; 1]
-
-    # Start MATLAB session
-    mat"""
-    figure_main = figure;
-    tiled_main = tiledlayout(3, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 3 rows, 1 column
-
-    % Axes for Attenuation
-    ax_attenuation = nexttile;
-    hold(ax_attenuation, 'on');
-    % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
-    set(ax_attenuation, 'XScale', 'log');
-    set(ax_attenuation, 'YScale', 'log')
-    set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
-    grid(ax_attenuation, 'on');
-    box(ax_attenuation, 'on');
-    set(ax_attenuation, 'XTickLabel', []);
-
-    % Axes for Rotation Angle
-    ax_rotation = nexttile;
-    hold(ax_rotation, 'on');
-    % xlabel(ax_rotation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_rotation, '\$ \\overline{\\left|\\theta\\right|} \$', "FontSize", 20, "Interpreter", "latex");
-    set(ax_rotation, 'XScale', 'log');
-    set(get(ax_rotation, 'ylabel'), 'rotation', 0);
-    grid(ax_rotation, 'on');
-    box(ax_rotation, 'on');
-    set(ax_rotation, 'XTickLabel', []);
-
-    % Axes for Aspect Ratio
-    ax_aspect_ratio = nexttile;
-    hold(ax_aspect_ratio, 'on');
-    xlabel(ax_aspect_ratio, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_aspect_ratio, '\$ \\overline{\\frac{b}{a}} \$', "FontSize", 20, "Interpreter", "latex");
-    set(ax_aspect_ratio, 'XScale', 'log');
-    set(get(ax_aspect_ratio, 'ylabel'), 'rotation', 0);
-    grid(ax_aspect_ratio, 'on');
-    box(ax_aspect_ratio, 'on');
-    """
-
-    # Normalize the gamma values
-    normalized_variable = (log.(plot_gamma) .- minimum(log.(plot_gamma))) ./ (maximum(log.(plot_gamma)) .- minimum(log.(plot_gamma)))
-
-    # Create a line for each gamma value across all pressure_list
-    for idx in eachindex(plot_gamma)
-
-        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
-
-        # For idx, only show current gamma data
-        iloop_gamma_value = plot_gamma[idx]
-        iloop_gamma_index = in.(filtered_data_frame.gamma, Ref(iloop_gamma_value))
-        iloop_combined_index = iloop_gamma_index
-        iloop_data_frame = filtered_data_frame[iloop_combined_index, :]
-
-        # Initizalized vectors for just this pressure
-        loop_mean_rotation_angles = Float64[];
-        loop_mean_attenuation_list = Float64[];
-        loop_mean_aspect_ratio_list = Float64[];
-
-        # Look at a single omega gamma value since each one spans all seeds
-        iloop_omega_gamma_list = sort(unique(iloop_data_frame.omegagamma))
-
-        for jdx in eachindex(iloop_omega_gamma_list)
-
-            # Get the idex for the current omega gamma value
-            matching_jdx = in.(iloop_data_frame.omegagamma, Ref(iloop_omega_gamma_list[jdx]))
-            jloop_data_frame = iloop_data_frame[matching_jdx,:]
-
-            # get the mean over all seeds
-            jvalue_mean_aspect_ratio = mean(jloop_data_frame.mean_aspect_ratio)
-            jvalue_mean_rotation_angle = mean(jloop_data_frame.mean_rotation_angles)
-            jvalue_mean_alphaoveromega = mean(jloop_data_frame.alphaoveromega)
-            
-            # Append values using push!
-            push!(loop_mean_aspect_ratio_list, jvalue_mean_aspect_ratio)
-            push!(loop_mean_rotation_angles, jvalue_mean_rotation_angle)
-            push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
+        # Check for NaN values
+        if isnan(mean_rotation_angles) || isnan(mean_aspect_ratio) || 
+           isnan(wavenumber_x) || isnan(wavenumber_y) ||
+           isnan(wavespeed_x) || isnan(input_pressure) || 
+           isnan(omega) || isnan(gamma) || isnan(pressure_actual) || 
+           isnan(attenuation_x) || isnan(attenuation_y)
+            println("Skipping file due to NaN values: $file_name")
+            continue
         end
 
-        # Filter data to include only points where omega_gamma <= gamma_value
-        valid_indices = iloop_omega_gamma_list .<= iloop_gamma_value.*2
-        iloop_omega_gamma_list = iloop_omega_gamma_list[valid_indices]
-        loop_mean_aspect_ratio_list = loop_mean_aspect_ratio_list[valid_indices]
-        loop_mean_rotation_angles = loop_mean_rotation_angles[valid_indices]
-        loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
-        
-        # This is needed because MATLAB.jl has a hard time escaping \'s
-        pressure_label = @sprintf("\$ \\hat{\\gamma} = %.3f, \\hat{P} = %.3f\$", iloop_gamma_value, pressure_value)
+        # Convert matrix-type data to vectors
+        asp_rat_counts = vec(iloop_file_data["asp_rat_counts"])
+        asp_rat_bins = vec(iloop_file_data["asp_rat_bins"])
+        rot_ang_counts = vec(iloop_file_data["rot_ang_counts"])
+        rot_ang_bins = vec(iloop_file_data["rot_ang_bins"])
+        # Extract amplitude and unwrapped phase vectors with checks
+        amplitude_vector_x = isa(iloop_file_data["amplitude_vector_x"], Array) ? 
+                             vec(iloop_file_data["amplitude_vector_x"]) : 
+                             [iloop_file_data["amplitude_vector_x"]]
 
-        # Transfer data to MATLAB
-        mat"""
-        omega_gamma = $(iloop_omega_gamma_list);
-        mean_aspect_ratio = $(loop_mean_aspect_ratio_list);
-        mean_rotation_angles = $(loop_mean_rotation_angles);
-        mean_attenuation_x = $(loop_mean_attenuation_list);
-        iloop_gamma_value = $(iloop_gamma_value);
-        plot_pressure = $(plot_pressure);
-        marker_color = $(marker_color);
-        pressure_label = $(pressure_label);
+        amplitude_vector_y = isa(iloop_file_data["amplitude_vector_y"], Array) ? 
+                             vec(iloop_file_data["amplitude_vector_y"]) : 
+                             [iloop_file_data["amplitude_vector_y"]]
 
-        % Plot Attenuation
-        loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-        
-        % Plot Rotation Angle
-        plot(ax_rotation, omega_gamma, mean_rotation_angles, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-        
-        % Plot Aspect Ratio
-        plot(ax_aspect_ratio, omega_gamma, mean_aspect_ratio, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-        """
+        unwrapped_phase_vector_x = haskey(iloop_file_data, "unwrapped_phase_vector_x") ? 
+                                   (isa(iloop_file_data["unwrapped_phase_vector_x"], Array) ? 
+                                       vec(iloop_file_data["unwrapped_phase_vector_x"]) : 
+                                       [iloop_file_data["unwrapped_phase_vector_x"]]) : 
+                                   Float64[]
+
+        unwrapped_phase_vector_y = haskey(iloop_file_data, "unwrapped_phase_vector_y") ? 
+                                   (isa(iloop_file_data["unwrapped_phase_vector_y"], Array) ? 
+                                       vec(iloop_file_data["unwrapped_phase_vector_y"]) : 
+                                       [iloop_file_data["unwrapped_phase_vector_y"]]) : 
+                                   Float64[]
+
+        initial_distance_from_oscillation_output_x_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_x_fft") ? 
+                                                        (isa(iloop_file_data["initial_distance_from_oscillation_output_x_fft"], Array) ? 
+                                                            vec(iloop_file_data["initial_distance_from_oscillation_output_x_fft"]) : 
+                                                            [iloop_file_data["initial_distance_from_oscillation_output_x_fft"]]) : 
+                                                        Float64[]
+
+        initial_distance_from_oscillation_output_y_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_y_fft") ? 
+                                                        (isa(iloop_file_data["initial_distance_from_oscillation_output_y_fft"], Array) ? 
+                                                            vec(iloop_file_data["initial_distance_from_oscillation_output_y_fft"]) : 
+                                                            [iloop_file_data["initial_distance_from_oscillation_output_y_fft"]]) : 
+                                                        Float64[]
+
+
+        # Handle potentially empty arrays for fft limits
+        fft_x = get(iloop_file_data, "initial_distance_from_oscillation_output_x_fft", [])
+        fft_y = get(iloop_file_data, "initial_distance_from_oscillation_output_y_fft", [])
+        fft_limit_x = isempty(fft_x) ? NaN : maximum(fft_x)
+        fft_limit_y = isempty(fft_y) ? NaN : maximum(fft_y)
+
+        data_entry = file_data(
+            input_pressure,
+            omega,
+            gamma,
+            asp_rat_counts,
+            asp_rat_bins,
+            rot_ang_counts,
+            rot_ang_bins,
+            omega * gamma,
+            iloop_file_data["seed"],
+            pressure_actual,
+            -attenuation_x,
+            -attenuation_y,
+            -wavespeed_x,
+            -wavenumber_x,
+            mean_aspect_ratio,
+            mean_rotation_angles,
+            fft_limit_x,
+            iloop_file_data["ellipse_stats_nonzero"],
+            fft_limit_y,
+            wavenumber_y,
+            -attenuation_x / omega,
+            -attenuation_y / omega,
+            amplitude_vector_x,
+            amplitude_vector_y,
+            unwrapped_phase_vector_x,
+            unwrapped_phase_vector_y,
+            initial_distance_from_oscillation_output_x_fft,
+            initial_distance_from_oscillation_output_y_fft
+        )
+
+        push!(thread_data[Threads.threadid()], data_entry) # pushes to respective threads
     end
 
-    # Add legends to the plots
-    mat"""
-    legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    %legend(ax_rotation, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-    %legend(ax_aspect_ratio, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-    """
+    # Combine results from all threads
+    simulation_data = vcat(thread_data...)
+    return simulation_data
+end
+
+function para_crunch_and_save(datapath::String, filepath::String)
+    simulation_data = para_crunch(datapath)
+    save_data(simulation_data, filepath)
+    
+    # Load the data back to verify
+    reloaded_data = load_data(filepath)
+    println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
 end
 
 end
