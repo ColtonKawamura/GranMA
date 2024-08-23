@@ -42,14 +42,6 @@ export JULIA_NUM_THREADS=32
 
 (The above command works on bourne shells on Linux and OSX. Note that if you're using a C shell on these platforms, you should use the keyword `set` instead of `export`. If you're on Windows, start up the command line in the location of `julia.exe` and use `set` instead of `export`.)
 
-Another option is the start Julia with
-
-```julia
-julia -t auto
-```
-
-This start julia with the optimal amount of threads for your system.
-
 Now let's start a new Julia REPL session and see if we're using all 32 threads.
 
 ```julia
