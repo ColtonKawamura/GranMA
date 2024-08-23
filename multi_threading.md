@@ -44,7 +44,7 @@ export JULIA_NUM_THREADS=32
 
 Now let's start a new Julia REPL session and see if we're using all 32 threads.
 
-```julia[...]
+```julia
 julia> Threads.nthreads()
 32
 ```
