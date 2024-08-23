@@ -25,7 +25,7 @@ Environment:
   LD_LIBRARY_PATH = /share/spack/linux-rhel7-x86_64/gcc-10.3.0/pcre2-10.42-ulnwntf53aqpkc53zfsx5ioexq7cab2d/lib
   LD_LIBRARY_PATH_modshare = /share/spack/linux-rhel7-x86_64/gcc-10.3.0/pcre2-10.42-ulnwntf53aqpkc53zfsx5ioexq7cab2d/lib:1)
 ```
-Here, the line `   Threads: 1 on 32 virtual cores` tells me I'm currently using 1 of 32 possible threads availble to me. This is simimilar to me having 32 laptops on a desk and I'm just sitting at one with Julia open.
+Here, the line `Threads: 1 on 32 virtual cores` tells me I'm currently using 1 of 32 possible threads availble to me. This is simimilar to me having 32 laptops on a desk and I'm just sitting at one with Julia open.
 
 Another way to verify this is by typing
 
@@ -40,7 +40,15 @@ By default, Julia starts up with a single thread of execution. If you want to us
 export JULIA_NUM_THREADS=32
 ```
 
-(The above command works on bourne shells on Linux and OSX. Note that if you're using a C shell on these platforms, you should use the keyword set instead of export. If you're on Windows, start up the command line in the location of julia.exe and use set instead of export.)
+(The above command works on bourne shells on Linux and OSX. Note that if you're using a C shell on these platforms, you should use the keyword `set` instead of `export`. If you're on Windows, start up the command line in the location of `julia.exe` and use `set` instead of `export`.)
+
+Another option is the start Julia with
+
+```julia
+julia -t auto
+```
+
+This start julia with the optimal amount of threads for your system.
 
 Now let's start a new Julia REPL session and see if we're using all 32 threads.
 
