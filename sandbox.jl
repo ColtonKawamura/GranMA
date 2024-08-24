@@ -780,7 +780,7 @@ function plot_energy(γ_value)
 
         # Look at a single omega gamma value since each one spans all seeds
         matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
-
+        
         for omega_gamma_value in matching_omega_gamma_list
 
             # Only look at data for current omega_gamma value
@@ -788,7 +788,7 @@ function plot_energy(γ_value)
 
             # Get the mean over all seeds       
             jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
-            E_ratio_list = []
+            E_ratio_list = Float64[]
             seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
             for k_seed in seed_list
                 k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
@@ -807,7 +807,7 @@ function plot_energy(γ_value)
         matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
         loop_mean_E_list = loop_mean_E_list[valid_indices]
         loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
-
+        @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
 
