@@ -17,7 +17,7 @@ using Polynomials
 # Read the data table
 data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
-simulation_data = load_data("out/processed/2d_bi_K100_W5_everything.jld2")
+simulation_data = load_data("out/processed/2d_bi_K100_W5_everything2.jld2")
 
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
 
@@ -579,9 +579,6 @@ function plot_attenuation_width_effect(γ_value)
 end
 
 # Construction Zone ------------------
-# vars = matread("/Users/coltonkawamura/Documents/GranMA/out/simulation_2d/2D_N5000_P0.01_Width5_Seed1_K100_Bv5_wD1.00_M1.mat")
-# vars = matread("/Users/coltonkawamura/Documents/GranMA/out/simulation_2d/2D_N5000_P0.001_Width5_Seed1_K100_Bv5_wD1.00_M1.mat")
-# vars = matread("/Users/coltonkawamura/Documents/GranMA/out/simulation_2d/2D_N5000_P0.1_Width5_Seed1_K100_Bv5_wD1.00_M1.mat")
 
 function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=true, simulation_data=simulation_data)
 
@@ -595,7 +592,7 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
     gamma = γ_value
 
     # Using fit(Histogram) to divide distance_vector_y from 1 to max distance away from wall
-    bins_y = fit(Histogram, distance_vector_y, 1:maximum(distance_vector_y)+1)
+    bins_y = StatsBase.fit(Histogram, distance_vector_y, 1:maximum(distance_vector_y)+1)
 
     # Initialize vectors to store bin centers and energy losses for plotting
     bin_centers_y = Float64[]
@@ -622,7 +619,7 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
     phase_vector_x = filtered_data[1].unwrapped_phase_vector_x #vec(vars["unwrapped_phase_vector_y"])
     distance_vector_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft #vec(vars["initial_distance_from_oscillation_output_y_fft"])
 
-    bins_x = fit(Histogram, distance_vector_x, 1:maximum(distance_vector_x)+1)
+    bins_x = StatsBase.fit(Histogram, distance_vector_x, 1:maximum(distance_vector_x)+1)
 
     bin_centers_x = Float64[]
     energy_losses_x = Float64[]
@@ -649,7 +646,7 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
         intercept_y = coeffs(p_y)[1]
         fitted_y = exp.(intercept_y .+ slope_y .* bin_centers_y)  # Convert back to linear space
     else
-        slope_y, fitted_y = NaN, []
+        intercept_y, slope_y, fitted_y = NaN, NaN, []
     end
 
     if !isempty(bin_centers_x) && !isempty(energy_losses_x)
@@ -659,38 +656,40 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
         intercept_x = coeffs(p_x)[1]
         fitted_x = exp.(intercept_x .+ slope_x .* bin_centers_x)  # Convert back to linear space
     else
-        slope_x, fitted_x = NaN, []
+        intercept_x, slope_x, fitted_x = NaN, NaN, []
     end
 
-    # Plotting the results using MATLAB
-    mat"""
-    set(groot, 'defaultTextInterpreter', 'latex');  % Set for text objects
-    set(groot, 'defaultLegendInterpreter', 'latex');  % Set for legends
-    set(groot, 'defaultAxesTickLabelInterpreter', 'latex');  % Set for axes tick labels
-    set(groot, 'defaultColorbarTickLabelInterpreter', 'latex');  % Set for colorbar tick labels
-    set(groot, 'defaultTextarrowshapeInterpreter', 'latex');  % Set for text arrows in annotations
-    
-    % Plot for y-direction
-    scatter($(bin_centers_y), $(energy_losses_y), 'DisplayName', 'y')
-    hold on
-    if length($(fitted_y)) > 0
-        plot($(bin_centers_y), $(fitted_y), 'DisplayName', sprintf('Fit y (slope = %.3f)', $(slope_y)))
-    end
+    if plot
+        # Plotting the results using MATLAB
+        mat"""
+        set(groot, 'defaultTextInterpreter', 'latex');  % Set for text objects
+        set(groot, 'defaultLegendInterpreter', 'latex');  % Set for legends
+        set(groot, 'defaultAxesTickLabelInterpreter', 'latex');  % Set for axes tick labels
+        set(groot, 'defaultColorbarTickLabelInterpreter', 'latex');  % Set for colorbar tick labels
+        set(groot, 'defaultTextarrowshapeInterpreter', 'latex');  % Set for text arrows in annotations
+        
+        % Plot for y-direction
+        scatter($(bin_centers_y), $(energy_losses_y), 'DisplayName', 'y')
+        hold on
+        if length($(fitted_y)) > 0
+            plot($(bin_centers_y), $(fitted_y), 'DisplayName', sprintf('Fit y (slope = %.3f)', $(slope_y)))
+        end
 
-    % Plot for x-direction
-    scatter($(bin_centers_x), $(energy_losses_x), 'DisplayName', 'x')
-    if length($(fitted_x)) > 0
-        plot($(bin_centers_x), $(fitted_x), 'DisplayName', sprintf('Fit x (slope = %.3f)', $(slope_x)))
-    end
+        % Plot for x-direction
+        scatter($(bin_centers_x), $(energy_losses_x), 'DisplayName', 'x')
+        if length($(fitted_x)) > 0
+            plot($(bin_centers_x), $(fitted_x), 'DisplayName', sprintf('Fit x (slope = %.3f)', $(slope_x)))
+        end
 
-    % Set logarithmic scale, labels, and other plot settings
-    set(gca, 'yscale', 'log')
-    xlabel(' \$ x- \$ Distance from Oscillation', 'FontSize', 15)
-    ylabel(' \$ \\left< E \\right> \$', 'Rotation', 0, 'FontSize', 15)
-    grid on
-    box on
-    legend()
-    """
+        % Set logarithmic scale, labels, and other plot settings
+        set(gca, 'yscale', 'log')
+        xlabel(' \$ x- \$ Distance from Oscillation', 'FontSize', 15)
+        ylabel(' \$ \\left< E \\right> \$', 'Rotation', 0, 'FontSize', 15)
+        grid on
+        box on
+        legend()
+        """
+    end
     Q_ratio = intercept_y / intercept_x
     return Q_ratio
 end
@@ -756,7 +755,7 @@ function plot_energy(γ_value)
     % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel(ax_energy, '\$ \\overline{E}  \$', "FontSize", 20, "Interpreter", "latex");
     set(ax_energy, 'XScale', 'log');
-    set(get(ax_energy, 'ylabel'), '<E>', 0);
+    set(get(ax_energy, 'ylabel'), 'rotation', 0);
     grid(ax_energy, 'on');
     box(ax_energy, 'on');
     set(ax_energy, 'XTickLabel', []);
