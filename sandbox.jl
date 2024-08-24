@@ -697,7 +697,7 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
         legend()
         """
     end
-    Q_ratio = intercept_x / intercept_y
+    Q_ratio = intercept_y / intercept_x
     return Q_ratio
 end
 
