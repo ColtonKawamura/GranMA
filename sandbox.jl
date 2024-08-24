@@ -762,6 +762,7 @@ function plot_energy(γ_value)
     % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel(ax_energy, '\$ \\overline{E}  \$', "FontSize", 20, "Interpreter", "latex");
     set(ax_energy, 'XScale', 'log');
+    set(ax_energy, 'YScale', 'log')
     set(get(ax_energy, 'ylabel'), 'rotation', 0);
     grid(ax_energy, 'on');
     box(ax_energy, 'on');
