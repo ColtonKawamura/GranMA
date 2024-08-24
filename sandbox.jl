@@ -582,12 +582,19 @@ end
 
 function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=true, simulation_data=simulation_data)
 
+        
     filtered_data = FilterData(simulation_data, pressure_value, :pressure, γ_value, :gamma, ω_value, :omega, seed_value, :seed)
     
     # Get input for this simulation
     amp_vector_y = filtered_data[1].amplitude_vector_y
     phase_vector_y = filtered_data[1].unwrapped_phase_vector_y #vec(vars["unwrapped_phase_vector_y"])
     distance_vector_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft #vec(vars["initial_distance_from_oscillation_output_y_fft"])
+    # Check if any of the vectors are empty
+    if isempty(amp_vector_y) || isempty(phase_vector_y) || isempty(distance_vector_y)
+        println("Warning: One or more input vectors are empty. Returning NaN for Q_ratio.")
+        return NaN
+    end
+    
     omega = ω_value
     gamma = γ_value
 
@@ -733,7 +740,7 @@ function plot_energy(γ_value)
     # Start MATLAB session
     mat"""
     figure_main = figure;
-    tiled_main = tiledlayout(3, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 3 rows, 1 column
+    tiled_main = tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 2 rows, 1 column
 
     % Axes for Attenuation
     ax_attenuation = nexttile;
