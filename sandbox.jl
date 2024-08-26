@@ -693,11 +693,10 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
         legend()
         """
     end
-    Q_ratio = (exp(intercept_y) / exp(intercept_x)) #/ ω_value
-    return Q_ratio
+    # Q_ratio = (exp(intercept_y) / exp(intercept_x)) #/ ω_value
+    Q_ratio =  - slope_y 
+    return Q_ratio 
 end
-
-
 
 function total_energy_loss_in_bin(amps, phases, gamma, omega)
     N = length(amps)
@@ -715,7 +714,6 @@ function energy_loss_time_avg(amp_j, phi_j, amp_k, phi_k, gamma, omega)
     # K*omega/2 * amp_j * amp_k * sin(phi_j - phi_k) -  (gamma * omega^2 )*((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k))
     return omega * sqrt(K^3 / m) * ( .5 * amp_j * amp_k * sin(phi_j - phi_k) - (gamma * omega ) * ((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k)))
 end
-
 
 function plot_energy(γ_value) 
 
@@ -800,19 +798,19 @@ function plot_energy(γ_value)
                 k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
                 k_seed_omega = k_seed_data[1].omega
                 k_E_ratio = bin_plot_energy(pressure_value, γ_value, k_seed_omega, k_seed; plot=false, simulation_data=matching_omega_gamma_data)
+                k_E_ratio = k_E_ratio / k_seed_omega
                 push!(E_ratio_list, k_E_ratio)
             end
             j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
-
             push!(loop_mean_E_list, j_E_ratio)
             push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
         end
 
         # Filter data to include only points where omega_gamma <= gamma_value
-        valid_indices = matching_omega_gamma_list .<= gamma_value.*2
-        matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
-        loop_mean_E_list = loop_mean_E_list[valid_indices]
-        loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
+        # valid_indices = matching_omega_gamma_list .<= gamma_value.*2
+        # matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
+        # loop_mean_E_list = loop_mean_E_list[valid_indices]
+        # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
         @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
