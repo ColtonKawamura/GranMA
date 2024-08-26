@@ -711,7 +711,9 @@ end
 # This function assumes a spring constant K=100
 function energy_loss_time_avg(amp_j, phi_j, amp_k, phi_k, gamma, omega)
     K = 100
-    return K*omega/2 * amp_j * amp_k * sin(phi_j - phi_k) -  (gamma * omega^2 )*((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k))
+    m = 1
+    # K*omega/2 * amp_j * amp_k * sin(phi_j - phi_k) -  (gamma * omega^2 )*((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k))
+    return omega * sqrt{K^3 / m} * ( .5 * amp_j * amp_k * sin(phi_j - phi_k) - (gamma * omega ) * ((amp_j^2 + amp_k^2)/2 - amp_j * amp_k * cos(phi_j - phi_k)))
 end
 
 
