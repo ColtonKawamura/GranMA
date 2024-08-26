@@ -697,7 +697,7 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
         title($title_label)
         """
     end
-    # Q_ratio = (exp(intercept_y) / exp(intercept_x)) #/ ω_value
+    # Q_ratio = exp(intercept_y) #/ ω_value
     Q_ratio =  - slope_y 
     return Q_ratio 
 end
@@ -729,7 +729,7 @@ function plot_energy(γ_value)
     gamma_value = γ_value
 
     # Get a list of unique input pressures
-    pressure_list = unique([entry.pressure for entry in matching_γ_data]) # goes through each entry of simulation_data and get the P value at that entry
+    pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
 
     # Limit range to data
     upper_limit_line_x = [1*γ_value; 1*γ_value]
@@ -760,7 +760,7 @@ function plot_energy(γ_value)
     ax_energy = nexttile;
     hold(ax_energy, 'on');
     % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_energy, '\$ \\overline{E}  \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_energy, '\$ \\frac{ \\overline{E} }{\\hat{\\omega}}  \$', "FontSize", 20, "Interpreter", "latex");
     set(ax_energy, 'XScale', 'log');
     set(ax_energy, 'YScale', 'log')
     set(get(ax_energy, 'ylabel'), 'rotation', 0);
