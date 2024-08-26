@@ -584,26 +584,33 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
 
         
     filtered_data = FilterData(simulation_data, pressure_value, :pressure, γ_value, :gamma, ω_value, :omega, seed_value, :seed)
+
+    omega = ω_value
+    gamma = γ_value
     
     # Get input for this simulation
     amp_vector_y = filtered_data[1].amplitude_vector_y
-    phase_vector_y = filtered_data[1].unwrapped_phase_vector_y #vec(vars["unwrapped_phase_vector_y"])
-    distance_vector_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft #vec(vars["initial_distance_from_oscillation_output_y_fft"])
+    amp_vector_x = filtered_data[1].amplitude_vector_x
+    phase_vector_y = filtered_data[1].unwrapped_phase_vector_y 
+    phase_vector_x = filtered_data[1].unwrapped_phase_vector_x 
+    distance_vector_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft 
+    distance_vector_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft 
+
     # Check if any of the vectors are empty
     if isempty(amp_vector_y) || isempty(phase_vector_y) || isempty(distance_vector_y)
         println("Warning: One or more input vectors are empty. Returning NaN for Q_ratio.")
         return NaN
     end
-    
-    omega = ω_value
-    gamma = γ_value
 
     # Using fit(Histogram) to divide distance_vector_y from 1 to max distance away from wall
     bins_y = StatsBase.fit(Histogram, distance_vector_y, 1:maximum(distance_vector_y)+1)
+    bins_x = StatsBase.fit(Histogram, distance_vector_x, 1:maximum(distance_vector_x)+1)
 
     # Initialize vectors to store bin centers and energy losses for plotting
     bin_centers_y = Float64[]
     energy_losses_y = Float64[]
+    bin_centers_x = Float64[]
+    energy_losses_x = Float64[]
 
     # Assign a total energy loss for each bin
     for i in 1:length(bins_y.weights)
@@ -619,17 +626,6 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
             end
         end
     end
-
-    # ************** x Direction
-
-    amp_vector_x = filtered_data[1].amplitude_vector_x
-    phase_vector_x = filtered_data[1].unwrapped_phase_vector_x #vec(vars["unwrapped_phase_vector_y"])
-    distance_vector_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft #vec(vars["initial_distance_from_oscillation_output_y_fft"])
-
-    bins_x = StatsBase.fit(Histogram, distance_vector_x, 1:maximum(distance_vector_x)+1)
-
-    bin_centers_x = Float64[]
-    energy_losses_x = Float64[]
 
     for i in 1:length(bins_x.weights)
         indices = findall(bins_x.edges[1][i] .<= distance_vector_x .< bins_x.edges[1][i+1])
