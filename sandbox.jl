@@ -798,7 +798,7 @@ function plot_energy(γ_value)
                 k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
                 k_seed_omega = k_seed_data[1].omega
                 k_E_ratio = bin_plot_energy(pressure_value, γ_value, k_seed_omega, k_seed; plot=false, simulation_data=matching_omega_gamma_data)
-                k_E_ratio = k_E_ratio 
+                k_E_ratio = k_E_ratio / k_seed_omega
                 push!(E_ratio_list, k_E_ratio)
             end
             j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
