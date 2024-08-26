@@ -664,7 +664,10 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
 
     if plot
         # Plotting the results using MATLAB
+
+        title_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.4f, \\hat{\\omega} = %.4f \$", pressure_value, γ_value, ω_value)
         mat"""
+        title_label = $(title_label)
         set(groot, 'defaultTextInterpreter', 'latex');  % Set for text objects
         set(groot, 'defaultLegendInterpreter', 'latex');  % Set for legends
         set(groot, 'defaultAxesTickLabelInterpreter', 'latex');  % Set for axes tick labels
@@ -691,6 +694,7 @@ function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=tr
         grid on
         box on
         legend()
+        title($title_label)
         """
     end
     # Q_ratio = (exp(intercept_y) / exp(intercept_x)) #/ ω_value
