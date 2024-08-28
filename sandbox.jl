@@ -1,7 +1,7 @@
 include("src/GranMA.jl")
 
 using .GranMA
-using CSV
+# using CSV
 using DataFrames
 using Debugger
 using MATLAB
@@ -15,7 +15,7 @@ using Polynomials
 # using MLJModels«
 
 # Read the data table
-data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
+# data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5_everything2.jld2")
 
@@ -886,9 +886,9 @@ function plot_phaseDensity(γ_value)
     ax_energy = nexttile;
     hold(ax_energy, 'on');
     % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_energy, '\$ \\frac{ \\overline{E} }{\\hat{\\omega}}  \$', "FontSize", 30, "Interpreter", "latex");
+    ylabel(ax_energy, '\$  \\overline{\\sigma}   \$', "FontSize", 30, "Interpreter", "latex");
     set(ax_energy, 'XScale', 'log');
-    set(ax_energy, 'YScale', 'log')
+    # set(ax_energy, 'YScale', 'log')
     set(get(ax_energy, 'ylabel'), 'rotation', 0);
     grid(ax_energy, 'on');
     box(ax_energy, 'on');
