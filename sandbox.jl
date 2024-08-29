@@ -943,7 +943,7 @@ function plot_energy(γ_value)
     """
 end
 
-function plot_phaseDensity(γ_value) 
+function plot_phaseACF(γ_value) 
 
     # filter the data based on those that are close to gamma_value
     closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
@@ -1093,7 +1093,7 @@ function plot_phaseDensity(γ_value)
     """
 end
 
-function plot_phaseSlope(γ_value) 
+function plot_phaseDensity(γ_value) 
 
     # filter the data based on those that are close to gamma_value
     closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
