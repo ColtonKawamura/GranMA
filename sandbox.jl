@@ -19,6 +19,97 @@ using Polynomials
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5_everything2.jld2")
 
+function plotEllipsePWR(γ_value; simulation_data = simulation_data)
+    filtered_data = FilterData(simulation_data, γ_value, :gamma)
+    pressure_list = sort(unique([entry.pressure for entry in filtered_data])) # goes through each entry of simulation_data and get the P value at that entry
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+    mat"""
+    figure_aspect_ratio = figure;
+    xlabel('\$ \\hat{\\omega} \\hat{\\gamma} \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\frac{\\textrm{Peak}}{\\textrm{Width}} \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'XScale', 'log');
+    set(gca, 'YScale', 'log');
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    grid on;
+    box on;
+    hold on
+    """
+     # Create a line for each pressure
+     for pressure_value in pressure_list
+
+        # Only look at data for current pressure value
+        pressureLoop_filtered_data = FilterData(filtered_data, pressure_value, :pressure)
+
+        # Assign a color
+        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Look at a single omega gamma value since each one spans all seeds
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in pressureLoop_filtered_data]))
+        peak_to_width_ratio_list = Float64[]
+        for omega_gamma_value in matching_omega_gamma_list
+
+            OmegaGamma_filtered_data = FilterData(pressureLoop_filtered_data, omega_gamma_value, :omega_gamma)
+            ω_value = OmegaGamma_filtered_data[1].omega
+
+            # Look at a single omega gamma value since each one spans all seeds
+            seed_list = sort(unique([entry.seed for entry in OmegaGamma_filtered_data]))
+
+            peak_to_width_ratio = Float64[]
+
+            for seed_value in seed_list
+                seedLoop_filtered_data = FilterData(OmegaGamma_filtered_data, seed_value, :seed)
+                probabilities_asp , probabilities_rot, plot_bins_asp, plot_bins_rot = plot_ellipse_pdf(ω_value, γ_value; plot=false, simulation_data=seedLoop_filtered_data)
+
+                # FWHM Calulation ASP
+                prob_asp_max = maximum(probabilities_asp)
+                half_max_asp = prob_asp_max / 2
+                # Find the closest index to half_max on the right side of the peak
+                right_indices_asp = index_peak:length(probabilities_asp)
+                right_index_asp = argmin(abs.(probabilities_asp[right_indices_asp] .- half_max_asp))
+                width_asp = plot_bins_asp[right_index_asp]
+                seedLoop_peak_to_width_ratio_asp = prob_asp_max / width_asp
+                seedLoop_peak_to_width_ratio_asp = isnan(seedLoop_peak_to_width_ratio_asp) ? NaN : (isinf(seedLoop_peak_to_width_ratio_asp) ? NaN : seedLoop_peak_to_width_ratio_asp)
+                
+
+                # FWHM Calulation ASP
+                prob_rot_max = maximum(probabilities_rot)
+                half_max_rot = prob_rot_max / 2
+                # Find the closest index to half_max on the right side of the peak
+                right_indices_rot = index_peak:length(probabilities_rot)
+                right_index_rot = argmin(abs.(probabilities_rot[right_indices_rot] .- half_max_rot))
+                width_rot = plot_bins_rot[right_index_rot]
+                seedLoop_peak_to_width_ratio_rot = prob_rot_max / width_rot
+                seedLoop_peak_to_width_ratio_rot = isnan(seedLoop_peak_to_width_ratio_rot) ? NaN : (isinf(seedLoop_peak_to_width_ratio_rot) ? NaN : seedLoop_peak_to_width_ratio_rot)
+                
+                seedLoop_peak_to_width_ratio = seedLoop_peak_to_width_ratio_rot * seedLoop_peak_to_width_ratio_asp
+                peak_to_width_ratio = push!(peak_to_width_ratio, seedLoop_peak_to_width_ratio)
+                
+            end
+            peak_to_width_ratio_list = push!(peak_to_width_ratio_list, mean(peak_to_width_ratio))
+        end
+
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        pressure_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\gamma} = %.3f  \$", pressure_value, γ_value)
+
+        mat"""
+        y = $(peak_to_width_ratio_list);
+        x = $(matching_omega_gamma_list);
+        marker_color = $(marker_color);
+        pressure_label = $(pressure_label);
+        
+        figure(figure_aspect_ratio);
+        plot(x, y, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+
+        """
+
+    end
+    mat"""
+    legend('show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    """
+end
+
+# Construction Zone Above ------------------
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
 
     # Intitialize the outputs of the function
@@ -38,7 +129,7 @@ function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulat
     matching_ωγ_data = filter(entry -> entry.omega == closest_ω_value, matching_γ_data)
 
     # Get a list of unique input pressures
-    pressure_list = unique([entry.pressure for entry in matching_ωγ_data]) # goes through each entry of simulation_data and get the P value at that entry
+    pressure_list = sort(unique([entry.pressure for entry in matching_ωγ_data])) # goes through each entry of simulation_data and get the P value at that entry
     
     # get a range for plotting color from 0 to 1
     if length(pressure_list) != 1
@@ -578,8 +669,6 @@ function plot_attenuation_width_effect(γ_value)
     """
 end
 
-# Construction Zone ------------------
-
 function bin_plot_energy(pressure_value, γ_value, ω_value, seed_value; plot=true, simulation_data=simulation_data)
 
         
@@ -843,7 +932,6 @@ function plot_energy(γ_value)
     %legend(ax_energy, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
 end
-
 
 function plot_phaseDensity(γ_value) 
 
