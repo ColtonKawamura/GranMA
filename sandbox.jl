@@ -22,16 +22,16 @@ function calculate_slope(x, y)
     p = Polynomials.fit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)
     return coeffs(p)[2]  # The slope is the coefficient of x
 end
-function plotEllipsePWR(γ_value; simulation_data = simulation_data)
+function plotEllipseFlattness(γ_value; simulation_data = simulation_data)
     filtered_data = FilterData(simulation_data, γ_value, :gamma)
     pressure_list = sort(unique([entry.pressure for entry in filtered_data])) # goes through each entry of simulation_data and get the P value at that entry
     normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
     mat"""
     figure_aspect_ratio = figure;
     xlabel('\$ \\hat{\\omega} \\hat{\\gamma} \$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ \\frac{\\textrm{Peak}}{\\textrm{Width}} \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\textrm{Flattness} \$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
-
+    set(gca, 'YScale', 'log');
     set(get(gca, 'ylabel'), 'rotation', 0);
     grid on;
     box on;
@@ -92,10 +92,11 @@ function plotEllipsePWR(γ_value; simulation_data = simulation_data)
                 # Store the slopes for both asp and rot
                 slope_asp = push!(slope_asp, slope_asp_value)
                 slope_rot = push!(slope_rot, slope_rot_value)
+                println("$slope_asp")
             end
             
             # Average slope across seeds and push to slope_list
-            slope_list = push!(slope_list, mean([mean(slope_asp)* mean(slope_rot)]))
+            slope_list = push!(slope_list,  ( mean(slope_asp) * mean(slope_rot)))
         end
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\gamma} = %.3f  \$", pressure_value, γ_value)
