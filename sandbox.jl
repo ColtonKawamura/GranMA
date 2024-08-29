@@ -11,6 +11,7 @@ using StatsBase
 using Plots
 using MAT
 using Polynomials
+using LinearAlgebra
 # using MLJ
 # using MLJModels«
 
@@ -985,7 +986,7 @@ function plot_phaseDensity(γ_value)
     % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel(ax_energy, '\$  \\overline{\\sigma}   \$', "FontSize", 30, "Interpreter", "latex");
     set(ax_energy, 'XScale', 'log');
-    # set(ax_energy, 'YScale', 'log')
+    set(ax_energy, 'YScale', 'log')
     set(get(ax_energy, 'ylabel'), 'rotation', 0);
     grid(ax_energy, 'on');
     box(ax_energy, 'on');
@@ -1025,8 +1026,33 @@ function plot_phaseDensity(γ_value)
                 k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
                 k_seed_omega = k_seed_data[1].omega
                 phase_vector_y = k_seed_data[1].unwrapped_phase_vector_y
-                stdPhaseY =  std(phase_vector_y)
-                push!(E_ratio_list, stdPhaseY)
+                # Wrap the phase vector around 2π
+                wrapped_phase = mod.(phase_vector_y, 2π)
+
+                # Check if wrapped_phase has sufficient variability
+                if std(wrapped_phase) > 0
+                    # Calculate the full autocorrelation
+                    acf_wrapped_phase = autocor(wrapped_phase)
+
+                    # Determine the actual number of lags available
+                    max_lags = 100
+                    actual_max_lags = min(max_lags, length(acf_wrapped_phase) - 1)
+
+                    # Limit the autocorrelation to the available lags
+                    acf_limited = acf_wrapped_phase[1:actual_max_lags+1]  # +1 to include the zero lag
+
+                    # Ensure that acf_limited[2:end] is not empty and doesn't contain -Inf or NaN
+                    if length(acf_limited) > 1 && all(isfinite, acf_limited[2:end])
+                        peak_acf_value = maximum(acf_limited[2:end])
+                    else
+                        peak_acf_value = NaN  # or some other default value
+                    end
+                else
+                    # Handle case with no variability in phase data
+                    peak_acf_value = NaN
+                end
+
+                push!(E_ratio_list, peak_acf_value)
             end
             j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
             push!(loop_mean_E_list, j_E_ratio)
@@ -1065,4 +1091,165 @@ function plot_phaseDensity(γ_value)
     legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     %legend(ax_energy, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
+end
+
+function plot_phaseSlope(γ_value) 
+
+    # filter the data based on those that are close to gamma_value
+    closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+    closest_γ_value = simulation_data[closest_γ_index].gamma
+    matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+    plot_gamma = γ_value
+    gamma_value = γ_value
+
+    # Get a list of unique input pressures
+    pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
+
+    # Limit range to data
+    upper_limit_line_x = [1*γ_value; 1*γ_value]
+    upper_limit_line_y = [1E-5; 1]
+    lower_limit_line_x = [.1*γ_value; .1*γ_value]
+    lower_limit_line_y = [1E-5; 1]
+
+    # Start MATLAB session
+    mat"""
+    figure_main = figure;
+    tiled_main = tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 2 rows, 1 column
+
+    % Axes for Attenuation
+    ax_attenuation = nexttile;
+    hold(ax_attenuation, 'on');
+    % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
+    set(ax_attenuation, 'XScale', 'log');
+    set(ax_attenuation, 'YScale', 'log')
+    set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
+    grid(ax_attenuation, 'on');
+    box(ax_attenuation, 'on');
+    %plot(ax_attenuation, $(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$');
+    %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
+    set(ax_attenuation, 'XTickLabel', []);
+
+    % Axes for Energy
+    ax_energy = nexttile;
+    hold(ax_energy, 'on');
+    % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel(ax_energy, '\$  \\overline{\\sigma}   \$', "FontSize", 30, "Interpreter", "latex");
+    set(ax_energy, 'XScale', 'log');
+    set(ax_energy, 'YScale', 'log')
+    set(get(ax_energy, 'ylabel'), 'rotation', 0);
+    grid(ax_energy, 'on');
+    box(ax_energy, 'on');
+    set(ax_energy, 'XTickLabel', []);
+    """
+
+    # get a range for plotting color from 0 to 1
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Create a line for each pressure
+    for pressure_value in pressure_list
+
+        # Assign a color
+        idx = findfirst(element -> element == pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Only look at data for current pressure value
+        matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_γ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+        # Initizalized vectors for just this pressure
+        loop_mean_E_list = Float64[];
+        loop_mean_attenuation_list = Float64[];
+
+        # Look at a single omega gamma value since each one spans all seeds
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
+        
+        for omega_gamma_value in matching_omega_gamma_list
+
+            # Only look at data for current omega_gamma value
+            matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+            # Get the mean over all seeds       
+            jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+            E_ratio_list = Float64[]
+            seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
+            for k_seed in seed_list
+                k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
+                k_seed_omega = k_seed_data[1].omega
+                phase_vector_y = k_seed_data[1].unwrapped_phase_vector_y
+                # Wrap the phase vector around 2π
+                wrapped_phase = mod.(phase_vector_y, 2π)
+                distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
+                mean_distance = mean_nearest_neighbor_distance(distance_from_wall, wrapped_phase)
+                push!(E_ratio_list, mean_distance)
+            end
+            j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
+            push!(loop_mean_E_list, j_E_ratio)
+            push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
+        end
+
+        # Filter data to include only points where omega_gamma <= gamma_value
+        # valid_indices = matching_omega_gamma_list .<= gamma_value.*2
+        # matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
+        # loop_mean_E_list = loop_mean_E_list[valid_indices]
+        # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
+        @bp
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        pressure_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
+
+        # Transfer data to MATLAB
+        mat"""
+        omega_gamma = $(matching_omega_gamma_list);
+        loop_mean_E_list = $(loop_mean_E_list);
+        mean_attenuation_x = $(loop_mean_attenuation_list);
+        iloop_pressure_value = $(pressure_value);
+        plot_gamma = $(plot_gamma);
+        marker_color = $(marker_color);
+        pressure_label = $(pressure_label);
+
+        % Plot Attenuation
+        loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        
+        % Plot Aspect Ratio
+        plot(ax_energy, omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        """
+    end
+
+    # Add legends to the plots
+    mat"""
+    legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    %legend(ax_energy, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    """
+end
+
+function wrapped_distance(y1, y2)
+    direct_dist = abs(y1 - y2)
+    wrapped_dist = 2π - direct_dist
+    return min(direct_dist, wrapped_dist)
+end
+
+function mean_nearest_neighbor_distance(x_values, y_values)
+    points = hcat(x_values, y_values)
+    n = size(points, 1)
+    distances = zeros(n)
+    
+    for i in 1:n
+        dist_to_others = zeros(n)
+        
+        for j in 1:n
+            if i != j
+                # Calculate Euclidean distance for x and wrapped distance for y
+                dist_x = abs(x_values[i] - x_values[j])
+                dist_y = wrapped_distance(y_values[i], y_values[j])
+                dist_to_others[j] = sqrt(dist_x^2 + dist_y^2)
+            else
+                dist_to_others[j] = Inf  # Exclude the point itself
+            end
+        end
+        
+        # Find the minimum distance to the nearest neighbor
+        distances[i] = minimum(dist_to_others)
+    end
+    
+    # Return the mean nearest neighbor distance
+    return mean(distances)
 end
