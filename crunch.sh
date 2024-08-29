@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --partition=granular
 #SBATCH --job-name=crunch
+#SBATCH --array=1-2%2
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --time=72:00:00
