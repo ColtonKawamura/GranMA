@@ -1,1 +1,2 @@
-julia -e 'include("src/GranMA.jl"); using .GranMA; para_crunch_and_save("out/simulation_2d/bi_width_effect/Width10", "out/processed/2d_bi_K100_W10.jld2");'
+julia -e 'include("src/GranMA.jl"); using .GranMA; para_crunch_and_save("out/simulation_2d/bi_width_effect/Width20", "out/processed/2d_bi_K100_W20.jld2");'
+julia -e 'include("src/GranMA.jl"); using .GranMA; para_crunch_and_save("out/simulation_2d/bi_width_effect/Width50", "out/processed/2d_bi_K100_W50.jld2");'
