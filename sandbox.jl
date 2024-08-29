@@ -18,7 +18,10 @@ using Polynomials
 # data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5_everything2.jld2")
-
+function calculate_slope(x, y)
+    p = Polynomials.fit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)
+    return coeffs(p)[2]  # The slope is the coefficient of x
+end
 function plotEllipsePWR(γ_value; simulation_data = simulation_data)
     filtered_data = FilterData(simulation_data, γ_value, :gamma)
     pressure_list = sort(unique([entry.pressure for entry in filtered_data])) # goes through each entry of simulation_data and get the P value at that entry
@@ -28,72 +31,77 @@ function plotEllipsePWR(γ_value; simulation_data = simulation_data)
     xlabel('\$ \\hat{\\omega} \\hat{\\gamma} \$', "FontSize", 20, "Interpreter", "latex");
     ylabel('\$ \\frac{\\textrm{Peak}}{\\textrm{Width}} \$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
-    set(gca, 'YScale', 'log');
+
     set(get(gca, 'ylabel'), 'rotation', 0);
     grid on;
     box on;
     hold on
     """
-     # Create a line for each pressure
-     for pressure_value in pressure_list
-
+    for pressure_value in pressure_list
         # Only look at data for current pressure value
         pressureLoop_filtered_data = FilterData(filtered_data, pressure_value, :pressure)
-
+    
         # Assign a color
-        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        idx = findfirst(idx -> idx == pressure_value, pressure_list)
         marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
-
+    
         # Look at a single omega gamma value since each one spans all seeds
         matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in pressureLoop_filtered_data]))
-        peak_to_width_ratio_list = Float64[]
+        slope_list = Float64[]
+        
         for omega_gamma_value in matching_omega_gamma_list
-
+    
             OmegaGamma_filtered_data = FilterData(pressureLoop_filtered_data, omega_gamma_value, :omega_gamma)
             ω_value = OmegaGamma_filtered_data[1].omega
-
+    
             # Look at a single omega gamma value since each one spans all seeds
             seed_list = sort(unique([entry.seed for entry in OmegaGamma_filtered_data]))
-
-            peak_to_width_ratio = Float64[]
-
+    
+            slope_asp = Float64[]
+            slope_rot = Float64[]
+    
             for seed_value in seed_list
                 seedLoop_filtered_data = FilterData(OmegaGamma_filtered_data, seed_value, :seed)
                 probabilities_asp , probabilities_rot, plot_bins_asp, plot_bins_rot = plot_ellipse_pdf(ω_value, γ_value; plot=false, simulation_data=seedLoop_filtered_data)
+    
+            # Flatten the vectors
+            probabilities_asp = vec(probabilities_asp)
+            probabilities_rot = vec(probabilities_rot)
+            plot_bins_asp = vec(plot_bins_asp)
+            plot_bins_rot = vec(plot_bins_rot)
 
-                # FWHM Calulation ASP
-                prob_asp_max = maximum(probabilities_asp)
-                half_max_asp = prob_asp_max / 2
-                # Find the closest index to half_max on the right side of the peak
-                right_indices_asp = index_peak:length(probabilities_asp)
-                right_index_asp = argmin(abs.(probabilities_asp[right_indices_asp] .- half_max_asp))
-                width_asp = plot_bins_asp[right_index_asp]
-                seedLoop_peak_to_width_ratio_asp = prob_asp_max / width_asp
-                seedLoop_peak_to_width_ratio_asp = isnan(seedLoop_peak_to_width_ratio_asp) ? NaN : (isinf(seedLoop_peak_to_width_ratio_asp) ? NaN : seedLoop_peak_to_width_ratio_asp)
-                
+            # Align lengths by trimming to the minimum length
+            min_length_asp = min(length(probabilities_asp), length(plot_bins_asp))
+            min_length_rot = min(length(probabilities_rot), length(plot_bins_rot))
 
-                # FWHM Calulation ASP
-                prob_rot_max = maximum(probabilities_rot)
-                half_max_rot = prob_rot_max / 2
-                # Find the closest index to half_max on the right side of the peak
-                right_indices_rot = index_peak:length(probabilities_rot)
-                right_index_rot = argmin(abs.(probabilities_rot[right_indices_rot] .- half_max_rot))
-                width_rot = plot_bins_rot[right_index_rot]
-                seedLoop_peak_to_width_ratio_rot = prob_rot_max / width_rot
-                seedLoop_peak_to_width_ratio_rot = isnan(seedLoop_peak_to_width_ratio_rot) ? NaN : (isinf(seedLoop_peak_to_width_ratio_rot) ? NaN : seedLoop_peak_to_width_ratio_rot)
-                
-                seedLoop_peak_to_width_ratio = seedLoop_peak_to_width_ratio_rot * seedLoop_peak_to_width_ratio_asp
-                peak_to_width_ratio = push!(peak_to_width_ratio, seedLoop_peak_to_width_ratio)
-                
+            probabilities_asp = probabilities_asp[1:min_length_asp]
+            plot_bins_asp = plot_bins_asp[1:min_length_asp]
+
+            probabilities_rot = probabilities_rot[1:min_length_rot]
+            plot_bins_rot = plot_bins_rot[1:min_length_rot]
+
+
+
+                slope_asp_value = calculate_slope(plot_bins_asp, probabilities_asp)
+                slope_asp_value = isnan(slope_asp_value) ? NaN : (isinf(slope_asp_value) ? NaN : slope_asp_value)
+    
+                # Calculate slope for rotational probability (probabilities_rot vs plot_bins_rot)
+                slope_rot_value = calculate_slope(plot_bins_rot, probabilities_rot)
+                slope_rot_value = isnan(slope_rot_value) ? NaN : (isinf(slope_rot_value) ? NaN : slope_rot_value)
+    
+                # Store the slopes for both asp and rot
+                slope_asp = push!(slope_asp, slope_asp_value)
+                slope_rot = push!(slope_rot, slope_rot_value)
             end
-            peak_to_width_ratio_list = push!(peak_to_width_ratio_list, mean(peak_to_width_ratio))
+            
+            # Average slope across seeds and push to slope_list
+            slope_list = push!(slope_list, mean([mean(slope_asp)* mean(slope_rot)]))
         end
-
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\gamma} = %.3f  \$", pressure_value, γ_value)
 
         mat"""
-        y = $(peak_to_width_ratio_list);
+        y = $(slope_list);
         x = $(matching_omega_gamma_list);
         marker_color = $(marker_color);
         pressure_label = $(pressure_label);
