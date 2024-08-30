@@ -119,6 +119,98 @@ function plotEllipseFlattness(γ_value; simulation_data = simulation_data)
     """
 end
 
+function plot_γ_attenuation_2d(ω_value; plot=true, simulation_data=simulation_data)  # Need to fix the legend
+    
+    filtered_data = FilterData(simulation_data, ω_value, :omega)
+
+
+    pressure_list = sort(unique([entry.pressure for entry in filtered_data])) # goes through each entry of simulation_data and get the P value at that entry
+
+    # Define the plot limits to match the 1D theory plot curves
+    theory_x = collect(3E-4:1E-5:3)
+    theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
+
+    if plot
+        # Intialized the plots to loop over
+        mat"""
+        figure_attenuation = figure;
+        loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
+        hold on;
+        xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+        ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
+        set(gca, 'XScale', 'log');
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        grid on;
+        box on;
+        """
+    end
+
+    # Normalize the gamma values
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Create a line for each gamma value across all pressure_list
+    for pressure_value in pressure_list
+
+        # Assign a color
+        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Only look at data for current pressure value
+        pressureLoop_filtered_data = FilterData(filtered_data, pressure_value, :pressure )
+        # Initizalized vectors for just this pressure
+        loop_mean_attenuation_list = Float64[];
+
+        # Look at a single omega gamma value since each one spans all seeds
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in pressureLoop_filtered_data]))
+
+        for omega_gamma_value in matching_omega_gamma_list
+
+            # Only look at data for current pressure value
+            omegaGammaLoop_filtered_data = FilterData(pressureLoop_filtered_data, omega_gamma_value, :omega_gamma)
+
+            # Get the mean over all seeds
+            loop_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in omegaGammaLoop_filtered_data)
+
+            # Append values
+            push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+        end
+
+        # Filter data to include only points where omega_gamma <= gamma_value
+        # valid_indices = matching_omega_gamma_list .<= gamma_value.*2
+        # matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
+        # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
+
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        legend_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\omega} = %.3f\$", pressure_value, ω_value)
+
+        if plot
+            # Transfer data to MATLAB
+            mat"""
+            omega_gamma = $(matching_omega_gamma_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            plot_gamma = $(ω_value);
+            marker_color= $(marker_color);
+            legend_label = $(legend_label);
+            figure(figure_attenuation);
+            set(gca, 'Yscale', 'log');
+            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+            """
+        end
+    end
+    if plot
+        # Add legends to the plots
+        mat"""
+        % Add legends to the MATLAB plots
+        figure(figure_attenuation);
+        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        """
+    end
+    return matching_omega_gamma_list, loop_mean_attenuation_list
+end
+
+
+
 # Construction Zone Above ------------------
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
 
