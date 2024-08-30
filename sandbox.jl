@@ -661,7 +661,7 @@ function plot_ωγ_wavespeed_2d(gamma_value) # Need to fix lgend
     """
 end
 
-function plot_ellipse_width_effect(ω_value, γ_value)
+function plot_ellipse_width_effect(ω_value, γ_value, pressure_value)
     width_list = [10, 20 , 50]
 
     normalized_variable = (width_list .- minimum(width_list)) ./ (maximum(width_list) .- minimum(width_list))
@@ -694,7 +694,8 @@ function plot_ellipse_width_effect(ω_value, γ_value)
         marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
         
         simulation_data = load_data("out/processed/2d_bi_K100_W$(width).jld2")
-        probabilities_asp , probabilities_rot, plot_bins_asp, plot_bins_rot = plot_ellipse_pdf(ω_value, γ_value, plot=false, simulation_data = simulation_data) 
+        filtered_data = FilterData(simulation_data, pressure_value, :pressure)
+        probabilities_asp , probabilities_rot, plot_bins_asp, plot_bins_rot = plot_ellipse_pdf(ω_value, γ_value, plot=false, simulation_data = filtered_data) 
 
         # This is needed because MATLAB.jl has a hard time escaping \'s
         legend_label = @sprintf("\$ \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", width, γ_value, ω_value)
@@ -1185,7 +1186,7 @@ function plot_phaseACF(γ_value)
     """
 end
 
-function plot_phaseDensity(γ_value) 
+function plot_phaseEntropy(γ_value) 
 
     # filter the data based on those that are close to gamma_value
     closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
@@ -1226,7 +1227,7 @@ function plot_phaseDensity(γ_value)
     ax_energy = nexttile;
     hold(ax_energy, 'on');
     % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_energy, '\$  \\overline{\\sigma}   \$', "FontSize", 30, "Interpreter", "latex");
+    ylabel(ax_energy, '\$ \\left< S^{\\perp}_\\phi \\right>   \$', "FontSize", 15, "Interpreter", "latex");
     set(ax_energy, 'XScale', 'log');
     set(ax_energy, 'YScale', 'log')
     set(get(ax_energy, 'ylabel'), 'rotation', 0);
