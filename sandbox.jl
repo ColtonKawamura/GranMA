@@ -725,7 +725,7 @@ function plot_ellipse_width_effect(ω_value, γ_value, pressure_value)
     """
 end
 
-function plot_attenuation_width_effect(γ_value)
+function plot_attenuation_width_effect(γ_value, pressure_value)
     width_list = [10, 20 , 50]
 
     normalized_variable = (width_list .- minimum(width_list)) ./ (maximum(width_list) .- minimum(width_list))
@@ -751,9 +751,10 @@ function plot_attenuation_width_effect(γ_value)
         marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
         
         simulation_data = load_data("out/processed/2d_bi_K100_W$(width).jld2")
-        matching_omega_gamma_list, loop_mean_attenuation_list = plot_ωγ_attenuation_2d(γ_value, plot=false, simulation_data=simulation_data)
+        filtered_data = FilterData(simulation_data, pressure_value, :pressure)
+        matching_omega_gamma_list, loop_mean_attenuation_list = plot_ωγ_attenuation_2d(γ_value, plot=false, simulation_data=filtered_data)
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        legend_label = @sprintf("\$ \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f \$", width, γ_value)
+        legend_label = @sprintf("\$ \\hat{P} = %.3f, \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f \$", pressure_value,width, γ_value)
 
         mat"""
         matching_omega_gamma_list = $(matching_omega_gamma_list);
