@@ -294,13 +294,21 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
 
     tvec = (1:Nt)*dt;
     %  Only analyze data that passed fft_x check
-    x_all = x_all(cleaned_particle_index_x,:);
-    y_all = y_all(cleaned_particle_index_x, :);
-    x0 = x0(cleaned_particle_index_x);
-    y0 = y0(cleaned_particle_index_x);
-    N = length(x0);
+    x_all_xfft = x_all(cleaned_particle_index_x,:);
+    y_all_xfft = y_all(cleaned_particle_index_x, :);
+    x0_xfft = x0(cleaned_particle_index_x);
+    y0_xfft = y0(cleaned_particle_index_x);
+    N_xfft= length(x0);
 
-    ellipse_stats = process_ellipse(tvec, N , x_all, y_all, x0, y0, left_wall_list, A)
+
+    %  make variables for y_fft
+    x_all_yfft = x_all(cleaned_particle_index_y,:);
+    y_all_yfft = y_all(cleaned_particle_index_y, :);
+    x0_yfft = x0(cleaned_particle_index_y);
+    y0_yfft = y0(cleaned_particle_index_y);
+    N_yfft= length(y0);
+
+    ellipse_stats = process_ellipse(tvec, N_xfft , x_all_xfft, y_all_xfft, x0_xfft, y0_xfft, left_wall_list, A)
     
     % Copy the ellipse_stats matrix to a new variable for processing.
     ellipse_stats_nonzero = ellipse_stats; % (semi-major axis, semi-minor axis, rotation angle, initial position from oscillation)
