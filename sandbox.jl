@@ -209,9 +209,6 @@ function plot_γ_attenuation_2d(ω_value; plot=true, simulation_data=simulation_
     return matching_omega_gamma_list, loop_mean_attenuation_list
 end
 
-
-
-# Construction Zone Above ------------------
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
 
     # Intitialize the outputs of the function
