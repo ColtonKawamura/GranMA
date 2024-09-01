@@ -26,7 +26,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     
     % Create the packing name with the exact number format for P
-    packing_name = sprintf('2D_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
+    packing_name = sprintf('2D_poly_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
     
     % Create the filename
     % filename_output = sprintf('%s_K%d_Bv%d_wD%d_M%d.mat', packing_name, K, Bv, w_D, M);
@@ -361,4 +361,4 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %         'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', ...
     %          'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y")
 
-        save(['out/simulation_2d/K100_everything3/' filename_output])
+        save(['out/simulation_2d/K100_poly/' filename_output])
