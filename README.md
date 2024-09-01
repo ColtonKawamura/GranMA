@@ -7,4 +7,4 @@ There are three main stages to the workflow.
 2. Simulation with packings.
 3. Post-processing of data of the simulation.
 
-Visit the [wiki](https://github.com/ColtonKawamura/GranMA/new/main?filename=README.md) for the documenation.
+Visit the [wiki](https://github.com/ColtonKawamura/GranMA/wiki) for the documenation.
