@@ -1,4 +1,4 @@
-function simulation_2d_spare(K, M, Bv, w_D, N, P, W, seed)
+function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %% Molecular Dynamics Simulator (Adapted from Mark D. Shattuck, CCNY)
     % Example command: simulation_2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1)
     
@@ -32,9 +32,9 @@ function simulation_2d_spare(K, M, Bv, w_D, N, P, W, seed)
     % filename_output = sprintf('%s_K%d_Bv%d_wD%d_M%d.mat', packing_name, K, Bv, w_D, M);
     filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
     
-    if exist(char("out/simulation_2d/bi_width_effect/" + filename_output), 'file')
-        return
-    end
+    % if exist(char("out/simulation_2d/K100_no_last_quarter/" + filename_output), 'file')
+    %     return
+    % end
     input_pressure = P;
     load(['in/' packing_name '.mat']);
     
@@ -252,7 +252,16 @@ function simulation_2d_spare(K, M, Bv, w_D, N, P, W, seed)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of attenuation / wavenumber, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+    wrapped_phase_vector_x = mod(unwrapped_phase_vector_x, 2*pi);
+    wrapped_phase_vector_y = mod(unwrapped_phase_vector_y, 2*pi);
+    figure;
+    scatter(initial_distance_from_oscillation_output_x_fft, wrapped_phase_vector_x, 'o');
+    grid on;
+    hold on;  % Keep the plot for adding the fitted line
+    scatter(initial_distance_from_oscillation_output_y_fft, wrapped_phase_vector_y, 'o');
+
+
+
     % plot_white_paper(initial_distance_from_oscillation_output_y_fft, initial_distance_from_oscillation_output_x_fft, amplitude_vector_x, amplitude_vector_y, unwrapped_phase_vector_x, unwrapped_phase_vector_y, cleaned_particle_index_x, cleaned_particle_index_y, x_all, y_all)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
@@ -285,13 +294,21 @@ function simulation_2d_spare(K, M, Bv, w_D, N, P, W, seed)
 
     tvec = (1:Nt)*dt;
     %  Only analyze data that passed fft_x check
-    x_all = x_all(cleaned_particle_index_x,:);
-    y_all = y_all(cleaned_particle_index_x, :);
-    x0 = x0(cleaned_particle_index_x);
-    y0 = y0(cleaned_particle_index_x);
-    N = length(x0);
+    x_all_xfft = x_all(cleaned_particle_index_x,:);
+    y_all_xfft = y_all(cleaned_particle_index_x, :);
+    x0_xfft = x0(cleaned_particle_index_x);
+    y0_xfft = y0(cleaned_particle_index_x);
+    N_xfft= length(x0);
 
-    ellipse_stats = process_ellipse(tvec, N , x_all, y_all, x0, y0, left_wall_list, A)
+
+    %  make variables for y_fft
+    x_all_yfft = x_all(cleaned_particle_index_y,:);
+    y_all_yfft = y_all(cleaned_particle_index_y, :);
+    x0_yfft = x0(cleaned_particle_index_y);
+    y0_yfft = y0(cleaned_particle_index_y);
+    N_yfft= length(y0);
+
+    ellipse_stats = process_ellipse(tvec, N_xfft , x_all_xfft, y_all_xfft, x0_xfft, y0_xfft, left_wall_list, A)
     
     % Copy the ellipse_stats matrix to a new variable for processing.
     ellipse_stats_nonzero = ellipse_stats; % (semi-major axis, semi-minor axis, rotation angle, initial position from oscillation)
@@ -337,9 +354,11 @@ function simulation_2d_spare(K, M, Bv, w_D, N, P, W, seed)
     gamma_dimensionless = Bv/sqrt(K*mass_particle_average);
     pressure_dimensionless = P;
     % Save the file
-    save(['out/simulation_2d/bi_width_effect/' filename_output], 'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
-        'rot_ang_bins', 'rot_ang_counts', 'time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
-        'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
-         'wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
-            'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', ...
-             'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure")
+    % save(['out/simulation_2d/K100_everything2/' filename_output], 'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
+    %     'rot_ang_bins', 'rot_ang_counts', 'time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
+    %     'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
+    %      'wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
+    %         'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', ...
+    %          'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y")
+
+        save(['out/simulation_2d/K100_everything3/' filename_output])
