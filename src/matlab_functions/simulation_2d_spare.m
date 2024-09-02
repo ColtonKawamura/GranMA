@@ -298,7 +298,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     y_all_xfft = y_all(cleaned_particle_index_x, :);
     x0_xfft = x0(cleaned_particle_index_x);
     y0_xfft = y0(cleaned_particle_index_x);
-    N_xfft= length(x0);
+    N_xfft= length(x0_xfft);
 
 
     %  make variables for y_fft
@@ -306,7 +306,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     y_all_yfft = y_all(cleaned_particle_index_y, :);
     x0_yfft = x0(cleaned_particle_index_y);
     y0_yfft = y0(cleaned_particle_index_y);
-    N_yfft= length(y0);
+    N_yfft= length(x0_yfft);
 
     ellipse_stats = process_ellipse(tvec, N_xfft , x_all_xfft, y_all_xfft, x0_xfft, y0_xfft, left_wall_list, A)
     
