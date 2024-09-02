@@ -206,7 +206,6 @@ function plot_γ_attenuation_2d(ω_value; plot=true, simulation_data=simulation_
         legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
         """
     end
-    return matching_omega_gamma_list, loop_mean_attenuation_list
 end
 
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
