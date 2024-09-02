@@ -275,8 +275,6 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     position_particles = y_all;
     plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
     box on
-    % Title and axis labels in LaTeX format
-    title('Particle Position Over Time', 'Interpreter', 'latex')
     xlabel('Time (s)', 'Interpreter', 'latex')
     ylabel('Position', 'Interpreter', 'latex')
     legend('$\hat{k}$', '$\hat{k}_\perp$' ,'Interpreter', 'latex')
