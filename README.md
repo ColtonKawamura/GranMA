@@ -1,4 +1,4 @@
-# Granular Materials - Acoustic (GranMA)
+# Granular Materials - Acoustics (GranMA)
 
 GranMA molecular dynamics (MD) simulation and post-processing package used for modeling and analyzing the effects of granular packing on granular packings.
 
