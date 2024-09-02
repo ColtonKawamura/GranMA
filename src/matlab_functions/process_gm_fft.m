@@ -130,9 +130,10 @@ hold on;
 semilogy(initial_distance_from_oscillation_output, attenuation_fit_line, 'r-', 'DisplayName', 'Linear Fit');
 xlabel('Distance from Oscillation (Particle Diameters)', 'Interpreter', 'latex');
 ylabel('Particle Oscillation Amplitude', 'Interpreter', 'latex');
-title(['Attenuation Plot with Fitted Attenuation = ', num2str(fitted_attenuation)], 'Interpreter', 'latex');
+% title(['Attenuation Plot with Fitted Attenuation = ', num2str(fitted_attenuation)], 'Interpreter', 'latex');
 legend('show', 'Interpreter', 'latex');
 grid on;
+box on
 hold off;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,6 +153,7 @@ wavenumber = p(1);
 figure;
 scatter(initial_distance_from_oscillation_output, unwrapped_phase_vector, 'o');
 grid on;
+box on
 hold on;  % Keep the plot for adding the fitted line
 
 % Plot the fitted line
