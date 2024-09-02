@@ -200,7 +200,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     % Perform fft fitting
     [fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = ...
-        process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation)
+        process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
     
     % Don't waste time if we didn't get enough data
     if isempty(cleaned_particle_index)
@@ -236,7 +236,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     % Perform fft fitting
     [fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = ...
-        process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation)
+        process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
     
     attenuation_y = fitted_attenuation;
     attenuation_fit_line_y = attenuation_fit_line;
@@ -308,7 +308,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     y0_yfft = y0(cleaned_particle_index_y);
     N_yfft= length(y0);
 
-    ellipse_stats = process_ellipse(tvec, N_xfft , x_all_xfft, y_all_xfft, x0_xfft, y0_xfft, left_wall_list, A)
+    ellipse_stats = process_ellipse(tvec, N_xfft , x_all_xfft, y_all_xfft, x0_xfft, y0_xfft, left_wall_list, A);
     
     % Copy the ellipse_stats matrix to a new variable for processing.
     ellipse_stats_nonzero = ellipse_stats; % (semi-major axis, semi-minor axis, rotation angle, initial position from oscillation)
@@ -337,7 +337,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     [binned_semi_minor_values, binned_semi_major_values, binned_rot_angle_values, bin_centers] = process_ellipse_data(ellipse_stats_nonzero);
     
-    [mean_aspect_ratio, mean_rotation_angles] =plot_ellipse_statistics(binned_semi_minor_values, binned_semi_major_values, binned_rot_angle_values, bin_centers, max_distance_from_wall)
+    [mean_aspect_ratio, mean_rotation_angles] =plot_ellipse_statistics(binned_semi_minor_values, binned_semi_major_values, binned_rot_angle_values, bin_centers, max_distance_from_wall);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Output
@@ -361,4 +361,4 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %         'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', ...
     %          'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y")
 
-        save(['out/simulation_2d/K100_everything3/' filename_output])
+    save(['out/simulation_2d/K100_everything3/' filename_output])
