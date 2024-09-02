@@ -258,6 +258,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     scatter(initial_distance_from_oscillation_output_x_fft, wrapped_phase_vector_x, 'o');
     grid on;
     hold on;  % Keep the plot for adding the fitted line
+    box on;  
     scatter(initial_distance_from_oscillation_output_y_fft, wrapped_phase_vector_y, 'o');
 
 
