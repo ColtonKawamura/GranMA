@@ -1223,14 +1223,14 @@ function plot_phaseEntropy(γ_value)
     % Axes for Energy
     ax_energy = nexttile;
     hold(ax_energy, 'on');
-    % xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel(ax_energy, '\$ \\left< S^{\\perp}_\\phi \\right>   \$', "FontSize", 15, "Interpreter", "latex");
     set(ax_energy, 'XScale', 'log');
     set(ax_energy, 'YScale', 'log')
     set(get(ax_energy, 'ylabel'), 'rotation', 0);
     grid(ax_energy, 'on');
     box(ax_energy, 'on');
-    set(ax_energy, 'XTickLabel', []);
+    % set(ax_energy, 'XTickLabel', []);
     """
 
     # get a range for plotting color from 0 to 1
