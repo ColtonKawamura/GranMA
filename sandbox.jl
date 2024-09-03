@@ -1230,7 +1230,7 @@ function plot_phaseEntropy(γ_value)
     set(get(ax_energy, 'ylabel'), 'rotation', 0);
     grid(ax_energy, 'on');
     box(ax_energy, 'on');
-    % set(ax_energy, 'XTickLabel', []);
+    %set(ax_energy, 'XTickLabel', []);
     """
 
     # get a range for plotting color from 0 to 1
