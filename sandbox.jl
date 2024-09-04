@@ -1,7 +1,6 @@
 include("src/GranMA.jl")
 
 using .GranMA
-# using CSV
 using DataFrames
 using Debugger
 using MATLAB
@@ -12,13 +11,96 @@ using Plots
 using MAT
 using Polynomials
 using LinearAlgebra
-# using MLJ
-# using MLJModels«
-
-# Read the data table
-# data_frame = CSV.read("out/processed/K100_ellipse_edits.csv", DataFrame)
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5_everything2.jld2")
+
+function plot_amplitude(filtered_data)
+    x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    y = filtered_data[1].amplitude_vector_x
+    mat"""
+    figure
+    scatter($(x), $(y))
+    set(gca, 'YScale', 'log')
+    grid on
+    """
+    x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    y = filtered_data[1].amplitude_vector_y
+    mat"""
+    figure
+    scatter($(x), $(y))
+    set(gca, 'YScale', 'log')
+    grid on
+    """
+end
+
+function plot_γ_attenuation_P_2d(pressure_value, ω_values::Vector{Float64}; plot=true, simulation_data=simulation_data)
+
+    if plot
+
+        theory_x = collect(3E-4:1E-5:3)
+        theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
+        mat"""
+        figure_attenuation = figure;
+        loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
+        hold on;
+        xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+        ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
+        set(gca, 'XScale', 'log');
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        grid on;
+        box on;
+        """
+    end
+    
+    closest_ω_indices = [argmin(abs.([idx.omega for idx in simulation_data] .- ω)) for ω in ω_values]
+    closest_ω_list = [simulation_data[idx].omega for idx in closest_ω_indices]
+    normalized_variable = (log.(closest_ω_list) .- minimum(log.(closest_ω_list))) ./ (maximum(log.(closest_ω_list)) .- minimum(log.(closest_ω_list)))
+
+
+    for ω_value in closest_ω_list
+        idx = findfirst(idx -> idx ==ω_value, closest_ω_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+        filtered_data = FilterData(simulation_data, ω_value, :omega, pressure_value, :pressure)
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in filtered_data]))
+        loop_mean_attenuation_list = Float64[];
+
+        for omega_gamma_value in matching_omega_gamma_list
+            # Only look at data for current omega_gamma_value 
+            omegaGammaLoop_filtered_data = FilterData(filtered_data, omega_gamma_value, :omega_gamma)
+
+            # Get the mean over all seeds
+            loop_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in omegaGammaLoop_filtered_data)
+
+            # Append values
+            push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+        end
+        legend_label = @sprintf("\$ \\hat{\\omega} = %.3f, \\hat{P} = %.3f \$", ω_value, pressure_value)
+
+        if plot
+            mat"""
+            omega_gamma = $(matching_omega_gamma_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            plot_gamma = $(ω_value);
+            marker_color= $(marker_color);
+            legend_label = $(legend_label);
+            figure(figure_attenuation);
+            set(gca, 'Yscale', 'log');
+            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+            """
+        end
+
+    end
+    if plot
+        # Add legends to the plots
+        mat"""
+        % Add legends to the MATLAB plots
+        figure(figure_attenuation);
+        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        """
+    end
+end
+
 function calculate_slope(x, y)
     p = Polynomials.fit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)
     return coeffs(p)[2]  # The slope is the coefficient of x
@@ -181,7 +263,7 @@ function plot_γ_attenuation_2d(ω_value; plot=true, simulation_data=simulation_
         # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
 
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        legend_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\omega} = %.3f\$", pressure_value, ω_value)
+        legend_label = @sprintf("\$ \\hat{\\omega} = %.3f, \\hat{P} = %.3f \$", ω_value, pressure_value)
 
         if plot
             # Transfer data to MATLAB
@@ -1032,7 +1114,6 @@ function plot_energy(γ_value)
     %legend(ax_energy, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
 end
-
 
 function plot_phaseEntropy(γ_value) 
 
