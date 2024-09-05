@@ -33,6 +33,17 @@ function plot_amplitude(filtered_data)
     """
 end
 
+function plot_phase(filtered_data)
+    x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    y = filtered_data[1].unwrapped_phase_vector_y
+    mat"""
+    figure
+    scatter($(x), $(y))
+    set(gca, 'YScale', 'log')
+    grid on
+    """
+end
+
 function plot_γ_attenuation_P_2d(pressure_value, ω_values::Vector{Float64}; plot=true, simulation_data=simulation_data)
 
     if plot
