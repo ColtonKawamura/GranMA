@@ -88,7 +88,7 @@ if plotit
     end
     axis('equal');
     axis([0 Lx 0 Ly]);
-    pause
+    % pause
 
     figure(2), clf;
 %     figure(3), clf;
