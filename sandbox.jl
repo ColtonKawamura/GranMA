@@ -44,73 +44,18 @@ function plot_phase(filtered_data)
     """
 end
 
-function plot_γ_attenuation_P_2d(pressure_value, ω_values::Vector{Float64}; plot=true, simulation_data=simulation_data)
-
-    if plot
-
-        theory_x = collect(3E-4:1E-5:3)
-        theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
-        mat"""
-        figure_attenuation = figure;
-        loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
-        hold on;
-        xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-        ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
-        set(gca, 'XScale', 'log');
-        set(get(gca, 'ylabel'), 'rotation', 0);
-        grid on;
-        box on;
-        """
-    end
-    
-    closest_ω_indices = [argmin(abs.([idx.omega for idx in simulation_data] .- ω)) for ω in ω_values]
-    closest_ω_list = [simulation_data[idx].omega for idx in closest_ω_indices]
-    normalized_variable = (log.(closest_ω_list) .- minimum(log.(closest_ω_list))) ./ (maximum(log.(closest_ω_list)) .- minimum(log.(closest_ω_list)))
-
-
-    for ω_value in closest_ω_list
-        idx = findfirst(idx -> idx ==ω_value, closest_ω_list) # find the first index that matches
-        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
-        filtered_data = FilterData(simulation_data, ω_value, :omega, pressure_value, :pressure)
-        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in filtered_data]))
-        loop_mean_attenuation_list = Float64[];
-
-        for omega_gamma_value in matching_omega_gamma_list
-            # Only look at data for current omega_gamma_value 
-            omegaGammaLoop_filtered_data = FilterData(filtered_data, omega_gamma_value, :omega_gamma)
-
-            # Get the mean over all seeds
-            loop_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in omegaGammaLoop_filtered_data)
-
-            # Append values
-            push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
-        end
-        legend_label = @sprintf("\$ \\hat{\\omega} = %.3f, \\hat{P} = %.3f \$", ω_value, pressure_value)
-
-        if plot
-            mat"""
-            omega_gamma = $(matching_omega_gamma_list);
-            mean_attenuation_x = $(loop_mean_attenuation_list);
-            iloop_pressure_value = $(pressure_value);
-            plot_gamma = $(ω_value);
-            marker_color= $(marker_color);
-            legend_label = $(legend_label);
-            figure(figure_attenuation);
-            set(gca, 'Yscale', 'log');
-            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
-            """
-        end
-
-    end
-    if plot
-        # Add legends to the plots
-        mat"""
-        % Add legends to the MATLAB plots
-        figure(figure_attenuation);
-        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-        """
-    end
+function plot_phase(filtered_data)
+    x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    y = filtered_data[1].unwrapped_phase_vector_y
+    mat"""
+    figure
+    scatter($(x), $(y))
+    set(gca, 'YScale', 'log')
+    grid on
+    """
 end
+
+
 
 function calculate_slope(x, y)
     p = Polynomials.fit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)
@@ -551,6 +496,7 @@ function plot_ellipse_ωγ_2d(γ_value)
     """
 end
 
+# Attenuation Plots
 function plot_ωγ_attenuation_2d(gamma_value; plot=true, simulation_data=simulation_data)  # Need to fix the legend
     # Initialize outputs
     matching_omega_gamma_list = []
@@ -654,6 +600,74 @@ function plot_ωγ_attenuation_2d(gamma_value; plot=true, simulation_data=simula
         """
     end
     return matching_omega_gamma_list, loop_mean_attenuation_list
+end
+
+function plot_γ_attenuation_P_2d(pressure_value, ω_values::Vector{Float64}; plot=true, simulation_data=simulation_data)
+
+    if plot
+
+        theory_x = collect(3E-4:1E-5:3)
+        theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
+        mat"""
+        figure_attenuation = figure;
+        loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
+        hold on;
+        xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+        ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
+        set(gca, 'XScale', 'log');
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        grid on;
+        box on;
+        """
+    end
+    
+    closest_ω_indices = [argmin(abs.([idx.omega for idx in simulation_data] .- ω)) for ω in ω_values]
+    closest_ω_list = [simulation_data[idx].omega for idx in closest_ω_indices]
+    normalized_variable = (log.(closest_ω_list) .- minimum(log.(closest_ω_list))) ./ (maximum(log.(closest_ω_list)) .- minimum(log.(closest_ω_list)))
+
+
+    for ω_value in closest_ω_list
+        idx = findfirst(idx -> idx ==ω_value, closest_ω_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+        filtered_data = FilterData(simulation_data, ω_value, :omega, pressure_value, :pressure)
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in filtered_data]))
+        loop_mean_attenuation_list = Float64[];
+
+        for omega_gamma_value in matching_omega_gamma_list
+            # Only look at data for current omega_gamma_value 
+            omegaGammaLoop_filtered_data = FilterData(filtered_data, omega_gamma_value, :omega_gamma)
+
+            # Get the mean over all seeds
+            loop_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in omegaGammaLoop_filtered_data)
+
+            # Append values
+            push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+        end
+        legend_label = @sprintf("\$ \\hat{\\omega} = %.3f, \\hat{P} = %.3f \$", ω_value, pressure_value)
+
+        if plot
+            mat"""
+            omega_gamma = $(matching_omega_gamma_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            plot_gamma = $(ω_value);
+            marker_color= $(marker_color);
+            legend_label = $(legend_label);
+            figure(figure_attenuation);
+            set(gca, 'Yscale', 'log');
+            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+            """
+        end
+
+    end
+    if plot
+        # Add legends to the plots
+        mat"""
+        % Add legends to the MATLAB plots
+        figure(figure_attenuation);
+        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        """
+    end
 end
 
 function plot_ωγ_wavespeed_2d(gamma_value) # Need to fix lgend
