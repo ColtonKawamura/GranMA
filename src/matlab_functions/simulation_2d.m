@@ -220,7 +220,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     amplitude_vector_x = amplitude_vector;
     cleaned_particle_index_x = cleaned_particle_index;
     
-    process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
+    % process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Y Direction Post Processing
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -264,64 +264,25 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Calculate the distance from the oscillating wall
-    distance_from_wall = abs(initial_distance_from_oscillation_output_x_fft);
-
-    % Find the total range of distances (to help find 1/4, 2/4, 3/4, and 4/4)
-    max_distance = max(distance_from_wall);
-
-    % Define the target distances at 1/4, 2/4, 3/4, and 4/4 away from the wall
-    target_distances = [0.25, 0.5, 0.75, 1.0] * max_distance;
-
-    % Find the indices of the particles closest to these distances
-    indices_to_plot = zeros(1, 4); % Preallocate an array to store the indices
-    for i = 1:length(target_distances)
-        [~, indices_to_plot(i)] = min(abs(distance_from_wall - target_distances(i)));
-    end
-
-    % Calculate the maximum y-axis value for consistent scaling
-    max_y_value = 0; % Initialize
-    for i = 1:length(indices_to_plot)
-        index_particle_to_plot = indices_to_plot(i);
-        
-        % Get max values for x and y positions
-        max_y_value = max(max_y_value, max(abs(x_all(index_particle_to_plot, :) - mean(x_all(index_particle_to_plot, :)))));
-        max_y_value = max(max_y_value, max(abs(y_all(index_particle_to_plot, :) - mean(y_all(index_particle_to_plot, :)))));
-    end
-
-    % Set up tiled layout for the plots
-    tiledlayout(4,1); % 4 rows, 1 column
-
-    % Loop over each selected particle to plot its position over time in separate tiles
-    for i = 1:length(indices_to_plot)
-        index_particle_to_plot = indices_to_plot(i);
-        
-        % Create a tile for each particle
-        nexttile;
-        
-        % Plot x position
-        position_particles_x = x_all;
-        plot(time_vector, position_particles_x(index_particle_to_plot, :) - mean(position_particles_x(index_particle_to_plot, :)), ...
-            'DisplayName', sprintf('Distance = %.3f (x)', distance_from_wall(index_particle_to_plot)));
-        hold on;
-        
-        % Plot y position
-        position_particles_y = y_all;
-        plot(time_vector, position_particles_y(index_particle_to_plot, :) - mean(position_particles_y(index_particle_to_plot, :)), ...
-            'DisplayName', sprintf('Distance = %.3f (y)', distance_from_wall(index_particle_to_plot)));
-        
-        % Set consistent y-axis limits
-        ylim([-max_y_value, max_y_value]);
-        
-        % Box, labels, and legends for each tile
-        box on;
-        xlabel('Time (s)', 'Interpreter', 'latex');
-        ylabel('Position', 'Interpreter', 'latex');
-        legend show;
-        
-        hold off;
-    end
-
+    % Plotting
+    figure
+    hold on
+    
+    % Plot centered on zero
+    position_particles = x_all;
+    index_particle_to_plot = 7;
+    plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
+    position_particles = y_all;
+    plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
+    box on
+    xlabel('Time (s)', 'Interpreter', 'latex')
+    ylabel('Position', 'Interpreter', 'latex')
+    legend('$\hat{k}$', '$\hat{k}_\perp$' ,'Interpreter', 'latex')
+    
+    % Adding legend
+    legend show
+    
+    hold off
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Ellipse Statistics
