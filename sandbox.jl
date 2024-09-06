@@ -34,26 +34,30 @@ function plot_amplitude(filtered_data)
 end
 
 function plot_phase(filtered_data)
-    x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-    y = filtered_data[1].unwrapped_phase_vector_y
+    distance_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    distance_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    phase_y = filtered_data[1].unwrapped_phase_vector_y
+    phase_x = filtered_data[1].unwrapped_phase_vector_x
+    phase_y = mod.(phase_y, 2π)
+    phase_x = mod.(phase_x, 2π)
+
     mat"""
     figure
-    scatter($(x), $(y))
-    set(gca, 'YScale', 'log')
+    scatter($(distance_x), $(phase_x), "DisplayName", "\$ \\hat{k} \$")
+    hold on
+    scatter($(distance_y), $(phase_y), "DisplayName", "\$ \\hat{k}_\\perp \$")
     grid on
+    box on
+    set(gca,'YTick', [0, pi, 2*pi], 'YTickLabel', {'0', ' \$ \\pi \$', '\$ 2\\pi \$'}, 'TickLabelInterpreter', 'latex');
+    ylabel("\$ \\Delta \\phi \$", "Interpreter", 'latex', "FontSize", 15)
+    xlabel("Distance from Oscillation", "Interpreter", 'latex', "FontSize", 15)
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    legend('Interpreter', 'latex')
+    ylim([0,2*pi])
     """
 end
 
-function plot_phase(filtered_data)
-    x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-    y = filtered_data[1].unwrapped_phase_vector_y
-    mat"""
-    figure
-    scatter($(x), $(y))
-    set(gca, 'YScale', 'log')
-    grid on
-    """
-end
+
 
 
 
@@ -61,6 +65,7 @@ function calculate_slope(x, y)
     p = Polynomials.fit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)
     return coeffs(p)[2]  # The slope is the coefficient of x
 end
+
 function plotEllipseFlattness(γ_value; simulation_data = simulation_data)
     filtered_data = FilterData(simulation_data, γ_value, :gamma)
     pressure_list = sort(unique([entry.pressure for entry in filtered_data])) # goes through each entry of simulation_data and get the P value at that entry
