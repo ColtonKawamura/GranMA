@@ -14,6 +14,7 @@ using LinearAlgebra
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5_everything2.jld2")
 
+# Single Simulation
 function plot_amplitude(filtered_data)
     x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
     y = filtered_data[1].amplitude_vector_x
@@ -59,11 +60,70 @@ end
 
 
 
+# Ellipse
 
+function plot_ellipse_width_effect(ω_value, γ_value, pressure_value)
+    width_list = [10, 20 , 50]
 
-function calculate_slope(x, y)
-    p = Polynomials.fit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)
-    return coeffs(p)[2]  # The slope is the coefficient of x
+    normalized_variable = (width_list .- minimum(width_list)) ./ (maximum(width_list) .- minimum(width_list))
+
+    # Intialized the plots to loop over
+    mat"""
+    figure_aspect_ratio = figure;
+    xlabel('\$ b/a \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ p(b/a) \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'YScale', 'log');
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    grid on;
+    box on;
+    hold on
+
+    figure_rotation_angle = figure;
+    xlabel('\$ \\theta \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ p(\\theta) \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'YScale', 'log');
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    grid on;
+    box on;
+    hold on
+    """
+    
+    for width in width_list
+
+        # Assign a color
+        idx = findfirst(idx -> idx ==width, width_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+        
+        simulation_data = load_data("out/processed/2d_bi_K100_W$(width).jld2")
+        filtered_data = FilterData(simulation_data, pressure_value, :pressure)
+        probabilities_asp , probabilities_rot, plot_bins_asp, plot_bins_rot = plot_ellipse_pdf(ω_value, γ_value, plot=false, simulation_data = filtered_data) 
+
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        legend_label = @sprintf("\$ \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", width, γ_value, ω_value)
+
+        mat"""
+        mean_asp_rat_counts = $(probabilities_asp);
+        mean_asp_rat_bins = $(plot_bins_asp);
+        mean_rot_ang_counts = $(probabilities_rot);
+        mean_rot_ang_bins = $(plot_bins_rot);
+        marker_color = $(marker_color);
+        legend_label = $(legend_label);
+        
+        figure(figure_aspect_ratio);
+        plot(mean_asp_rat_bins, mean_asp_rat_counts, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+
+        figure(figure_rotation_angle);
+        plot(mean_rot_ang_bins, mean_rot_ang_counts, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+        """
+    end
+
+    mat"""
+    figure(figure_aspect_ratio);
+    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+
+    figure(figure_rotation_angle);
+    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    """
 end
 
 function plotEllipseFlattness(γ_value; simulation_data = simulation_data)
@@ -160,95 +220,6 @@ function plotEllipseFlattness(γ_value; simulation_data = simulation_data)
     mat"""
     legend('show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     """
-end
-
-function plot_γ_attenuation_2d(ω_value; plot=true, simulation_data=simulation_data)  # Need to fix the legend
-    
-    filtered_data = FilterData(simulation_data, ω_value, :omega)
-
-
-    pressure_list = sort(unique([entry.pressure for entry in filtered_data])) # goes through each entry of simulation_data and get the P value at that entry
-
-    # Define the plot limits to match the 1D theory plot curves
-    theory_x = collect(3E-4:1E-5:3)
-    theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
-
-    if plot
-        # Intialized the plots to loop over
-        mat"""
-        figure_attenuation = figure;
-        loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
-        hold on;
-        xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-        ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
-        set(gca, 'XScale', 'log');
-        set(get(gca, 'ylabel'), 'rotation', 0);
-        grid on;
-        box on;
-        """
-    end
-
-    # Normalize the gamma values
-    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
-
-    # Create a line for each gamma value across all pressure_list
-    for pressure_value in pressure_list
-
-        # Assign a color
-        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
-        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
-
-        # Only look at data for current pressure value
-        pressureLoop_filtered_data = FilterData(filtered_data, pressure_value, :pressure )
-        # Initizalized vectors for just this pressure
-        loop_mean_attenuation_list = Float64[];
-
-        # Look at a single omega gamma value since each one spans all seeds
-        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in pressureLoop_filtered_data]))
-
-        for omega_gamma_value in matching_omega_gamma_list
-
-            # Only look at data for current pressure value
-            omegaGammaLoop_filtered_data = FilterData(pressureLoop_filtered_data, omega_gamma_value, :omega_gamma)
-
-            # Get the mean over all seeds
-            loop_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in omegaGammaLoop_filtered_data)
-
-            # Append values
-            push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
-        end
-
-        # Filter data to include only points where omega_gamma <= gamma_value
-        # valid_indices = matching_omega_gamma_list .<= gamma_value.*2
-        # matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
-        # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
-
-        # This is needed because MATLAB.jl has a hard time escaping \'s
-        legend_label = @sprintf("\$ \\hat{\\omega} = %.3f, \\hat{P} = %.3f \$", ω_value, pressure_value)
-
-        if plot
-            # Transfer data to MATLAB
-            mat"""
-            omega_gamma = $(matching_omega_gamma_list);
-            mean_attenuation_x = $(loop_mean_attenuation_list);
-            iloop_pressure_value = $(pressure_value);
-            plot_gamma = $(ω_value);
-            marker_color= $(marker_color);
-            legend_label = $(legend_label);
-            figure(figure_attenuation);
-            set(gca, 'Yscale', 'log');
-            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
-            """
-        end
-    end
-    if plot
-        # Add legends to the plots
-        mat"""
-        % Add legends to the MATLAB plots
-        figure(figure_attenuation);
-        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-        """
-    end
 end
 
 function plot_ellipse_pdf(ω_value, γ_value; plot=true, simulation_data=simulation_data)
@@ -502,6 +473,95 @@ function plot_ellipse_ωγ_2d(γ_value)
 end
 
 # Attenuation Plots
+function plot_γ_attenuation_2d(ω_value; plot=true, simulation_data=simulation_data)  # Need to fix the legend
+    
+    filtered_data = FilterData(simulation_data, ω_value, :omega)
+
+
+    pressure_list = sort(unique([entry.pressure for entry in filtered_data])) # goes through each entry of simulation_data and get the P value at that entry
+
+    # Define the plot limits to match the 1D theory plot curves
+    theory_x = collect(3E-4:1E-5:3)
+    theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
+
+    if plot
+        # Intialized the plots to loop over
+        mat"""
+        figure_attenuation = figure;
+        loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
+        hold on;
+        xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+        ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
+        set(gca, 'XScale', 'log');
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        grid on;
+        box on;
+        """
+    end
+
+    # Normalize the gamma values
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Create a line for each gamma value across all pressure_list
+    for pressure_value in pressure_list
+
+        # Assign a color
+        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Only look at data for current pressure value
+        pressureLoop_filtered_data = FilterData(filtered_data, pressure_value, :pressure )
+        # Initizalized vectors for just this pressure
+        loop_mean_attenuation_list = Float64[];
+
+        # Look at a single omega gamma value since each one spans all seeds
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in pressureLoop_filtered_data]))
+
+        for omega_gamma_value in matching_omega_gamma_list
+
+            # Only look at data for current pressure value
+            omegaGammaLoop_filtered_data = FilterData(pressureLoop_filtered_data, omega_gamma_value, :omega_gamma)
+
+            # Get the mean over all seeds
+            loop_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in omegaGammaLoop_filtered_data)
+
+            # Append values
+            push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+        end
+
+        # Filter data to include only points where omega_gamma <= gamma_value
+        # valid_indices = matching_omega_gamma_list .<= gamma_value.*2
+        # matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
+        # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
+
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        legend_label = @sprintf("\$ \\hat{\\omega} = %.3f, \\hat{P} = %.3f \$", ω_value, pressure_value)
+
+        if plot
+            # Transfer data to MATLAB
+            mat"""
+            omega_gamma = $(matching_omega_gamma_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            plot_gamma = $(ω_value);
+            marker_color= $(marker_color);
+            legend_label = $(legend_label);
+            figure(figure_attenuation);
+            set(gca, 'Yscale', 'log');
+            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+            """
+        end
+    end
+    if plot
+        # Add legends to the plots
+        mat"""
+        % Add legends to the MATLAB plots
+        figure(figure_attenuation);
+        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        """
+    end
+end
+
 function plot_ωγ_attenuation_2d(gamma_value; plot=true, simulation_data=simulation_data)  # Need to fix the legend
     # Initialize outputs
     matching_omega_gamma_list = []
@@ -769,69 +829,6 @@ function plot_ωγ_wavespeed_2d(gamma_value) # Need to fix lgend
     """
 end
 
-function plot_ellipse_width_effect(ω_value, γ_value, pressure_value)
-    width_list = [10, 20 , 50]
-
-    normalized_variable = (width_list .- minimum(width_list)) ./ (maximum(width_list) .- minimum(width_list))
-
-    # Intialized the plots to loop over
-    mat"""
-    figure_aspect_ratio = figure;
-    xlabel('\$ b/a \$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ p(b/a) \$', "FontSize", 20, "Interpreter", "latex");
-    set(gca, 'YScale', 'log');
-    set(get(gca, 'ylabel'), 'rotation', 0);
-    grid on;
-    box on;
-    hold on
-
-    figure_rotation_angle = figure;
-    xlabel('\$ \\theta \$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ p(\\theta) \$', "FontSize", 20, "Interpreter", "latex");
-    set(gca, 'YScale', 'log');
-    set(get(gca, 'ylabel'), 'rotation', 0);
-    grid on;
-    box on;
-    hold on
-    """
-    
-    for width in width_list
-
-        # Assign a color
-        idx = findfirst(idx -> idx ==width, width_list) # find the first index that matches
-        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
-        
-        simulation_data = load_data("out/processed/2d_bi_K100_W$(width).jld2")
-        filtered_data = FilterData(simulation_data, pressure_value, :pressure)
-        probabilities_asp , probabilities_rot, plot_bins_asp, plot_bins_rot = plot_ellipse_pdf(ω_value, γ_value, plot=false, simulation_data = filtered_data) 
-
-        # This is needed because MATLAB.jl has a hard time escaping \'s
-        legend_label = @sprintf("\$ \\textrm{Width} = %.3f, \\hat{\\gamma} = %.3f , \\hat{\\omega} = %.3f \$", width, γ_value, ω_value)
-
-        mat"""
-        mean_asp_rat_counts = $(probabilities_asp);
-        mean_asp_rat_bins = $(plot_bins_asp);
-        mean_rot_ang_counts = $(probabilities_rot);
-        mean_rot_ang_bins = $(plot_bins_rot);
-        marker_color = $(marker_color);
-        legend_label = $(legend_label);
-        
-        figure(figure_aspect_ratio);
-        plot(mean_asp_rat_bins, mean_asp_rat_counts, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
-
-        figure(figure_rotation_angle);
-        plot(mean_rot_ang_bins, mean_rot_ang_counts, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
-        """
-    end
-
-    mat"""
-    figure(figure_aspect_ratio);
-    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-
-    figure(figure_rotation_angle);
-    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-    """
-end
 
 function plot_attenuation_width_effect(γ_value, pressure_value)
     width_list = [10, 20 , 50]
@@ -1273,6 +1270,10 @@ function plot_phaseEntropy(γ_value)
     """
 end
 
+
+
+# Helper Functions
+
 function wrapped_distance(y1, y2)
     direct_dist = abs(y1 - y2)
     wrapped_dist = 2π - direct_dist
@@ -1304,4 +1305,9 @@ function mean_nearest_neighbor_distance(x_values, y_values)
     
     # Return the mean nearest neighbor distance
     return mean(distances)
+end
+
+function calculate_slope(x, y)
+    p = Polynomials.fit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)
+    return coeffs(p)[2]  # The slope is the coefficient of x
 end
