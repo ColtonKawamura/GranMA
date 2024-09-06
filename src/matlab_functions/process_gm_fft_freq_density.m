@@ -15,7 +15,7 @@ function process_gm_fft_freq_density(time_vector, index_particles, index_oscilla
     % Note:     This is very computationally expensive. Change iskip, frequency_cutoff, and position_cutoff as needed
 
 iskip = 1;
-frequency_cutoff = 9;  % Define the frequency cutoff (upper limit)
+frequency_cutoff = 4;  % Define the frequency cutoff (upper limit)
 position_cutoff = 60; % Distance cutoff (upper limit)
 
 % Pre Allocate for Speed
@@ -24,7 +24,7 @@ sampling_freq = 1 / average_dt;
 % nyquist_freq = sampling_freq / 2;  % Nyquist frequency is sampling_freq / 2, but I increased for more bins for better looking graphs. computationally more expensive though.
 % freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq;
 nyquist_freq = sampling_freq / 2;  % Nyquist frequency is sampling_freq / 2
-num_bins = 20000;  % Increase this value for more bins
+num_bins = 2000;  % Increase this value for more bins
 freq_vector = linspace(0, nyquist_freq, num_bins);  % Use linspace with num_bins
 
 index_vector = 1:numel(freq_vector);
@@ -70,9 +70,9 @@ for nn = index_particles(1:iskip:end)  % Incremental index processing
 end
 
 % Highlight the driving frequency
-line(xlim, [driving_frequency driving_frequency], 'Color', 'k', 'LineStyle', '--', 'LineWidth', 2);
-text(mean(xlim), driving_frequency, sprintf(' Driving Frequency: %.2f Hz', driving_frequency), ...
-     'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center', 'FontSize', 10, 'Color', 'red');
+% line(xlim, [driving_frequency driving_frequency], 'Color', 'k', 'LineStyle', '--', 'LineWidth', 2);
+% text(mean(xlim), driving_frequency, sprintf(' Driving Frequency: %.2f Hz', driving_frequency), ...
+%      'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center', 'FontSize', 10, 'Color', 'red');
 
 xlabel('Initial Position from Oscillating Wall (Particle Diamters)');
 ylabel('Frequency (Inverse Time)');
