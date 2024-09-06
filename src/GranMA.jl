@@ -61,11 +61,11 @@ mutable struct file_data
     # yfft_posX::Vector{Float64}
     # yfft_init_posX::Vector{Float64}
     # yfft_init_posY::Vector{Float64}
-    # xfft_posY::Vector{Float64}
-    # xfft_posX::Vector{Float64}
-    # xfft_init_posX::Vector{Float64}
-    # xfft_init_pos::Vector{Float64}
-    # timeVec::Vector{Float64}
+    xfft_posY::Vector{Float64}
+    xfft_posX::Vector{Float64}
+    xfft_init_posX::Vector{Float64}
+    xfft_init_posY::Vector{Float64}
+    timeVec::Vector{Float64}
 end
 
 function makeJobList2D(filename::String, K_values::Vector{T1}, M_values::Vector{T2}, Bv_values::Vector{T3}, w_D_values::Vector{T4}, N_values::Vector{T5}, P_values::Vector{T6}, W_values::Vector{T7}, seeds::Vector{T8}) where {T1, T2, T3, T4, T5, T6, T7, T8}
@@ -251,10 +251,10 @@ function crunch(datapath::String)
             unwrapped_phase_vector_y,
             initial_distance_from_oscillation_output_x_fft,
             initial_distance_from_oscillation_output_y_fft,
-            yfft_posY,
-            yfft_posX,
-            yfft_init_posX,
-            yfft_init_posY,
+            # yfft_posY,
+            # yfft_posX,
+            # yfft_init_posX,
+            # yfft_init_posY,
             xfft_posY,
             xfft_posX,
             xfft_init_posX,
