@@ -220,7 +220,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     amplitude_vector_x = amplitude_vector;
     cleaned_particle_index_x = cleaned_particle_index;
     
-    process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
+    % process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Y Direction Post Processing
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,12 +265,12 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Vector of target initial distances
-    target_distances = [15.8752, 119.252, 323.055, 399.619]; % Example values
+    target_distances = [23.42133, 158.525, 259.472, 404.754]; % Example values
 
     % Find the indices of the particles closest to the target distances
     indices_to_plot = zeros(1, length(target_distances)); % Preallocate an array to store the indices
     for i = 1:length(target_distances)
-        [~, indices_to_plot(i)] = min(abs(initial_distance_from_oscillation_output_x_fft - target_distances(i)));
+        [~, indices_to_plot(i)] = min(abs(x0 - target_distances(i)));
     end
 
     % Calculate the maximum y-axis value for consistent scaling
@@ -296,13 +296,13 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
         % Plot x position
         position_particles_x = x_all;
         plot(time_vector, position_particles_x(index_particle_to_plot, :) - mean(position_particles_x(index_particle_to_plot, :)), ...
-            'DisplayName', sprintf('Distance = %.3f (x)', initial_distance_from_oscillation_output_x_fft(index_particle_to_plot)));
+            'DisplayName', sprintf('Distance = %.3f (x)', x0(index_particle_to_plot)));
         hold on;
         
         % Plot y position
         position_particles_y = y_all;
         plot(time_vector, position_particles_y(index_particle_to_plot, :) - mean(position_particles_y(index_particle_to_plot, :)), ...
-            'DisplayName', sprintf('Distance = %.3f (y)', initial_distance_from_oscillation_output_x_fft(index_particle_to_plot)));
+            'DisplayName', sprintf('Distance = %.3f (y)', x0(index_particle_to_plot)));
         
         % Set consistent y-axis limits
         ylim([-max_y_value, max_y_value]);
