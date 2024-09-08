@@ -220,7 +220,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     amplitude_vector_x = amplitude_vector;
     cleaned_particle_index_x = cleaned_particle_index;
     
-    % process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
+    process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Y Direction Post Processing
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,7 +265,8 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Vector of target initial distances
-    target_distances = [23.42133, 158.525, 259.472, 404.754]; % Example values
+    % target_distances = [11.2249, 62.3078, 128.511, 199.605]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .001, 5, 1)
+    target_distances = [21.5772, 221.969, 399.241, 599.475]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .1, 5, 1)
 
     % Find the indices of the particles closest to the target distances
     indices_to_plot = zeros(1, length(target_distances)); % Preallocate an array to store the indices
@@ -302,7 +303,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
         % Plot y position
         position_particles_y = y_all;
         plot(time_vector, position_particles_y(index_particle_to_plot, :) - mean(position_particles_y(index_particle_to_plot, :)), ...
-            'DisplayName', sprintf('Distance = %.3f (y)', x0(index_particle_to_plot)));
+            'DisplayName', sprintf('(y)'));
         
         % Set consistent y-axis limits
         ylim([-max_y_value, max_y_value]);
