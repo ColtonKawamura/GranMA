@@ -15,8 +15,8 @@ function process_gm_fft_freq_density(time_vector, index_particles, index_oscilla
     % Note:     This is very computationally expensive. Change iskip, frequency_cutoff, and position_cutoff as needed
 
 iskip = 1;
-frequency_cutoff = 4;  % Define the frequency cutoff (upper limit)
-position_cutoff = 60; % Distance cutoff (upper limit)
+frequency_cutoff = .8;  % Define the frequency cutoff (upper limit)
+position_cutoff = 250; % Distance from awall cutoff (upper limit)
 
 % Pre Allocate for Speed
 average_dt = mean(diff(time_vector));
