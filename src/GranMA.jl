@@ -13,6 +13,7 @@ using Glob
 using JLD2
 using IterTools
 using Distributed
+using StaticArrays
 
 export  makeJobList2D,
         load_data,
@@ -27,6 +28,16 @@ export  makeJobList2D,
         FilterData,
         para_crunch_and_save,
         para_crunch
+
+struct Pos2D{T} <: FieldVector{2,T}
+    x::T
+    y::T
+end
+
+struct Particle{VecType}
+    position::VecType
+    diameter::Float64
+end
 
 mutable struct file_data
     pressure::Float64
@@ -68,6 +79,23 @@ mutable struct file_data
     timeVec::Vector{Float64}
 end
 
+
+mutable struct raw_data
+    width::Float64
+    pressureActual::Float64
+    dt::Float64
+    trajectory::Vector{Particle}
+    timesteps::Float64
+    mass::Float64
+    amplitude::Float64
+    pressureInput::Float64
+    gamma::Float64
+    omega::Float64
+    seed::Float64
+    kappa::Float64
+    omega_gamma ::Float64
+
+end
 function makeJobList2D(filename::String, K_values::Vector{T1}, M_values::Vector{T2}, Bv_values::Vector{T3}, w_D_values::Vector{T4}, N_values::Vector{T5}, P_values::Vector{T6}, W_values::Vector{T7}, seeds::Vector{T8}) where {T1, T2, T3, T4, T5, T6, T7, T8}
     # makeJobList2D("testfile.txt", [100],[1],exp10.(-5:.2:2),exp10.(-5:.2:2),[10000],[.01,.001],[10,20,50],[1,2,3,4,5])
     # makeJobList2D("simulation_job_list.txt", [100],[1],exp10.(-5:.2:2),exp10.(-5:.2:2),[5000],[0.0001,0.00021544, 0.00046416, 0.001, 0.0021544, 0.0046416, 0.01, 0.021544, 0.046416, 0.1, ],[5],[1,2,3,4,5])    # Convert input vectors to the required types
@@ -501,6 +529,57 @@ function para_crunch_and_save(datapath::String, filepath::String)
     # Load the data back to verify
     reloaded_data = load_data(filepath)
     println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
+end
+
+function paraSimpleCrunch(datapath::String)
+    mat_files = glob("*.mat", datapath)
+    thread_data = [Vector{file_data}() for _ in 1:Threads.nthreads()]
+    
+    Threads.@threads for file_name in mat_files
+        iloop_file_data = matread(file_name)
+
+        # Extract data fields
+        width = iloop_file_data["W"]
+        pressureActual = iloop_file_data["P"]
+        dt = iloop_file_data["dt"]
+        particles = size(iloop_file_data["Pos2D"], 2)  # Extract the number of particles
+        timesteps = Int(iloop_file_data["Nt"])
+        mass = iloop_file_data["M"]
+        amplitude = iloop_file_data["A"]
+        pressureInput = iloop_file_data["input_pressure"]
+        gamma = iloop_file_data["Bv"]
+        omega = iloop_file_data["w_D"]
+        seed = iloop_file_data["seed"]
+        kappa = iloop_file_data["K"]
+        diameters = iloop_file_data["diameters"]
+
+        trajectory = [
+            ([Pos2D(iloop_file_data["Pos2D"][t, p, 1], iloop_file_data["Pos2D"][t, p, 2]) for p in 1:particles], diameters)
+            for t in 1:timesteps
+        ]
+
+        data_entry = raw_data(
+            width,
+            pressureActual,
+            dt,
+            trajectory,
+            timesteps,
+            mass,
+            amplitude,
+            pressureInput,
+            gamma/sqrt(kappa*mass),
+            omega*sqrt(mass/kappa),
+            seed,
+            kappa,
+            gamma/sqrt(kappa*mass) * omega*sqrt(mass/kappa),
+        )
+
+        push!(thread_data[Threads.threadid()], data_entry) # pushes to respective threads
+    end
+
+    # Combine results from all threads
+    simulation_data = vcat(thread_data...)
+    return simulation_data
 end
 
 end
