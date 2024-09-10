@@ -68,10 +68,10 @@ mutable struct file_data
     unwrapped_phase_vector_y::Vector{Float64}
     initial_distance_from_oscillation_output_x_fft::Vector{Float64}
     initial_distance_from_oscillation_output_y_fft::Vector{Float64}
-    # yfft_posY::Vector{Float64}
-    # yfft_posX::Vector{Float64}
-    # yfft_init_posX::Vector{Float64}
-    # yfft_init_posY::Vector{Float64}
+    yfft_posY::Vector{Float64}
+    yfft_posX::Vector{Float64}
+    yfft_init_posX::Vector{Float64}
+    yfft_init_posY::Vector{Float64}
     xfft_posY::Vector{Float64}
     xfft_posX::Vector{Float64}
     xfft_init_posX::Vector{Float64}
@@ -503,10 +503,10 @@ function para_crunch(datapath::String)
             unwrapped_phase_vector_y,
             initial_distance_from_oscillation_output_x_fft,
             initial_distance_from_oscillation_output_y_fft,
-            # yfft_posY,
-            # yfft_posX,
-            # yfft_init_posX,
-            # yfft_init_posY,
+            yfft_posY,
+            yfft_posX,
+            yfft_init_posX,
+            yfft_init_posY,
             xfft_posY,
             xfft_posX,
             xfft_init_posX,
