@@ -182,7 +182,8 @@ function simulation_2d_bare(K, M, Bv, w_D, N, P, W, seed)
    % Particle positions are very long...consider skipping every 10? after the simulation? 
    [~, sortIdx] = sort(x_all(:, 1));  % Sort based on the initial x positions (first timestep)
    Pos2D = cat(3, x_all(sortIdx, :).', y_all(sortIdx, :).');
-   save(['out/simulation_2d/K100_bare/' filename_output],'K', 'M', 'Bv', 'w_D', 'input_pressure', 'P', 'W', 'seed', 'dt', 'Nt', 'A','Pos2D' )
+   diameters = Dn(sortIdx)';
+   save(['out/simulation_2d/K100_bare/' filename_output],'K', 'M', 'Bv', 'w_D', 'input_pressure', 'P', 'W', 'seed', 'dt', 'Nt', 'A','Pos2D', 'diameters')
 
     
     
