@@ -12,7 +12,8 @@ using MAT
 using Polynomials
 using LinearAlgebra
 
-simulation_data = load_data("out/processed/2d_bi_K100_W5_everything2.jld2")
+simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
+simulation_data = load_data("out/processed/2d_poly_K100_W10_shortrun.jld2")
 
 # Single Simulation
 function plot_amplitude(filtered_data)
