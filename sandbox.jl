@@ -58,19 +58,6 @@ function plot_phase(filtered_data)
     """
 end
 
-function plot_single_particle(filtered_data)
-    # get the time vector
-    # Getting the x,y position of particle at first 1/4 away from wall, in the middle of the chanel
-    # Same for 2/4 away from wall relative to fft
-    # Same for 3/4 away from wall
-    # Same for 4/4 away from wall
-
-    # Do tiled plot of them
-
-
-end
-
-
 # Ellipse
 
 function plot_ellipse_width_effect(ω_value, γ_value, pressure_value)
