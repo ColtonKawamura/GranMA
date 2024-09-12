@@ -585,7 +585,7 @@ function plot_ωγ_attenuation_2d(gamma_value; plot=true, simulation_data=simula
     plot_gamma = gamma_value
 
     # Get a list of unique input pressures
-    pressure_list = unique([entry.pressure for entry in matching_gamma_data]) # goes through each entry of simulation_data and get the P value at that entry
+    pressure_list = sort(unique([entry.pressure for entry in matching_gamma_data])) # goes through each entry of simulation_data and get the P value at that entry
     plot_pressure = pressure_list
 
     # Define the plot limits to match the 1D theory plot curves
