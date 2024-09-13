@@ -33,3 +33,19 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     """
 end
+
+function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
+    mat"""
+    addpath('src/matlab_functions/')
+    K = double($(K))
+    M = double($(M))
+    Bv = double($(Bv))
+    w_D = double($(w_D))
+    N =double($(N))
+    P = double($(P))
+    G = double($(G))
+    W = double($(W))
+    seed = double($(seed))
+    simulation2dPoly(K, M, Bv, w_D, N, P, W, seed)
+    """
+end
