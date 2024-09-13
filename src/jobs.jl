@@ -31,3 +31,32 @@ function makeJobList2D(filename::String, K_values::Vector{T1}, M_values::Vector{
 
     println("Commands written to $filename")
 end
+
+
+function makePackingList2D(filename::String, N_values::Vector{T1}, K_values::Vector{T2}, D_values::Vector{T3}, G_values::Vector{T4}, M_values::Vector{T5}, P_values::Vector{T6}, W_values::Vector{T7}, seeds::Vector{T8}) where {T1, T2, T3, T4, T5, T6, T7, T8}
+    # Convert all the values to their respective types
+    K_values = Int64.(K_values)
+    M_values = Int64.(M_values)
+    N_values = Float64.(N_values)
+    P_values = Float64.(P_values)
+    W_values = Int64.(W_values)
+    seeds = Int64.(seeds)
+
+    # Helper function to generate MATLAB command
+    function generate_matlab_command(N, K, D, G, M, P_target, W_factor, seed)
+        return "matlab -nodisplay -nosplash -r \"addpath('./src/matlab_functions/'); packing_poly_2d($N, $K, $D, $G, $M, $P_target, $W_factor, $seed, false); exit\""
+    end
+
+    # Generate all combinations of parameters using IterTools.product
+    combinations = IterTools.product(N_values, K_values, D_values, G_values, M_values, P_values, W_values, seeds)
+
+    # Open a file to write the MATLAB commands
+    open(filename, "w") do file
+        for combo in combinations
+            command = generate_matlab_command(combo...)
+            println(file, command)
+        end
+    end
+
+    println("Commands written to $filename")
+end

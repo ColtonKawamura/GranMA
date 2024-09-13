@@ -24,6 +24,10 @@ function plot_amplitude(filtered_data)
     scatter($(x), $(y))
     set(gca, 'YScale', 'log')
     grid on
+    xlabel("Distance from Oscillation", "Interpreter", 'latex', "FontSize", 15)
+    ylabel("\$ A_\\parallel \$", "Interpreter", 'latex', "FontSize", 15)
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    box on
     """
     x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
     y = filtered_data[1].amplitude_vector_y
@@ -561,7 +565,7 @@ function plot_γ_attenuation_2d(ω_value; plot=true, simulation_data=simulation_
     end
 end
 
-function plot_ωγ_attenuation_2d(gamma_value; plot=true, simulation_data=simulation_data)  # Need to fix the legend
+function plot_ωγ_attenuation_2d(gamma_value, mean_diameter; plot=true, simulation_data=simulation_data)  # Need to fix the legend
     # Initialize outputs
     matching_omega_gamma_list = []
     loop_mean_attenuation_list = []
@@ -626,7 +630,7 @@ function plot_ωγ_attenuation_2d(gamma_value; plot=true, simulation_data=simula
             matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
 
             # Get the mean over all seeds
-            loop_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+            loop_mean_alphaoveromega = mean_diameter .* mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
 
             # Append values
             push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
