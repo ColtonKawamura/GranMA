@@ -15,15 +15,21 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     
     % % Script Variables for debugging
-    % K = 100;
-    % M = 1;
-    % Bv = .1;
-    % w_D = 0.36; % 
-    % N = 5000;
-    % P = 0.001; % 0.021544 0.046416
-    % W = 5;
-    % seed = 1;
-    
+    K = 100;
+    M = 1;
+    Bv = .5;
+    w_D = .36; % 
+    N = 5000;
+    P = 0.001; % 0.021544 0.046416
+    W = 5;
+    seed = 1;
+    %% Set up Gaussian Envelope for Pulse
+    tau = 1/(w_D/(2*pi) )* 1; % ten cycles long, was 5
+    sigma = tau  / sqrt(2*log(2)); % spread of the pulse
+    % t_max = 4*tau; % time when the center of the pulse occurs
+    t_max = 0*tau; % start a maximum then die off
+
+    f = @(t,tmax,sigma) exp(-(t-tmax).^2./(sigma.^2)); %create gaussian envelope for pulse
     
     % Create the packing name with the exact number format for P
     packing_name = sprintf('2D_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
@@ -113,7 +119,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
         x  =  x+vx*dt+ax_old.*dt.^2/2;
         y  =  y+vy*dt+ay_old.*dt.^2/2;
     
-        x(left_wall_list) = x0(left_wall_list)+A*sin(w_D*dt*nt);
+        x(left_wall_list) = x0(left_wall_list)+A*cos(w_D*((nt)*dt-t_max))*f(nt*dt,t_max,sigma);
         y(left_wall_list) = y0(left_wall_list);
         x(right_wall_list) = x0(right_wall_list);
         y(right_wall_list) = y0(right_wall_list);
@@ -220,7 +226,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     amplitude_vector_x = amplitude_vector;
     cleaned_particle_index_x = cleaned_particle_index;
     
-    % process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
+    process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Y Direction Post Processing
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,7 +272,8 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Vector of target initial distances
     % target_distances = [11.2249, 62.3078, 128.511, 199.605]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .001, 5, 1)
-    target_distances = [21.5772, 221.969, 399.241, 599.475]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .1, 5, 1)
+    % target_distances = [21.5772, 221.969, 399.241, 599.475]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .1, 5, 1)
+    target_distances = [21.5772, 30, 40, 50]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .1, 5, 1)
 
     % Find the indices of the particles closest to the target distances
     indices_to_plot = zeros(1, length(target_distances)); % Preallocate an array to store the indices
