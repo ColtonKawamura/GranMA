@@ -11,7 +11,7 @@ function packing_poly_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
 %% Set up section
 rng(seed)
 
-filename = ['in/2D_poly_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
+filename = ['in/2D_poly_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor)'_G' num2str(G) '_Seed' num2str(seed) '.mat'];
 if exist(filename)
     return
 end
@@ -25,7 +25,7 @@ T = 1; % temperature factor
 Dn=rand(1,N); %randomize diameter
 [~, i]=sort(Dn);
 for k=1:N
-    Dn(i(k))=D+G*Dn(i(k)); %starting with the smallest diameter of Small particles, assign a diamter that between D and D+G
+    Dn(i(k))=D-G/2 + G*Dn(i(k)); %starting with the smallest diameter of Small particles, assign a diamter that between D and D+G
 end
 
 %% Physical Parameters
