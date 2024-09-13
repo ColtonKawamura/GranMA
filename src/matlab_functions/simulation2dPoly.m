@@ -1,4 +1,4 @@
-function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
+function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
     %% Molecular Dynamics Simulator (Adapted from Mark D. Shattuck, CCNY)
     % Example command: simulation_2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1)
     
@@ -26,7 +26,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     
     % Create the packing name with the exact number format for P
-    packing_name = sprintf('2D_poly_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
+    packing_name = sprintf('2D_poly_N%d_P%s_Width%d_G_Seed%d', N, num2str(P), W, G, seed);
     
     % Create the filename
     % filename_output = sprintf('%s_K%d_Bv%d_wD%d_M%d.mat', packing_name, K, Bv, w_D, M);
