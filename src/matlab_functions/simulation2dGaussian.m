@@ -18,16 +18,17 @@
     K = 100;
     M = 1;
     Bv = 0;
-    w_D = .3 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+    w_D = 1 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
     N = 5000;
     P = 0.001; % 0.021544 0.046416
     W = 5;
     seed = 1;
 
-    save_interval = 10;
-    xOut = [];
-    yOut = [];
-    timeVector = [];
+    % save_interval = 10;
+    % xOut = [];
+    % yOut = [];
+    % timeVector = [];
+    nt_out = [];
 
 
     % Set up Gaussian Envelope for Pulse
@@ -63,7 +64,7 @@
     dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
     % Nt = round(.9.*(Lx ./ c_0)./(dt));
-    Nt = 300000;
+    Nt = 30000;
     ax_old = 0*x;
     ay_old = 0*y;
     vx = 0*x;
@@ -126,7 +127,7 @@
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% Debug Plotting %%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        [breakOut, outAmp, outXinit]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx);
+        [breakOut, outAmp, outXinit, nt_out]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
         if breakOut
             break;
         end
@@ -206,11 +207,12 @@
         ax_old = ax;
         ay_old = ay;
         
-        if mod(nt, save_interval) == 0
-            xOut = [xOut, x'];
-            yOut = [yOut, y'];
-            timeVector = [timeVector, nt*dt];
-        end
+        % This is for exporting time-space vectors
+        % if mod(nt, save_interval) == 0
+        %     xOut = [xOut, x'];
+        %     yOut = [yOut, y'];
+        %     timeVector = [timeVector, nt*dt];
+        % end
 
     end
     
@@ -231,9 +233,18 @@
     % xOut = xOut(sortIdx, :);
     % yOut = yOut(sortIdx, :);
     meanDiameter = mean(Dn);
-    figure
-    semilogy(outXinit, outAmp, 'o')
-    slope =  getAttenuation(outXinit, outAmp)
-     % Save the file
-     save(['out/simulation_2d/' filename_output],  'xOut', 'yOut', 'Dn', 'timeVector', 'tau', 'w_D', 'Bv', 'K', 'M', 'P', 'W', 'seed', 'P_target')
+    attenuation =  getSlopeLog(outXinit, outAmp)
+    wavespeed = getSlope(nt_out, outXinit)
+
+    mass = M;
+    spring_constant = K;
+    omega = w_D * sqrt(mass / spring_constant );
+    gamma = Bv / sqrt(spring_constant * mass)
+    attenuation = - meanDiameter * attenuation;
+    width = W;
+    pressure = P_target;
+    pressure_actual = P;
+
+
+     save(['out/simulation_2d/' filename_output], 'meanDiameter', 'tau', 'omega', 'gamma', 'spring_constant', 'mass', 'pressure', 'width', 'seed', 'pressure_actual', 'attenuation')
 
