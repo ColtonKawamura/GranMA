@@ -18,7 +18,7 @@
     K = 100;
     M = 1;
     Bv = 0;
-    w_D = .3 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+    w_D = 1 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
     N = 5000;
     P = 0.001; % 0.021544 0.046416
     W = 5;
@@ -63,7 +63,7 @@
     dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
     % Nt = round(.9.*(Lx ./ c_0)./(dt));
-    Nt = 35000;
+    Nt = 10000;
     ax_old = 0*x;
     ay_old = 0*y;
     vx = 0*x;
@@ -126,50 +126,9 @@
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% Debug Plotting %%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        % if mod(nt,100)==0
-        %     smoothAmp = smooth(x(idx) - x0(idx), 150, 'sgolay');
-        %     minPeakWidth = 1/w_D * .6;
-        %     [pks,locs]=findpeaks(smoothAmp, "MinPeakWidth", minPeakWidth);
-        %     valid_peaks_idx = find(pks > A * 0.2);
-        %     [~, first_peak_idx] = max(locs(valid_peaks_idx));  % find the first peak thats greater than 1/2 amp
-        %     firstPeak = pks(valid_peaks_idx(first_peak_idx)); % value of the first peak, store in vector 
-        %     peak_index = locs(valid_peaks_idx(first_peak_idx));
-        %     if ~isempty(valid_peaks_idx)
-        %         % plot(x0(idx), x(idx) - x0(idx), '.', x0(idx), smoothAmp, 'r-', x0(idx(peak_index)), x(idx(peak_index)) - x0(idx(peak_index)), 'o', 'MarkerFaceColor', 'r')
-        %         plot(x0(idx), x(idx) - x0(idx), '.', x0(idx), smoothAmp, 'r-', x0(idx(peak_index)), firstPeak, 'o', 'MarkerFaceColor', 'r')
-        %         ylim(1.2*[-A,A])
-        %         outAmp = [outAmp, firstPeak];
-        %         outXinit = [outXinit, x0(idx(peak_index))];
-        %     end
-        %     drawnow
-        % end
-        % if mod(nt,10)==0
-        %     smoothAmp = smooth(x(idx) - x0(idx), 150, 'sgolay');
-        %     minPeakWidth = 1/w_D * .6;
-        %     [pks,locs]=findpeaks(smoothAmp, "MinPeakWidth", minPeakWidth);
-        %     valid_peaks_idx = find(pks > A * 0.1);
-        %     if ~isempty(valid_peaks_idx) && length(valid_peaks_idx) >2
-        %         second_peak_idx = valid_peaks_idx(end-1);
-        %         second_peak_Amp = pks(second_peak_idx);
-        %         second_peak_xInit = x0(idx(locs(second_peak_idx)));
-        %         % plot(x0(idx), x(idx) - x0(idx), '.', x0(idx), smoothAmp, 'r-', x0(idx(peak_index)), x(idx(peak_index)) - x0(idx(peak_index)), 'o', 'MarkerFaceColor', 'r')
-        %         plot(x0(idx), x(idx) - x0(idx), '.', x0(idx), smoothAmp, 'r-', second_peak_xInit, second_peak_Amp, 'o', 'MarkerFaceColor', 'r')
-        %         ylim(1.2*[-A,A])
-        %         outAmp = [outAmp, second_peak_Amp];
-        %         outXinit = [outXinit, second_peak_xInit];
-        %         if second_peak_Amp < outAmp(1) * .7
-        %             display("peak dropped")
-        %             break
-        %         end
-        %     end
-        %     drawnow
-        % end
         [breakOut, outAmp, outXinit]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit);
-        % outAmp = [outAmp, second_peak_Amp];
-        % outXinit = [outXinit, second_peak_xInit];
         if breakOut
-            break; % Break the loop if shouldBreak is true
+            break;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% First step in Verlet integration %%%%%
@@ -274,65 +233,7 @@
     meanDiameter = mean(Dn);
     figure
     semilogy(outXinit, outAmp, 'o')
-
+    [slope_lower, slope_upper] = getAttenuation(outXinit, outAmp)
      % Save the file
      save(['out/simulation_2d/' filename_output],  'xOut', 'yOut', 'Dn', 'timeVector', 'tau', 'w_D', 'Bv', 'K', 'M', 'P', 'W', 'seed', 'P_target')
 
-
-    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % % % Figure of one particle's motion, just for poster purposes
-    % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % % Vector of target initial distances
-    % % target_distances = [11.2249, 62.3078, 128.511, 199.605]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .001, 5, 1)
-    % % target_distances = [21.5772, 221.969, 399.241, 599.475]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .1, 5, 1)
-    % target_distances = [25, 125, 225, 325]; %  simulation_2d(100, 1, .0000000001, 1, 5000, .1, 5, 1)
-
-    % % Find the indices of the particles closest to the target distances
-    % indices_to_plot = zeros(1, length(target_distances)); % Preallocate an array to store the indices
-    % for i = 1:length(target_distances)
-    %     [~, indices_to_plot(i)] = min(abs(x0 - target_distances(i)));
-    % end
-
-    % % Calculate the maximum y-axis value for consistent scaling
-    % max_y_value = 0; % Initialize
-    % for i = 1:length(indices_to_plot)
-    %     index_particle_to_plot = indices_to_plot(i);
-        
-    %     % Get max values for x and y positions
-    %     max_y_value = max(max_y_value, max(abs(x_all(index_particle_to_plot, :) - mean(x_all(index_particle_to_plot, :)))));
-    %     max_y_value = max(max_y_value, max(abs(y_all(index_particle_to_plot, :) - mean(y_all(index_particle_to_plot, :)))));
-    % end
-
-    % % Set up tiled layout for the plots
-    % tiledlayout(length(target_distances),1); % Create tiled layout with rows equal to the number of target distances
-
-    % % Loop over each selected particle to plot its position over time in separate tiles
-    % for i = 1:length(indices_to_plot)
-    %     index_particle_to_plot = indices_to_plot(i);
-        
-    %     % Create a tile for each particle
-    %     nexttile;
-        
-    %     % Plot x position
-    %     position_particles_x = x_all;
-    %     plot(time_vector, position_particles_x(index_particle_to_plot, :) - mean(position_particles_x(index_particle_to_plot, :)), ...
-    %         'DisplayName', sprintf('Distance = %.3f (x)', x0(index_particle_to_plot)));
-    %     hold on;
-        
-    %     % Plot y position
-    %     position_particles_y = y_all;
-    %     plot(time_vector, position_particles_y(index_particle_to_plot, :) - mean(position_particles_y(index_particle_to_plot, :)), ...
-    %         'DisplayName', sprintf('(y)'));
-        
-    %     % Set consistent y-axis limits
-    %     ylim([-max_y_value, max_y_value]);
-        
-    %     % Box, labels, and legends for each tile
-    %     box on;
-    %     xlabel('Time (s)', 'Interpreter', 'latex');
-    %     ylabel('Position', 'Interpreter', 'latex');
-    %     legend show;
-        
-    %     hold off;
-    % end
-    

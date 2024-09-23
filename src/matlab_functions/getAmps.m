@@ -15,7 +15,7 @@ function [breakOut, outAmp, outXinit] = getAmps(nt, x, x0, idx, w_D, A, outAmp, 
             ylim(1.2*[-A,A])
             outAmp = [outAmp, second_peak_Amp];
             outXinit = [outXinit, second_peak_xInit];
-            if second_peak_Amp < outAmp(1) * .5 % stop sim once 2nd peak amp is some percent of inital amp, .5 works well for low freq, but used .7 for others
+            if second_peak_Amp < outAmp(1) * .7 % stop sim once 2nd peak amp is some percent of inital amp, .5 works well for low freq, but used .7 for others
                 display("peak dropped")
                 breakOut = true;
                 return
