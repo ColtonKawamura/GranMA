@@ -18,7 +18,7 @@
     K = 100;
     M = 1;
     Bv = 0;
-    w_D = .2; % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+    w_D = .3 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
     N = 5000;
     P = 0.001; % 0.021544 0.046416
     W = 5;
@@ -63,7 +63,7 @@
     dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
     % Nt = round(.9.*(Lx ./ c_0)./(dt));
-    Nt = 10000;
+    Nt = 25000;
     ax_old = 0*x;
     ay_old = 0*y;
     vx = 0*x;
