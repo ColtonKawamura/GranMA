@@ -1,4 +1,4 @@
-function [breakOut, outAmp, outXinit] = getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx)
+function [breakOut, outAmp, outXinit, nt_out] = getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out)
     breakOut = false;
     if mod(nt,10)==0
 
@@ -9,22 +9,26 @@ function [breakOut, outAmp, outXinit] = getAmps(nt, x, x0, idx, w_D, A, outAmp, 
         if ~isempty(valid_peaks_idx) && length(valid_peaks_idx) > 2
             second_peak_idx = valid_peaks_idx(end-2); % this is the third peak
             second_peak_Amp = pks(second_peak_idx);
-
             second_peak_xInit = x0(idx(locs(second_peak_idx)));
+
+            % Prevent from jumping to peak bheind
             if length(outXinit) > 1 && second_peak_xInit < outXinit(end-1) 
                 return
             end
 
+            % Prevent from hitting back wall
             if second_peak_xInit > .8 * Lx 
-                return
+                display("peak hit .8 wall")
+                breakOut = true;
             end
 
-
-            % plot(x0(idx), x(idx) - x0(idx), '.', x0(idx), smoothAmp, 'r-', x0(idx(peak_index)), x(idx(peak_index)) - x0(idx(peak_index)), 'o', 'MarkerFaceColor', 'r')
             plot(x0(idx), x(idx) - x0(idx), '.', x0(idx), smoothAmp, 'r-', second_peak_xInit, second_peak_Amp, 'o', 'MarkerFaceColor', 'r')
             ylim(1.2*[-A,A])
             outAmp = [outAmp, second_peak_Amp];
             outXinit = [outXinit, second_peak_xInit];
+            nt_out = [nt_out, nt];
+
+            % Stop once peak has attenuated past threshold, prevents from jumping, need to see if I need this anymore due to previous ones.
             if second_peak_Amp < outAmp(1) * .7 % stop sim once 2nd peak amp is some percent of inital amp, .5 works well for low freq, but used .7 for others
                 display("peak dropped")
                 breakOut = true;
