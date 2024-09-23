@@ -63,7 +63,7 @@
     dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
     % Nt = round(.9.*(Lx ./ c_0)./(dt));
-    Nt = 25000;
+    Nt = 35000;
     ax_old = 0*x;
     ay_old = 0*y;
     vx = 0*x;
