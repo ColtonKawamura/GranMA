@@ -12,7 +12,12 @@ function [breakOut, outAmp, outXinit, nt_out] = getAmps(nt, x, x0, idx, w_D, A, 
             second_peak_xInit = x0(idx(locs(second_peak_idx)));
 
             % Prevent from jumping to peak bheind
-            if length(outXinit) > 1 && second_peak_xInit < outXinit(end-1) 
+            % if length(outXinit) > 1 && second_peak_xInit < outXinit(end-1) 
+            %     return
+            % end
+
+            % Prevent from jumping ahead (or behind, got a lot going one)
+            if length(outXinit) > 1 && second_peak_Amp > mean(outAmp)
                 return
             end
 

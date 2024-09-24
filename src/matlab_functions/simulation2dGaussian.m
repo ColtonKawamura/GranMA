@@ -1,4 +1,4 @@
-% function simulation2dGausian(K, M, Bv, w_D, N, P, W, seed)
+function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     %% Molecular Dynamics Simulator (Adapted from Mark D. Shattuck, CCNY)
     % Example command: simulation_2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1)
     
@@ -15,14 +15,14 @@
     addpath('./src/matlab_functions') 
     
     % % Script Variables for debugging
-    K = 100;
-    M = 1;
-    Bv = 0;
-    w_D = 1 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
-    N = 5000;
-    P = 0.001; % 0.021544 0.046416
-    W = 5;
-    seed = 1;
+    % K = 100;
+    % M = 1;
+    % Bv = 0;
+    % w_D = .2 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+    % N = 5000;
+    % P = 0.001; % 0.021544 0.046416
+    % W = 5;
+    % seed = 1;
 
     % save_interval = 10;
     % xOut = [];
@@ -128,6 +128,10 @@
         %%%%% Debug Plotting %%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         [breakOut, outAmp, outXinit, nt_out]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
+        if x(idx(end))-x0_sorted(end) > A * .1
+            display("wave reached back wall")
+            breakout = true;
+        end
         if breakOut
             break;
         end
@@ -228,7 +232,7 @@
     % Dn = Dn';
 
     % Sorting based on the initial x positions (first column of xOut)
-    [~, sortIdx] = sort(xOut(:, 1));  % Get the sorting indices based on initial x positions
+    % [~, sortIdx] = sort(xOut(:, 1));  % Get the sorting indices based on initial x positions
 
     % xOut = xOut(sortIdx, :);
     % yOut = yOut(sortIdx, :);
@@ -239,7 +243,7 @@
     mass = M;
     spring_constant = K;
     omega = w_D * sqrt(mass / spring_constant );
-    gamma = Bv / sqrt(spring_constant * mass)
+    gamma = Bv / sqrt(spring_constant * mass);
     attenuation = - meanDiameter * attenuation;
     width = W;
     pressure = P_target;
