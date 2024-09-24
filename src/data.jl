@@ -8,8 +8,22 @@ export
     para_crunch,
     para_crunch_and_save,
     paraSimpleCrunch,
-    crunchGausData
+    crunchGausData,
+    saveGausData,
+    loadGausData
 
+function loadGausData(filepath::String)::Vector{gaus_data}
+    # filename = "out/processed/name_without_extension
+    filepath
+    @load filepath simulation_data
+    return simulation_data
+end
+
+function saveGausData(simulation_data::Vector{gaus_data}, filepath::String)
+     # filepath = "out/processed/name_without_extension
+    @save filepath simulation_data
+    println("Data saved to $filepath")
+end
 function crunchGausData(simulation_data::Vector{gaus_data}, datapath::String, filepath::String)
     mat_files = glob("*.mat", datapath)
 
@@ -31,15 +45,7 @@ function crunchGausData(simulation_data::Vector{gaus_data}, datapath::String, fi
         # Add data to the simulation_data vector as gaus_data struct
         push!(simulation_data, gaus_data(meanDiameter, omega, gamma, spring_constant, mass, pressure, width, seed, pressure_actual, attenuation))
     end
-
-    # Save the simulation data vector to the specified filepath
-    open(filepath, "w") do io
-        for data in simulation_data
-            write(io, string(data.mean_diamter, " ", data.omega, " ", data.gamma, " ", data.spring_constant, " ", 
-                                data.mass, " ", data.pressure, " ", data.width, " ", data.seed, " ", 
-                                data.pressure_actual, " ", data.attenuation, "\n"))
-        end
-    end
+    return simulation_data
 end
 
 
