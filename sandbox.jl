@@ -730,8 +730,8 @@ function plotGausAttenuation2d(simulation_data; plot=true)
             matching_omega_data = filter(entry -> entry.omega == omega_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
 
             # Get the mean over all seeds
-            loop_mean_alphaoveromega = matching_omega_data[1].mean_diamter .* mean(entry.attenuation for entry in matching_omega_data) ./ omega_value
-            loop_std_alphaoveromega = matching_omega_data[1].mean_diamter .* std(entry.attenuation for entry in matching_omega_data) ./ omega_value
+            loop_mean_alphaoveromega = mean(entry.attenuation for entry in matching_omega_data) ./ omega_value
+            loop_std_alphaoveromega =  std(entry.attenuation for entry in matching_omega_data) ./ omega_value
             push!(loop_std_attenuation_list, loop_std_alphaoveromega)
 
             # Append values
