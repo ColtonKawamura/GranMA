@@ -11,8 +11,7 @@ export
     crunchGausData,
     saveGausData,
     loadGausData,
-    crunchNSaveGaus,
-
+    crunchNSaveGaus
 
 function crunchNSaveGaus(datapath::String, filepath::String)
     simulation_data = crunchGausData(datapath)
