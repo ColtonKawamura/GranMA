@@ -237,8 +237,8 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % xOut = xOut(sortIdx, :);
     % yOut = yOut(sortIdx, :);
     meanDiameter = mean(Dn);
-    attenuation =  getSlopeLog(outXinit, outAmp)
-    wavespeed = getSlope(nt_out, outXinit)
+    attenuation =  getSlopeLog(outXinit, outAmp);
+    wavespeed = getSlope(nt_out, outXinit);
 
     mass = M;
     spring_constant = K;
