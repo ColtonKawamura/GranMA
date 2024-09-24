@@ -238,13 +238,13 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % yOut = yOut(sortIdx, :);
     meanDiameter = mean(Dn);
     attenuation =  getSlopeLog(outXinit, outAmp);
-    wavespeed = getSlope(nt_out, outXinit);
+    wavespeed = getSlope(nt_out, outXinit)
 
     mass = M;
     spring_constant = K;
     omega = w_D * sqrt(mass / spring_constant );
     gamma = Bv / sqrt(spring_constant * mass);
-    attenuation = - meanDiameter * attenuation;
+    attenuation = - meanDiameter * attenuation
     width = W;
     pressure = P_target;
     pressure_actual = P;

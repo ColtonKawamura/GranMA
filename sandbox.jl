@@ -14,7 +14,7 @@ using LinearAlgebra
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 simulation_data = load_data("out/processed/2d_poly_K100_W10_shortrun.jld2")
-
+gaus_data = loadGausData("out/processed/gaus_no_gamma.jld2")
 
 # Single Simulation
 function plot_amplitude(filtered_data)
