@@ -250,5 +250,5 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     pressure_actual = P;
 
 
-     save(['out/simulation_2d/' filename_output], 'meanDiameter', 'tau', 'omega', 'gamma', 'spring_constant', 'mass', 'pressure', 'width', 'seed', 'pressure_actual', 'attenuation')
+     save(['out/simulation_2d/gaus2' filename_output], 'meanDiameter', 'tau', 'omega', 'gamma', 'spring_constant', 'mass', 'pressure', 'width', 'seed', 'pressure_actual', 'attenuation')
 
