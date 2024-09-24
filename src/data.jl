@@ -15,11 +15,11 @@ export
 
 
 function crunchNSaveGaus(datapath::String, filepath::String)
-    simulation_data = crunch(datapath)
-    save_data(simulation_data, filepath)
+    simulation_data = crunchGausData(datapath)
+    saveGausData(simulation_data, filepath)
     
     # Load the data back to verify
-    reloaded_data = load_data(filepath)
+    reloaded_data = loadGausData(filepath)
     println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
 end
 
