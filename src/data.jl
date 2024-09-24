@@ -34,9 +34,9 @@ function saveGausData(simulation_data::Vector{gaus_data}, filepath::String)
     @save filepath simulation_data
     println("Data saved to $filepath")
 end
-function crunchGausData(simulation_data::Vector{gaus_data}, datapath::String, filepath::String)
+function crunchGausData(datapath::String)
     mat_files = glob("*.mat", datapath)
-
+    simulation_data = gaus_data[]
     for file_name in mat_files
         iloop_file_data = matread(file_name)
         
