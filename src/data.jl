@@ -10,7 +10,18 @@ export
     paraSimpleCrunch,
     crunchGausData,
     saveGausData,
-    loadGausData
+    loadGausData,
+    crunchNSaveGaus,
+
+
+function crunchNSaveGaus(datapath::String, filepath::String)
+    simulation_data = crunch(datapath)
+    save_data(simulation_data, filepath)
+    
+    # Load the data back to verify
+    reloaded_data = load_data(filepath)
+    println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
+end
 
 function loadGausData(filepath::String)::Vector{gaus_data}
     # filename = "out/processed/name_without_extension
