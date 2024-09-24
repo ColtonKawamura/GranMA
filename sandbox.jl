@@ -719,6 +719,7 @@ function plotGausAttenuation2d(simulation_data; plot=true)
 
         # Initizalized vectors for just this pressure
         loop_mean_attenuation_list = Float64[];
+        loop_std_attenuation_list = Float64[]
 
         # Look at a single omega gamma value since each one spans all seeds
         matching_omega_list = sort(unique([entry.omega for entry in matching_pressure_data]))
@@ -730,6 +731,8 @@ function plotGausAttenuation2d(simulation_data; plot=true)
 
             # Get the mean over all seeds
             loop_mean_alphaoveromega = matching_omega_data[1].mean_diamter .* mean(entry.attenuation for entry in matching_omega_data) ./ omega_value
+            loop_std_alphaoveromega = matching_omega_data[1].mean_diamter .* std(entry.attenuation for entry in matching_omega_data) ./ omega_value
+            push!(loop_std_attenuation_list, loop_std_alphaoveromega)
 
             # Append values
             push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
@@ -749,7 +752,7 @@ function plotGausAttenuation2d(simulation_data; plot=true)
             legend_label = $(legend_label);
             figure(figure_attenuation);
             set(gca, 'Yscale', 'log');
-            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+            errorbar(omega_gamma, mean_attenuation_x, $(loop_std_attenuation_list), '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
             """
         end
     end
