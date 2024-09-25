@@ -14,7 +14,8 @@ using LinearAlgebra
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 simulation_data = load_data("out/processed/2d_poly_K100_W10_shortrun.jld2")
-gaus_data = loadGausData("out/processed/gaus_no_gamma.jld2")
+data_gaus = loadGausData("out/processed/gaus3.jld2")
+data_gaus = filter(x -> x.omega >= 0.03, data_gaus) # This is used for the presentation of the program review 
 
 # Single Simulation
 function plot_amplitude(filtered_data)
@@ -730,7 +731,7 @@ function plotGausAttenuation2d(simulation_data; plot=true)
             matching_omega_data = filter(entry -> entry.omega == omega_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
 
             # Get the mean over all seeds
-            loop_mean_alphaoveromega = mean(entry.attenuation for entry in matching_omega_data) ./ omega_value
+            loop_mean_alphaoveromega = mean(filter(x -> x > 0, [entry.attenuation for entry in matching_omega_data])) ./ omega_value
             loop_std_alphaoveromega =  std(entry.attenuation for entry in matching_omega_data) ./ omega_value
             push!(loop_std_attenuation_list, loop_std_alphaoveromega)
 
