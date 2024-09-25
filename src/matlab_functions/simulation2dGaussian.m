@@ -15,14 +15,14 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     addpath('./src/matlab_functions') 
     
     % % Script Variables for debugging
-     K = 100;
-     M = 1;
-     Bv = 0;
-     w_D = .2 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
-     N = 5000;
-     P = 0.001; % 0.021544 0.046416
-     W = 5;
-     seed = 1;
+    %  K = 100;
+    %  M = 1;
+    %  Bv = 0;
+    %  w_D = .2 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+    %  N = 5000;
+    %  P = 0.001; % 0.021544 0.046416
+    %  W = 5;
+    %  seed = 1;
 
     % save_interval = 10;
     % xOut = [];
