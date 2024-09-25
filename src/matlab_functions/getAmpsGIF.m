@@ -25,6 +25,7 @@ function [breakOut, outAmp, outXinit, nt_out] = getAmpsGIF(nt, x, x0, idx, w_D, 
 
             plot(x0(idx), x(idx) - x0(idx), '.')
             ylim(1.2*[-A,A])
+            grid on
             outAmp = [outAmp, second_peak_Amp];
             outXinit = [outXinit, second_peak_xInit];
             nt_out = [nt_out, nt];

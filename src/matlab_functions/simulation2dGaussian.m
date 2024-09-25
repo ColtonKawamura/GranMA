@@ -128,10 +128,12 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
         %%%%% Debug Plotting %%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         [breakOut, outAmp, outXinit, nt_out]= getAmpsGIF(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
-        if x(idx(end-20))-x0_sorted(end-20) > A * .1
+        
+        if any(x(idx(end-200:end)) - x0_sorted(end-200:end) > A * 0.01)
             display("wave reached back wall")
-            breakout = true;
+            breakOut = true;
         end
+
         if breakOut
             break;
         end
