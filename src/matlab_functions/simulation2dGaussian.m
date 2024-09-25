@@ -15,14 +15,14 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     addpath('./src/matlab_functions') 
     
     % % Script Variables for debugging
-    % K = 100;
-    % M = 1;
-    % Bv = 0;
-    % w_D = .2 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
-    % N = 5000;
-    % P = 0.001; % 0.021544 0.046416
-    % W = 5;
-    % seed = 1;
+     K = 100;
+     M = 1;
+     Bv = 0;
+     w_D = .2 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+     N = 5000;
+     P = 0.001; % 0.021544 0.046416
+     W = 5;
+     seed = 1;
 
     % save_interval = 10;
     % xOut = [];
@@ -127,8 +127,9 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% Debug Plotting %%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        [breakOut, outAmp, outXinit, nt_out]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
-        
+        % [breakOut, outAmp, outXinit, nt_out]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
+        [breakOut, outAmp, outXinit, nt_out]= getAmpsK(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
+
         if any(x(idx(end-200:end)) - x0_sorted(end-200:end) > A * 0.01)
             display("wave reached back wall")
             breakOut = true;
@@ -239,7 +240,9 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % xOut = xOut(sortIdx, :);
     % yOut = yOut(sortIdx, :);
     meanDiameter = mean(Dn);
-    attenuation =  getSlopeLog(outXinit, outAmp);
+    % attenuation =  getSlopeLog(outXinit, outAmp);
+    [slope1, slope2] =  getSlopeK(outXinit, outAmp);
+
     wavespeed = getSlope(nt_out, outXinit)
 
     mass = M;
