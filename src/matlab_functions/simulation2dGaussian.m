@@ -242,7 +242,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     meanDiameter = mean(Dn);
     % attenuation =  getSlopeLog(outXinit, outAmp);
     [slope1, slope2] = getSlopeK(outXinit, outAmp);
-    attenuation = min([slope1, slope2])
+    attenuation = min([abs(slope1), abs(slope2)])
 
     wavespeed = getSlope(nt_out, outXinit)
 
