@@ -14,7 +14,7 @@ using LinearAlgebra
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 simulation_data = load_data("out/processed/2d_poly_K100_W10_shortrun.jld2")
-data_gaus = loadGausData("out/processed/gaus7.jld2")
+data_gaus = loadGausData("out/processed/gaus6.jld2")
 data_gaus = filter(x -> x.omega >= 0.03, data_gaus) # This is used for the presentation of the program review 
 
 # Single Simulation
@@ -694,12 +694,14 @@ function plotGausAttenuation2d(simulation_data; plot=true)
         # Intialized the plots to loop over
         mat"""
         figure_attenuation = figure;
-        loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
+        % loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
+        loglog($(theory_x), $(theory_x) ./ 15, 'k--', 'DisplayName', 'Slope 1');
         hold on;
+        loglog($(theory_x), $(theory_x).^.5, 'k:', 'DisplayName', 'Slope 1/2');
         xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
         ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
-        set(gca, 'XScale', 'log');
         set(get(gca, 'ylabel'), 'rotation', 0);
+        set(gca, 'XScale', 'log');
         grid on;
         box on;
         """
