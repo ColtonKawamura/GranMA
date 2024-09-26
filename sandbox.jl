@@ -711,7 +711,7 @@ function plotGausAttenuation2d(simulation_data; plot=true)
     normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
 
     # Create a line for each omega value across all pressure_list
-    for pressure_value in pressure_list
+    for pressure_value in pressure_list[1:end-2]
 
         # Assign a color
         idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
