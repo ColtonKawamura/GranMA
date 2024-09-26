@@ -127,8 +127,8 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% Debug Plotting %%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % [breakOut, outAmp, outXinit, nt_out]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
-        [breakOut, outAmp, outXinit, nt_out]= getAmpsK(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
+        [breakOut, outAmp, outXinit, nt_out]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
+        % [breakOut, outAmp, outXinit, nt_out]= getAmpsK(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
         % [breakOut, outAmp, outXinit, nt_out]= getAmpsGIF(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
         if any(x(idx(end-200:end)) - x0_sorted(end-200:end) > A * 0.01)
             display("wave reached back wall")
@@ -240,9 +240,9 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % xOut = xOut(sortIdx, :);
     % yOut = yOut(sortIdx, :);
     meanDiameter = mean(Dn);
-    % attenuation =  getSlopeLog(outXinit, outAmp);
-    [slope1, slope2] = getSlopeK(outXinit, outAmp);
-    attenuation = min([abs(slope1), abs(slope2)])
+    attenuation =  getSlopeLog(outXinit, outAmp);
+    % [slope1, slope2] = getSlopeK(outXinit, outAmp);
+    % attenuation = min([abs(slope1), abs(slope2)])
 
     wavespeed = getSlope(nt_out, outXinit)
 
