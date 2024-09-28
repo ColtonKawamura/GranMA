@@ -251,7 +251,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     omega = w_D * sqrt(mass / spring_constant );
     gamma = Bv / sqrt(spring_constant * mass);
     attenuation = - meanDiameter * attenuation
-    width = W;s
+    width = W;
     pressure = P_target;
     pressure_actual = P;
 
