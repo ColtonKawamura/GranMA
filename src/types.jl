@@ -57,4 +57,5 @@ mutable struct gaus_data
     seed::Float64
     pressure_actual::Float64
     attenuation::Float64
+    wavespeed::Float64
 end
