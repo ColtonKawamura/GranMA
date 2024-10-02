@@ -20,3 +20,5 @@ moved_files
 *.txt
 .DS_Store
 *.gif
+fig1.fig
+fig2.fig
