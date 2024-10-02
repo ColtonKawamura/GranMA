@@ -27,7 +27,7 @@ function [breakOut, outAmp, outXinit, nt_out] = getAmpsK(nt, x, x0, idx, w_D, A,
                 breakOut = true;
             end
 
-            plot(x0(idx), x(idx) - x0(idx), '.', x0(idx), smoothAmp, 'r-', second_peak_xInit, second_peak_Amp, 'o', 'MarkerFaceColor', 'r')
+            plot(x0(idx), x(idx) - x0(idx), '.')
             ylim(1.2*[-A,A])
             outAmp = [outAmp, second_peak_Amp];
             outXinit = [outXinit, second_peak_xInit];
