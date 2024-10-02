@@ -756,7 +756,8 @@ function plotGausAttenuation2d(simulation_data; plot=true)
             legend_label = $(legend_label);
             figure(figure_attenuation);
             set(gca, 'Yscale', 'log');
-            errorbar(omega_gamma, mean_attenuation_x, $(loop_std_attenuation_list), '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label)
+            % errorbar(omega_gamma, mean_attenuation_x, $(loop_std_attenuation_list), '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
             """
         end
     end
