@@ -47,7 +47,7 @@ end
 
 
 mutable struct gaus_data
-    mean_diamter::Float64
+    mean_diameter::Float64
     omega::Float64
     gamma::Float64
     spring_constant::Float64
@@ -58,4 +58,5 @@ mutable struct gaus_data
     pressure_actual::Float64
     attenuation::Float64
     wavespeed::Float64
+    wavenumber::Float64
 end
