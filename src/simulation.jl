@@ -1,9 +1,11 @@
 export 
-    pack_poly_2d,
-    simulation_2d
+    packPoly2d,
+    sim2d,
+    sim2dPoly,
+    sim2dGauss
 
     
-function pack_poly_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
+function packPoly2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
     mat"""
     addpath('src/matlab_functions/')
     N =double($(N))
@@ -19,7 +21,7 @@ function pack_poly_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
     """
 end
 
-function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
+function sim2d(K, M, Bv, w_D, N, P, W, seed)
     mat"""
     addpath('src/matlab_functions/')
     K = double($(K))
@@ -34,7 +36,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     """
 end
 
-function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
+function sim2dPoly(K, M, Bv, w_D, N, P, G, W, seed)
     mat"""
     addpath('src/matlab_functions/')
     K = double($(K))
@@ -47,5 +49,20 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
     W = double($(W))
     seed = double($(seed))
     simulation2dPoly(K, M, Bv, w_D, N, P, W, seed)
+    """
+end
+
+function sim2dGauss(K, M, Bv, w_D, N, P, W, seed)
+    mat"""
+    addpath('src/matlab_functions/')
+    K = double($(K))
+    M = double($(M))
+    Bv = double($(Bv))
+    w_D = double($(w_D))
+    N =double($(N))
+    P = double($(P))
+    W = double($(W))
+    seed = double($(seed))
+    simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     """
 end
