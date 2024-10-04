@@ -64,7 +64,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
     % Nt = round(.9.*(Lx ./ c_0)./(dt));
-    Nt = 30000;
+    Nt = 14000;
     ax_old = 0*x;
     ay_old = 0*y;
     vx = 0*x;
