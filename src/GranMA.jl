@@ -19,6 +19,6 @@ include("jobs.jl")
 include("data.jl")
 include("simulation.jl")
 include("types.jl")
-
+include("plotting.jl")
 
 end
