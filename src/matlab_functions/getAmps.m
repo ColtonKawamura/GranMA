@@ -2,8 +2,8 @@ function [breakOut, outAmp, outXinit, nt_out] = getAmps(nt, x, x0, idx, w_D, A, 
     breakOut = false;
     if mod(nt,10)==0
 
-        % smoothAmp = smooth(x(idx) - x0(idx), 150, 'sgolay');
-        smoothAmp = smoothdata(x(idx)- x0(idx), "SamplePoints", x0(idx));
+        smoothAmp = smooth(x(idx) - x0(idx), 150, 'sgolay');
+        % smoothAmp = smoothdata(x(idx)- x0(idx), "SamplePoints", x0(idx));
         minPeakWidth = 1/w_D * .6; % Criteria is at a little more that a half wavelength, some buffer for weird stuff happening
         [pks,locs]=findpeaks(smoothAmp, "MinPeakWidth", minPeakWidth);
         valid_peaks_idx = find(pks > A * 0.1);
