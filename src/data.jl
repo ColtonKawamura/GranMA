@@ -73,9 +73,10 @@ function crunchGausData(datapath::String)
         pressure_actual = iloop_file_data["pressure_actual"]
         attenuation = iloop_file_data["attenuation"]
         wavespeed = iloop_file_data["wavespeed"]
+        wavenumber = iloop_file_data["wavenumber"]
 
         # Add data to the simulation_data vector as gaus_data struct
-        push!(simulation_data, gaus_data(meanDiameter, omega, gamma, spring_constant, mass, pressure, width, seed, pressure_actual, attenuation, wavespeed))
+        push!(simulation_data, gaus_data(meanDiameter, omega, gamma, spring_constant, mass, pressure, width, seed, pressure_actual, attenuation, wavespeed, wavenumber))
     end
     return simulation_data
 end
