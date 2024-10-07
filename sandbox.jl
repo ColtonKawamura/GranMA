@@ -15,7 +15,7 @@ using LinearAlgebra
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 simulation_data = load_data("out/processed/2d_poly_K100_W10_shortrun.jld2")
 data_gaus = loadGausData("out/processed/gausGetAmpsSmoothData.jld2")
-data_gaus = filter(x -> x.omega >= 0.03, data_gaus) # This is used for the presentation of the program review 
+# data_gaus = filter(x -> x.omega >= 0.03, data_gaus) # This is used for the presentation of the program review 
 data_gaus = filter(x -> x.omega <= .11, data_gaus) # This is for the wavespeed plot
 data_gaus = filter(x -> x.pressure != .1 && x.pressure !=  unique([x.pressure for x in data_gaus])[end] , data_gaus) 
 
