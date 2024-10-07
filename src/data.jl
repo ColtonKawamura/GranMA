@@ -62,7 +62,7 @@ function crunchGausData(datapath::String)
         iloop_file_data = matread(file_name)
         
         # Extract data from the .mat file
-        meanDiameter = iloop_file_data["meanDiameter"]
+        mean_diameter = iloop_file_data["meanDiameter"]
         omega = iloop_file_data["omega"]
         gamma = iloop_file_data["gamma"]
         spring_constant = iloop_file_data["spring_constant"]
@@ -77,7 +77,7 @@ function crunchGausData(datapath::String)
         dt = iloop_file_data["dt"]
 
         # Add data to the simulation_data vector as gaus_data struct
-        push!(simulation_data, gaus_data(meanDiameter, omega, gamma, spring_constant, mass, pressure, width, seed, pressure_actual, attenuation, wavespeed, wavenumber, dt))
+        push!(simulation_data, gaus_data(mean_diameter, omega, gamma, spring_constant, mass, pressure, width, seed, pressure_actual, attenuation, wavespeed, wavenumber, dt))
     end
     return simulation_data
 end
