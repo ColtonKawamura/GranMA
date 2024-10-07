@@ -59,4 +59,5 @@ mutable struct gaus_data
     attenuation::Float64
     wavespeed::Float64
     wavenumber::Float64
+    dt::Float64
 end
