@@ -6,7 +6,7 @@ export
 
 function plotGausWavespeed2d(simulation_data; plot=true)  
     loop_mean_wavespeed_list = []
-    dt = 0.0157
+    # dt = 0.0157
 
     # Get a list of unique input pressures
     pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
@@ -106,7 +106,7 @@ end
 
 function plotGausWavenumber(simulation_data; plot=true)
     loop_mean_wavenumber_list = []
-    dt = 0.0157
+    # dt = data_gaus[1].dt
 
     # Get a list of unique input pressures
     pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
@@ -165,7 +165,7 @@ function plotGausWavenumber(simulation_data; plot=true)
             matching_omega_data = filter(entry -> entry.omega == omega_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
 
             # Get the mean over all seeds
-            loop_mean_wavespeed = mean(filter(x -> x > 0, [entry.wavespeed for entry in matching_omega_data])) ./ ( sqrt.(matching_omega_data[1].spring_constant ./ matching_omega_data[1].mass) .* matching_omega_data[1].mean_diameter .* dt)
+            loop_mean_wavespeed = mean(filter(x -> x > 0, [entry.wavespeed for entry in matching_omega_data])) ./ ( sqrt.(matching_omega_data[1].spring_constant ./ matching_omega_data[1].mass) .* matching_omega_data[1].mean_diameter)
             loop_std_wavespeed =  std(entry.wavespeed for entry in matching_omega_data) ./ ( sqrt.(matching_omega_data[1].spring_constant ./ matching_omega_data[1].mass) .* matching_omega_data[1].mean_diameter )
             
             loop_mean_wavenumber = omega_value ./ loop_mean_wavespeed 
@@ -289,7 +289,7 @@ function plotGausAttenuation2d(simulation_data; plot=true)
             legend_label = $(legend_label);
             figure(figure_attenuation);
             set(gca, 'Yscale', 'log');
-            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label)
+            plot(omega_gamma, mean_attenuation_x, '-o', 'Color', marker_color, 'DisplayName', legend_label)
             % errorbar(omega_gamma, mean_attenuation_x, $(loop_std_attenuation_list), '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
             """
         end
