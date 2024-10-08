@@ -246,6 +246,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % attenuation = min([abs(slope1), abs(slope2)])
 
     wavespeed = getSlope(nt_out * dt, outXinit) % particle diamters / time
+ 
 
     mass = M;
     spring_constant = K;
@@ -255,6 +256,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     width = W;
     pressure = P_target;
     pressure_actual = P;
+    wavespeed = wavespeed / (sqrt(spring_constant / mass) * meanDiameter )
     wavenumber = omega / wavespeed;
 
 
