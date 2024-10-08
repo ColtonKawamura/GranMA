@@ -375,6 +375,9 @@ function plotGausAttenuationK2d(simulation_data; plot=true)
 
             # Append values
             push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+
+            # Turn the wavenumber into dimensionless wavenumber
+            wavenumber_value = ( sqrt.(matching_omega_data[1].spring_constant ./ matching_omega_data[1].mass) .* matching_omega_data[1].mean_diameter )
         end
 
 
