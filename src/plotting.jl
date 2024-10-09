@@ -2,7 +2,8 @@ export
     plotGausWavespeed2d,
     plotGausWavenumber,
     plotGausAttenuation2d,
-    plotGausAttenuationK2d
+    plotGausAttenuationK2d,
+    plot_ωγ_attenuation_2d
 
 
 function plotGausWavespeed2d(simulation_data; plot=true)  
@@ -408,4 +409,110 @@ function plotGausAttenuationK2d(simulation_data; plot=true)
         """
     end
     return loop_mean_attenuation_list
+end
+
+
+function plot_ωγ_attenuation_2d(simulation_data, gamma_value, mean_diameter; plot=true)
+    # Initialize outputs
+    matching_omega_gamma_list = []
+    loop_mean_attenuation_list = []
+
+    # filter the data based on those that are close to gamma_value
+    closest_gamma_index = argmin(abs.([idx.gamma for idx in simulation_data] .- gamma_value))
+    closest_gamma_value = simulation_data[closest_gamma_index].gamma
+    matching_gamma_data = filter(entry -> entry.gamma == closest_gamma_value, simulation_data)
+    plot_gamma = gamma_value
+
+    # Get a list of unique input pressures
+    pressure_list = sort(unique([entry.pressure for entry in matching_gamma_data])) # goes through each entry of simulation_data and get the P value at that entry
+    plot_pressure = pressure_list
+
+    # Define the plot limits to match the 1D theory plot curves
+    theory_x = collect(3E-4:1E-5:3)
+    theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
+    # upper_limit_line_x = [1*gamma_value; 1*gamma_value]
+    # upper_limit_line_y = [1E-5; 1]
+    # lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
+    # lower_limit_line_y = [1E-5; 1]
+    # % plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
+    # % plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
+
+    if plot
+        # Intialized the plots to loop over
+        mat"""
+        figure_attenuation = figure;
+        loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
+        hold on;
+        xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+        ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
+        set(gca, 'XScale', 'log');
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        grid on;
+        box on;
+        """
+    end
+
+    # Normalize the gamma values
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Create a line for each gamma value across all pressure_list
+    for pressure_value in pressure_list
+
+        # Assign a color
+        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Only look at data for current pressure value
+        matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_gamma_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+        # Initizalized vectors for just this pressure
+        loop_mean_attenuation_list = Float64[];
+
+        # Look at a single omega gamma value since each one spans all seeds
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
+
+        for omega_gamma_value in matching_omega_gamma_list
+
+            # Only look at data for current pressure value
+            matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+            # Get the mean over all seeds
+            loop_mean_alphaoveromega = mean_diameter .* mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+
+            # Append values
+            push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+        end
+
+        # Filter data to include only points where omega_gamma <= gamma_value
+        valid_indices = matching_omega_gamma_list .<= gamma_value.*2
+        matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
+        loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
+
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        legend_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\gamma} = %.3f\$", pressure_value, gamma_value)
+
+        if plot
+            # Transfer data to MATLAB
+            mat"""
+            omega_gamma = $(matching_omega_gamma_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            plot_gamma = $(plot_gamma);
+            marker_color= $(marker_color);
+            legend_label = $(legend_label);
+            figure(figure_attenuation);
+            set(gca, 'Yscale', 'log');
+            plot(omega_gamma, mean_attenuation_x, '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+            """
+        end
+    end
+    if plot
+        # Add legends to the plots
+        mat"""
+        % Add legends to the MATLAB plots
+        figure(figure_attenuation);
+        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        """
+    end
+    return matching_omega_gamma_list, loop_mean_attenuation_list
 end
