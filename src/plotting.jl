@@ -1,6 +1,6 @@
 export
     plotGausWavespeed2d,
-    plotGausWavenumber,
+    plotGausWavenumber2d,
     plotGausAttenuation2d,
     plotGausAttenuationK2d,
     plot_ωγ_attenuation_2d,
@@ -9,7 +9,8 @@ export
 
 function plotGausWavespeed2d(simulation_data; plot=true)  
     loop_mean_wavespeed_list = []
-    # dt = 0.0157
+    pressure_out = Float64[]
+    wavespeed_out = Float64[]
 
     # Get a list of unique input pressures
     pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
@@ -77,7 +78,15 @@ function plotGausWavespeed2d(simulation_data; plot=true)
             # Append values
             push!(loop_mean_wavespeed_list, loop_mean_wavespeed)
         end
-
+        mean_wavespeed = mean(loop_mean_wavespeed_list)
+        std_wavespeed = std(loop_mean_wavespeed_list)
+        lower_bound = mean_wavespeed - 2 * std_wavespeed
+        upper_bound = mean_wavespeed + 2 * std_wavespeed
+        cleaned_wavespeed = filter(x -> x >= lower_bound && x <= upper_bound, loop_mean_wavespeed_list)
+        mean_cleaned_wavespeed = mean(cleaned_wavespeed)
+        println("$pressure_value")
+        pressure_out = push!(pressure_out, pressure_value)
+        wavespeed_out = push!(wavespeed_out, mean_cleaned_wavespeed)
 
         # This is needed because MATLAB.jl has a hard time escaping \'s
         legend_label = @sprintf("\$ \\hat{P} = %.4f\$", pressure_value)
@@ -105,13 +114,13 @@ function plotGausWavespeed2d(simulation_data; plot=true)
         legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
         """
     end
-    return loop_mean_attenuation_list
+    return pressure_out, wavespeed_out
 end
 
 
-function plotGausWavenumber(simulation_data; plot=true)
+function plotGausWavenumber2d(simulation_data; plot=true)
     loop_mean_wavenumber_list = []
-    # dt = data_gaus[1].dt
+    pressure_out, wavespeed_out = plotGausWavespeed2d(simulation_data; plot=false) 
 
     # Get a list of unique input pressures
     pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
