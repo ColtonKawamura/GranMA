@@ -327,7 +327,7 @@ end
 
 function plotGausAttenuationK2d(simulation_data; plot=true)  
     loop_mean_attenuation_list = []
-    wavenumber_out, pressure_out =  plotGausWavenumber2d(simulation_data; plot=false)
+    pressure_out, wavespeed_out = plotGausWavespeed2d(simulation_data; plot=false)
 
     # Get a list of unique input pressures
     # pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
@@ -378,34 +378,37 @@ function plotGausAttenuationK2d(simulation_data; plot=true)
         # Initizalized vectors for just this pressure
         loop_mean_attenuation_list = Float64[];
         loop_std_attenuation_list = Float64[]
+        wavenumber_list = Float64[]
 
         # Look at a single omega gamma value since each one spans all seeds
         # matching_wavenumber_list = sort(unique([entry.wavenumber for entry in matching_pressure_data]))
-        matching_wavenumber_list = wavenumber_out
+        matching_omega_list = sort(unique([entry.omega for entry in matching_pressure_data]))
+        # matching_wavenumber_list = wavenumber_out
         
-        for wavenumber_value in matching_wavenumber_list
+        for omega_value in matching_omega_list
 
             # Only look at data for current pressure value
-            matching_wavenumber_data = filter(entry -> entry.wavenumber == wavenumber_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
-            omega_value = matching_wavenumber_data[1].omega
+            # matching_wavenumber_data = filter(entry -> entry.wavenumber == wavenumber_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+            matching_omega_data = filter(entry -> entry.omega == omega_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+            # omega_value = matching_wavenumber_data[1].omega
             # Get the mean over all seeds
-            loop_mean_alphaoveromega = mean(filter(x -> x > 0, [entry.attenuation for entry in matching_wavenumber_data]))  ./ omega_value
-            loop_std_alphaoveromega =  std(entry.attenuation for entry in matching_wavenumber_data) ./ omega_value
+            loop_mean_alphaoveromega = mean(filter(x -> x > 0, [entry.attenuation for entry in matching_omega_data]))  ./ omega_value
+            loop_std_alphaoveromega =  std(entry.attenuation for entry in matching_omega_data) ./ omega_value
             push!(loop_std_attenuation_list, loop_std_alphaoveromega)
 
             # Append values
             push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
-
+            loop_wavenumber_ = omega_value / wavespeed_out[idx]
+            push!(wavenumber_list, loop_wavenumber_)
         end
-
-
+        
         # This is needed because MATLAB.jl has a hard time escaping \'s
         legend_label = @sprintf("\$ \\hat{P} = %.3f\$", pressure_value)
 
         if plot
             # Transfer data to MATLAB
             mat"""
-            omega_gamma = $(matching_wavenumber_list);
+            omega_gamma = $(wavenumber_list);
             mean_attenuation_x = $(loop_mean_attenuation_list);
             iloop_pressure_value = $(pressure_value);
             marker_color= $(marker_color);
