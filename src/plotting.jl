@@ -120,10 +120,12 @@ end
 
 function plotGausWavenumber2d(simulation_data; plot=true)
     loop_mean_wavenumber_list = []
+    wavenumber_out = Float64[]
     pressure_out, wavespeed_out = plotGausWavespeed2d(simulation_data; plot=false) 
 
     # Get a list of unique input pressures
-    pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
+    # pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
+    pressure_list = sort(unique(pressure for pressure in pressure_out))
     plot_pressure = pressure_list
 
     # Define the plot limits to match the 1D theory plot curves
@@ -162,6 +164,7 @@ function plotGausWavenumber2d(simulation_data; plot=true)
         # Assign a color
         idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
         marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+        wavespeed_at_pressure = wavespeed_out[idx]
 
         # Only look at data for current pressure value
         matching_pressure_data = filter(entry -> entry.pressure == pressure_value, simulation_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
@@ -179,9 +182,10 @@ function plotGausWavenumber2d(simulation_data; plot=true)
             matching_omega_data = filter(entry -> entry.omega == omega_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
 
             # Get the mean over all seeds
-            loop_mean_wavespeed = mean(filter(x -> x > 0, [entry.wavespeed for entry in matching_omega_data])) ./ ( sqrt.(matching_omega_data[1].spring_constant ./ matching_omega_data[1].mass) .* matching_omega_data[1].mean_diameter)
+            # loop_mean_wavespeed = mean(filter(x -> x > 0, [entry.wavespeed for entry in matching_omega_data])) ./ ( sqrt.(matching_omega_data[1].spring_constant ./ matching_omega_data[1].mass) .* matching_omega_data[1].mean_diameter)
             loop_std_wavespeed =  std(entry.wavespeed for entry in matching_omega_data) ./ ( sqrt.(matching_omega_data[1].spring_constant ./ matching_omega_data[1].mass) .* matching_omega_data[1].mean_diameter )
-            
+            loop_mean_wavespeed = wavespeed_at_pressure
+
             loop_mean_wavenumber = omega_value ./ loop_mean_wavespeed 
             loop_std_wavenumber= omega_value ./ loop_std_wavespeed
 
@@ -218,6 +222,7 @@ function plotGausWavenumber2d(simulation_data; plot=true)
         legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
         """
     end
+    return wavenumber_out, pressure_out
 end
 
 function plotGausAttenuation2d(simulation_data; plot=true)  
