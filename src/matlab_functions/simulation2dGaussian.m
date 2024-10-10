@@ -260,5 +260,5 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     wavenumber = omega / wavespeed;
 
 
-     save(['out/simulation_2d/gausGetAmps_no_backtrack_moreFreqs/' filename_output], 'meanDiameter', 'tau', 'omega', 'gamma', 'spring_constant', 'mass', 'pressure', 'width', 'seed', 'pressure_actual', 'attenuation', 'wavespeed', 'wavenumber', 'dt')
+     save(['out/simulation_2d/gausGetAmps_no_backtrack_moreFreqsV2/' filename_output], 'meanDiameter', 'tau', 'omega', 'gamma', 'spring_constant', 'mass', 'pressure', 'width', 'seed', 'pressure_actual', 'attenuation', 'wavespeed', 'wavenumber', 'dt')
 
