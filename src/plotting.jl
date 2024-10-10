@@ -327,10 +327,11 @@ end
 
 function plotGausAttenuationK2d(simulation_data; plot=true)  
     loop_mean_attenuation_list = []
-
+    wavenumber_out, pressure_out =  plotGausWavenumber2d(simulation_data; plot=false)
 
     # Get a list of unique input pressures
-    pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
+    # pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
+    pressure_list = sort(unique(pressure for pressure in pressure_out))
     plot_pressure = pressure_list
 
     # Define the plot limits to match the 1D theory plot curves
@@ -379,8 +380,9 @@ function plotGausAttenuationK2d(simulation_data; plot=true)
         loop_std_attenuation_list = Float64[]
 
         # Look at a single omega gamma value since each one spans all seeds
-        matching_wavenumber_list = sort(unique([entry.wavenumber for entry in matching_pressure_data]))
-
+        # matching_wavenumber_list = sort(unique([entry.wavenumber for entry in matching_pressure_data]))
+        matching_wavenumber_list = wavenumber_out
+        
         for wavenumber_value in matching_wavenumber_list
 
             # Only look at data for current pressure value
