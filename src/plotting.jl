@@ -6,7 +6,8 @@ export
     plot_ωγ_attenuation_2d,
     plot_ωγ_wavespeed_2d,
     plotGuess,
-    plotAmp
+    plotAmp,
+    plotPhase
 
 
 function plotGausWavespeed2d(simulation_data; plot=true)  
@@ -768,5 +769,29 @@ function plotAmp(filtered_data)
     set(gca, 'YScale', 'log')
     grid on
     legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    """
+end
+
+function plotPhase(filtered_data)
+    distance_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    distance_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    phase_y = filtered_data[1].unwrapped_phase_vector_y
+    phase_x = filtered_data[1].unwrapped_phase_vector_x
+    phase_y = mod.(phase_y, 2π)
+    phase_x = mod.(phase_x, 2π)
+
+    mat"""
+    figure
+    scatter($(distance_x), $(phase_x), "DisplayName", "\$ \\phi_{||} \$")
+    hold on
+    scatter($(distance_y), $(phase_y), "DisplayName", "\$ \\phi_{\\perp} \$")
+    grid on
+    box on
+    set(gca,'YTick', [0, pi, 2*pi], 'YTickLabel', {'0', ' \$ \\pi \$', '\$ 2\\pi \$'}, 'TickLabelInterpreter', 'latex');
+    ylabel("\$ \\Delta \\phi \$", "Interpreter", 'latex', "FontSize", 15)
+    xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    legend('Interpreter', 'latex')
+    ylim([0,2*pi])
     """
 end
