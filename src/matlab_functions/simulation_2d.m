@@ -260,7 +260,31 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     hold on;  % Keep the plot for adding the fitted line
     box on;  
     scatter(initial_distance_from_oscillation_output_y_fft, wrapped_phase_vector_y, 'o');
-
+   
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % % Figure of one particle's motion, just for poster purposes
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Plotting
+    figure
+    hold on
+    
+    % Plot centered on zero
+    position_particles = x_all;
+    index_particle_to_plot = 32;
+    plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
+    position_particles = y_all;
+    plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
+    
+    % Title and axis labels in LaTeX format
+    title('Particle Position Over Time', 'Interpreter', 'latex')
+    xlabel('Time (s)', 'Interpreter', 'latex')
+    ylabel('Position', 'Interpreter', 'latex')
+    legend('$\hat{k}$', '$\hat{k}_\perp$' ,'Interpreter', 'latex')
+    
+    % Adding legend
+    legend show
+    
+    hold off
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
