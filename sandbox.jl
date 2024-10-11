@@ -20,28 +20,30 @@ data_gaus = filter(x -> x.omega > .02, data_gaus) # This is for the wavespeed pl
 data_gaus = filter(x -> x.pressure >= .001, data_gaus) 
 
 # Single Simulation
-function plot_amplitude(filtered_data)
-    x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-    y = filtered_data[1].amplitude_vector_x
-    mat"""
-    figure
-    scatter($(x), $(y))
-    set(gca, 'YScale', 'log')
-    grid on
-    xlabel("Distance from Oscillation", "Interpreter", 'latex', "FontSize", 15)
-    ylabel("\$ A_\\parallel \$", "Interpreter", 'latex', "FontSize", 15)
-    set(get(gca, 'ylabel'), 'rotation', 0);
-    box on
-    """
-    x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-    y = filtered_data[1].amplitude_vector_y
-    mat"""
-    figure
-    scatter($(x), $(y))
-    set(gca, 'YScale', 'log')
-    grid on
-    """
-end
+
+# Moved to plotting
+# function plot_amplitude(filtered_data)
+#     x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+#     y = filtered_data[1].amplitude_vector_x
+#     mat"""
+#     figure
+#     scatter($(x), $(y))
+#     set(gca, 'YScale', 'log')
+#     grid on
+#     xlabel("Distance from Oscillation", "Interpreter", 'latex', "FontSize", 15)
+#     ylabel("\$ A_\\parallel \$", "Interpreter", 'latex', "FontSize", 15)
+#     set(get(gca, 'ylabel'), 'rotation', 0);
+#     box on
+#     """
+#     x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+#     y = filtered_data[1].amplitude_vector_y
+#     mat"""
+#     figure
+#     scatter($(x), $(y))
+#     set(gca, 'YScale', 'log')
+#     grid on
+#     """
+# end
 
 function plot_phase(filtered_data)
     distance_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft

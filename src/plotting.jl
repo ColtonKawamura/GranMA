@@ -4,7 +4,9 @@ export
     plotGausAttenuation2d,
     plotGausAttenuationK2d,
     plot_ωγ_attenuation_2d,
-    plot_ωγ_wavespeed_2d
+    plot_ωγ_wavespeed_2d,
+    plotGuess,
+    plotAmp
 
 
 function plotGausWavespeed2d(simulation_data; plot=true)  
@@ -117,6 +119,7 @@ function plotGausWavespeed2d(simulation_data; plot=true)
     return pressure_out, wavespeed_out
 end
 
+#### Gaus Plots
 
 function plotGausWavenumber2d(simulation_data; plot=true)
     loop_mean_wavenumber_list = []
@@ -403,7 +406,7 @@ function plotGausAttenuationK2d(simulation_data; plot=true)
         end
         
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        legend_label = @sprintf("\$ \\hat{P} = %.3f\$", pressure_value)
+        legend_label = @sprintf("\$ \\hat{P} = %.4f\$", pressure_value)
 
         if plot
             # Transfer data to MATLAB
@@ -415,7 +418,7 @@ function plotGausAttenuationK2d(simulation_data; plot=true)
             legend_label = $(legend_label);
             figure(figure_attenuation);
             set(gca, 'Yscale', 'log');
-            plot(omega_gamma, mean_attenuation_x, '-o', 'Color', marker_color, 'DisplayName', legend_label)
+            plot(omega_gamma, mean_attenuation_x, '-|', 'Color', marker_color, 'DisplayName', legend_label)
             % errorbar(omega_gamma, mean_attenuation_x, $(loop_std_attenuation_list), '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
             """
         end
@@ -431,6 +434,7 @@ function plotGausAttenuationK2d(simulation_data; plot=true)
     return loop_mean_attenuation_list
 end
 
+#### Regular Plots
 
 function plot_ωγ_attenuation_2d(simulation_data, gamma_value, mean_diameter; plot=true)
     # Initialize outputs
@@ -628,5 +632,136 @@ function plot_ωγ_wavespeed_2d(simulation_data, gamma_value) # Need to fix lgen
     % Add legends to the MATLAB plots
     figure(figure_wavespeed);
     legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    """
+end
+
+function plotGuess(simulation_data; plot=true)  # This is expirimental
+    loop_mean_attenuation_list = []
+    pressure_out, wavespeed_out = plotGausWavespeed2d(simulation_data; plot=false)
+
+    # Get a list of unique input pressures
+    # pressure_list = sort(unique([entry.pressure for entry in simulation_data])) # goes through each entry of simulation_data and get the P value at that entry
+    pressure_list = sort(unique(pressure for pressure in pressure_out))
+    plot_pressure = pressure_list
+
+    # Define the plot limits to match the 1D theory plot curves
+    theory_x = collect(3E-4:1E-5:3)
+    theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
+    # upper_limit_line_x = [1*gamma_value; 1*gamma_value]
+    # upper_limit_line_y = [1E-5; 1]
+    # lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
+    # lower_limit_line_y = [1E-5; 1]
+    # % plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
+    # % plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
+
+    if plot
+        # Intialized the plots to loop over
+        mat"""
+        figure_attenuation = figure;
+        % loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
+        %loglog($(theory_x), $(theory_x) ./ 15, 'k--', 'DisplayName', 'Slope 1');
+        hold on;
+        %loglog($(theory_x), $(theory_x).^.5 ./ 15, 'k:', 'DisplayName', 'Slope 1/2');
+        %loglog($(theory_x), $(theory_x).^1.5 ./ 15, 'k', 'DisplayName', 'Slope 3/2');
+        xlabel('\$\\hat{k}\\hat{P}\$', "FontSize", 20, "Interpreter", "latex");
+        ylabel('\$\\hat{\\alpha} \$', "FontSize", 20, "Interpreter", "latex");
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        set(gca, 'XScale', 'log');
+        grid on;
+        box on;
+        """
+    end
+
+    # Normalize the gamma values
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Create a line for each omega value across all pressure_list
+    for pressure_value in pressure_list
+
+        # Assign a color
+        idx = findfirst(idx -> idx ==pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Only look at data for current pressure value
+        matching_pressure_data = filter(entry -> entry.pressure == pressure_value, simulation_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+        # Initizalized vectors for just this pressure
+        loop_mean_attenuation_list = Float64[];
+        loop_std_attenuation_list = Float64[]
+        wavenumber_list = Float64[]
+
+        # Look at a single omega gamma value since each one spans all seeds
+        # matching_wavenumber_list = sort(unique([entry.wavenumber for entry in matching_pressure_data]))
+        matching_omega_list = sort(unique([entry.omega for entry in matching_pressure_data]))
+        # matching_wavenumber_list = wavenumber_out
+        
+        for omega_value in matching_omega_list
+
+            # Only look at data for current pressure value
+            # matching_wavenumber_data = filter(entry -> entry.wavenumber == wavenumber_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+            matching_omega_data = filter(entry -> entry.omega == omega_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+            # omega_value = matching_wavenumber_data[1].omega
+            # Get the mean over all seeds
+            loop_mean_alphaoveromega = mean(filter(x -> x > 0, [entry.attenuation for entry in matching_omega_data]))  #./ omega_value
+            loop_std_alphaoveromega =  std(entry.attenuation for entry in matching_omega_data) #./ omega_value
+            push!(loop_std_attenuation_list, loop_std_alphaoveromega)
+
+            # Append values
+            push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+            loop_wavenumber_ = omega_value / wavespeed_out[idx] #* pressure_value
+            push!(wavenumber_list, loop_wavenumber_)
+        end
+        
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        legend_label = @sprintf("\$ \\hat{P} = %.4f\$", pressure_value)
+
+        if plot
+            # Transfer data to MATLAB
+            mat"""
+            omega_gamma = $(wavenumber_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            marker_color= $(marker_color);
+            legend_label = $(legend_label);
+            figure(figure_attenuation);
+            set(gca, 'Yscale', 'log');
+            plot(omega_gamma, mean_attenuation_x, '-|', 'Color', marker_color, 'DisplayName', legend_label)
+            xline($(pressure_value) * .5)
+            yline(.12)
+            % errorbar(omega_gamma, mean_attenuation_x, $(loop_std_attenuation_list), '-o','MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', legend_label);
+            """
+        end
+    end
+    if plot
+        # Add legends to the plots
+        mat"""
+        % Add legends to the MATLAB plots
+        figure(figure_attenuation);
+        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        """
+    end
+    return loop_mean_attenuation_list
+end
+
+function plotAmp(filtered_data)
+    x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    y = filtered_data[1].amplitude_vector_x
+    mat"""
+    figure
+    scatter($(x), $(y))
+    set(gca, 'YScale', 'log')
+    grid on
+    xlabel("Distance from Oscillation", "Interpreter", 'latex', "FontSize", 15)
+    ylabel("\$ A_\\parallel \$", "Interpreter", 'latex', "FontSize", 15)
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    box on
+    """
+    x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    y = filtered_data[1].amplitude_vector_y
+    mat"""
+    figure
+    scatter($(x), $(y))
+    set(gca, 'YScale', 'log')
+    grid on
     """
 end
