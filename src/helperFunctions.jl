@@ -1,6 +1,8 @@
 export
     fitLogLine,
-    cleanVector
+    cleanVector,
+    meanDistNeighbor,
+    wrappedDistance
 
 function fitLogLine(x, y)
     X = hcat(ones(length(x)), x)  # Create matrix for linear regression [1 x]
@@ -22,4 +24,37 @@ function cleanVector(x, y)
     filtered_y = y[mask]
 
     return filtered_x, filtered_y
+end
+
+function meanDistNeighbor(x_values, y_values)
+    points = hcat(x_values, y_values)
+    n = size(points, 1)
+    distances = zeros(n)
+    
+    for i in 1:n
+        dist_to_others = zeros(n)
+        
+        for j in 1:n
+            if i != j
+                # Calculate Euclidean distance for x and wrapped distance for y
+                dist_x = abs(x_values[i] - x_values[j])
+                dist_y = wrappedDistance(y_values[i], y_values[j])
+                dist_to_others[j] = sqrt(dist_x^2 + dist_y^2)
+            else
+                dist_to_others[j] = Inf  # Exclude the point itself
+            end
+        end
+        
+        # Find the minimum distance to the nearest neighbor
+        distances[i] = minimum(dist_to_others)
+    end
+    
+    # Return the mean nearest neighbor distance
+    return mean(distances)
+end
+
+function wrappedDistance(y1, y2)
+    direct_dist = abs(y1 - y2)
+    wrapped_dist = 2π - direct_dist
+    return min(direct_dist, wrapped_dist)
 end

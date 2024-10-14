@@ -42,7 +42,7 @@ function paperPlots()
 
     data = FilterData(simulation_data, .1, :pressure, .01, :omega, .5, :gamma, 1, :seed)
     plotPhase(data) # phase plot for high pressure, low gamma
-    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    data = FilterData(simulation_data, .001, :pressure, .01, :omega, .5, :gamma, 1, :seed)
     plotPhase(data) # phase plot for high pressure, low gamma
 end
 
@@ -1362,38 +1362,38 @@ end
 
 # Helper Functions
 
-function wrapped_distance(y1, y2)
-    direct_dist = abs(y1 - y2)
-    wrapped_dist = 2π - direct_dist
-    return min(direct_dist, wrapped_dist)
-end
+# function wrapped_distance(y1, y2)
+#     direct_dist = abs(y1 - y2)
+#     wrapped_dist = 2π - direct_dist
+#     return min(direct_dist, wrapped_dist)
+# end
 
-function mean_nearest_neighbor_distance(x_values, y_values)
-    points = hcat(x_values, y_values)
-    n = size(points, 1)
-    distances = zeros(n)
+# function mean_nearest_neighbor_distance(x_values, y_values)
+#     points = hcat(x_values, y_values)
+#     n = size(points, 1)
+#     distances = zeros(n)
     
-    for i in 1:n
-        dist_to_others = zeros(n)
+#     for i in 1:n
+#         dist_to_others = zeros(n)
         
-        for j in 1:n
-            if i != j
-                # Calculate Euclidean distance for x and wrapped distance for y
-                dist_x = abs(x_values[i] - x_values[j])
-                dist_y = wrapped_distance(y_values[i], y_values[j])
-                dist_to_others[j] = sqrt(dist_x^2 + dist_y^2)
-            else
-                dist_to_others[j] = Inf  # Exclude the point itself
-            end
-        end
+#         for j in 1:n
+#             if i != j
+#                 # Calculate Euclidean distance for x and wrapped distance for y
+#                 dist_x = abs(x_values[i] - x_values[j])
+#                 dist_y = wrapped_distance(y_values[i], y_values[j])
+#                 dist_to_others[j] = sqrt(dist_x^2 + dist_y^2)
+#             else
+#                 dist_to_others[j] = Inf  # Exclude the point itself
+#             end
+#         end
         
-        # Find the minimum distance to the nearest neighbor
-        distances[i] = minimum(dist_to_others)
-    end
+#         # Find the minimum distance to the nearest neighbor
+#         distances[i] = minimum(dist_to_others)
+#     end
     
-    # Return the mean nearest neighbor distance
-    return mean(distances)
-end
+#     # Return the mean nearest neighbor distance
+#     return mean(distances)
+# end
 
 function calculate_slope(x, y)
     p = Polynomials.fit(x, y, 1)  # Fit a 1st-degree polynomial (linear regression)

@@ -786,6 +786,8 @@ function plotPhase(filtered_data)
     phase_x = filtered_data[1].unwrapped_phase_vector_x
     phase_y = mod.(phase_y, 2π)
     phase_x = mod.(phase_x, 2π)
+    scatter_x = meanDistNeighbor(distance_x, phase_x)
+    scatter_y = meanDistNeighbor(distance_y, phase_y)
 
     mat"""
     figure
@@ -801,4 +803,5 @@ function plotPhase(filtered_data)
     legend('Interpreter', 'latex')
     ylim([0,2*pi])
     """
+    return scatter_y / scatter_x
 end
