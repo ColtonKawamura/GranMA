@@ -264,12 +264,15 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    target_distance = 21;
+    [~, index_to_plot] = min(abs(x0 - target_distance));
+
     % Plotting
     figure
     
     % Plot centered on zero
     position_particles = x_all;
-    index_particle_to_plot = 32;
+    index_particle_to_plot = index_to_plot;
     plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
     hold on
     position_particles = y_all;

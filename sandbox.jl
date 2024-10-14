@@ -19,6 +19,10 @@ data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
 data_gaus = filter(x -> x.omega > .02, data_gaus) # This is for the wavespeed plot
 data_gaus = filter(x -> x.pressure >= .001, data_gaus) 
 
+function paperPlots()
+    sim2d(100, 1, 5, 1, 5000, .1, 5, 1)  # Single particle oscilaltion
+end
+
 # Single Simulation
 
 # Moved to plotting
