@@ -266,20 +266,20 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plotting
     figure
-    hold on
     
     % Plot centered on zero
     position_particles = x_all;
     index_particle_to_plot = 32;
     plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
+    hold on
     position_particles = y_all;
     plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
     
     % Title and axis labels in LaTeX format
-    title('Particle Position Over Time', 'Interpreter', 'latex')
+    % title('Particle Position Over Time', 'Interpreter', 'latex')
     xlabel('Time (s)', 'Interpreter', 'latex')
-    ylabel('Position', 'Interpreter', 'latex')
-    legend('$\hat{k}$', '$\hat{k}_\perp$' ,'Interpreter', 'latex')
+    ylabel('$ A(x)$', 'Interpreter', 'latex', "Rotation", 0)
+    legend('$A_{||}$', '$A_{\perp}$' ,'Interpreter', 'latex')
     
     % Adding legend
     legend show
@@ -307,7 +307,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
         max_y_value = max(max_y_value, max(abs(x_all(index_particle_to_plot, :) - mean(x_all(index_particle_to_plot, :)))));
         max_y_value = max(max_y_value, max(abs(y_all(index_particle_to_plot, :) - mean(y_all(index_particle_to_plot, :)))));
     end
-
+    figure
     % Set up tiled layout for the plots
     tiledlayout(length(target_distances),1); % Create tiled layout with rows equal to the number of target distances
 
