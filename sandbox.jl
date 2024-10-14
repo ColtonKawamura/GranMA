@@ -13,7 +13,7 @@ using Polynomials
 using LinearAlgebra
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
-# simulation_data = load_data("out/processed/2d_poly_K100_W10_shortrun.jld2")
+
 data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
 # data_gaus = filter(x -> x.omega >= 0.03, data_gaus) # This is used for the presentation of the program review 
 data_gaus = filter(x -> x.omega > .02, data_gaus) # This is for the wavespeed plot
@@ -21,58 +21,30 @@ data_gaus = filter(x -> x.pressure >= .001, data_gaus)
 
 function paperPlots()
     sim2d(100, 1, 5, 1, 5000, .1, 5, 1)  # Single particle oscilaltion
+
+    simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
+    # high omega
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data) # amplitude plot for high pressure, low gamma
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data) # amplitude plot for low pressure, low gamma
+    
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotPhase(data) # phase plot for high pressure, low gamma
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotPhase(data) # phase plot for high pressure, low gamma
+
+    # low omega
+    data = FilterData(simulation_data, .1, :pressure, .01, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data) # amplitude plot for high pressure, low gamma
+    data = FilterData(simulation_data, .001, :pressure, .01, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data) # amplitude plot for low pressure, low gamma
+
+    data = FilterData(simulation_data, .1, :pressure, .01, :omega, .5, :gamma, 1, :seed)
+    plotPhase(data) # phase plot for high pressure, low gamma
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotPhase(data) # phase plot for high pressure, low gamma
 end
-
-# Single Simulation
-
-# Moved to plotting
-# function plot_amplitude(filtered_data)
-#     x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-#     y = filtered_data[1].amplitude_vector_x
-#     mat"""
-#     figure
-#     scatter($(x), $(y))
-#     set(gca, 'YScale', 'log')
-#     grid on
-#     xlabel("Distance from Oscillation", "Interpreter", 'latex', "FontSize", 15)
-#     ylabel("\$ A_\\parallel \$", "Interpreter", 'latex', "FontSize", 15)
-#     set(get(gca, 'ylabel'), 'rotation', 0);
-#     box on
-#     """
-#     x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-#     y = filtered_data[1].amplitude_vector_y
-#     mat"""
-#     figure
-#     scatter($(x), $(y))
-#     set(gca, 'YScale', 'log')
-#     grid on
-#     """
-# end
-
-# moved to plotting
-# function plot_phase(filtered_data)
-#     distance_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-#     distance_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-#     phase_y = filtered_data[1].unwrapped_phase_vector_y
-#     phase_x = filtered_data[1].unwrapped_phase_vector_x
-#     phase_y = mod.(phase_y, 2π)
-#     phase_x = mod.(phase_x, 2π)
-
-#     mat"""
-#     figure
-#     scatter($(distance_x), $(phase_x), "DisplayName", "\$ \\hat{k} \$")
-#     hold on
-#     scatter($(distance_y), $(phase_y), "DisplayName", "\$ \\hat{k}_\\perp \$")
-#     grid on
-#     box on
-#     set(gca,'YTick', [0, pi, 2*pi], 'YTickLabel', {'0', ' \$ \\pi \$', '\$ 2\\pi \$'}, 'TickLabelInterpreter', 'latex');
-#     ylabel("\$ \\Delta \\phi \$", "Interpreter", 'latex', "FontSize", 15)
-#     xlabel("Distance from Oscillation", "Interpreter", 'latex', "FontSize", 15)
-#     set(get(gca, 'ylabel'), 'rotation', 0);
-#     legend('Interpreter', 'latex')
-#     ylim([0,2*pi])
-#     """
-# end
 
 # Ellipse
 

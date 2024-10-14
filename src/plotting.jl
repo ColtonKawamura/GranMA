@@ -1,3 +1,5 @@
+include("helperFunctions.jl")
+
 export
     plotGausWavespeed2d,
     plotGausWavenumber2d,
@@ -749,6 +751,8 @@ end
 function plotAmp(filtered_data)
     x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
     y = filtered_data[1].amplitude_vector_x
+    coeffs = fitLogLine(x,y)
+    yIntercept_amp_x = coeffs[1]
     display_name = @sprintf("\$ A_{||}(x) \$")
     mat"""
     figure
@@ -763,6 +767,8 @@ function plotAmp(filtered_data)
     """
     x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
     y = filtered_data[1].amplitude_vector_y
+    coeffs = fitLogLine(x,y)
+    yIntercept_amp_y = coeffs[1]
     display_name = @sprintf("\$ A_\\perp(x) \$")
     mat"""
     scatter($(x), $(y), "DisplayName", $(display_name))
@@ -770,6 +776,7 @@ function plotAmp(filtered_data)
     grid on
     legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
+    return yIntercept_amp_x / yIntercept_amp_y
 end
 
 function plotPhase(filtered_data)
