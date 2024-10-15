@@ -65,7 +65,7 @@ function plotAmpRatio(simulation_data, γ_value)
 
     mat"""
     ax_energy = figure;
-    xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
+    xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel('\$ \\overline{\\frac{A_{\\parallel}}{A_{\\perp}}} \$', "FontSize", 20, "Interpreter", "latex");
     set(get(gca, 'ylabel'), 'rotation', 0);
     set(gca, 'XScale', 'log');
@@ -172,36 +172,46 @@ function plotPhaseRatio(simulation_data, γ_value)
     lower_limit_line_x = [.1*γ_value; .1*γ_value]
     lower_limit_line_y = [1E-5; 1]
 
-    # Start MATLAB session
+    # # Start MATLAB session
+    # mat"""
+    # figure_main = figure;
+    # tiled_main = tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 2 rows, 1 column
+
+    # % Axes for Attenuation
+    # ax_attenuation = nexttile;
+    # hold(ax_attenuation, 'on');
+    # % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    # ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
+    # set(ax_attenuation, 'XScale', 'log');
+    # set(ax_attenuation, 'YScale', 'log')
+    # set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
+    # grid(ax_attenuation, 'on');
+    # box(ax_attenuation, 'on');
+    # %plot(ax_attenuation, $(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$');
+    # %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
+    # set(ax_attenuation, 'XTickLabel', []);
+
+    # % Axes for Energy
+    # ax_energy = nexttile;
+    # hold(ax_energy, 'on');
+    # xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    # ylabel(ax_energy, '\$ \\overline{\\Delta \\phi}_{\\perp} \$', "FontSize", 15, "Interpreter", "latex");
+    # set(ax_energy, 'XScale', 'log');
+    # set(ax_energy, 'YScale', 'log')
+    # set(get(ax_energy, 'ylabel'), 'rotation', 0);
+    # grid(ax_energy, 'on');
+    # box(ax_energy, 'on');
+    # %set(ax_energy, 'XTickLabel', []);
+    # """
     mat"""
-    figure_main = figure;
-    tiled_main = tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 2 rows, 1 column
-
-    % Axes for Attenuation
-    ax_attenuation = nexttile;
-    hold(ax_attenuation, 'on');
-    % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
-    set(ax_attenuation, 'XScale', 'log');
-    set(ax_attenuation, 'YScale', 'log')
-    set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
-    grid(ax_attenuation, 'on');
-    box(ax_attenuation, 'on');
-    %plot(ax_attenuation, $(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$');
-    %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
-    set(ax_attenuation, 'XTickLabel', []);
-
-    % Axes for Energy
-    ax_energy = nexttile;
-    hold(ax_energy, 'on');
-    xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_energy, '\$ \\overline{\\Delta \\phi}_{\\perp} \$', "FontSize", 15, "Interpreter", "latex");
-    set(ax_energy, 'XScale', 'log');
-    set(ax_energy, 'YScale', 'log')
-    set(get(ax_energy, 'ylabel'), 'rotation', 0);
-    grid(ax_energy, 'on');
-    box(ax_energy, 'on');
-    %set(ax_energy, 'XTickLabel', []);
+    ax_energy = figure;
+    xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\overline{\\Delta \\phi}_{\\perp} \$', "FontSize", 20, "Interpreter", "latex");
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    set(gca, 'XScale', 'log');
+    grid on;
+    box on; 
+    hold on;
     """
 
     # get a range for plotting color from 0 to 1
@@ -269,17 +279,18 @@ function plotPhaseRatio(simulation_data, γ_value)
         pressure_label = $(pressure_label);
 
         % Plot Attenuation
-        loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        %loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         
         % Plot Aspect Ratio
-        plot(ax_energy, omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        % plot(ax_energy, omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         """
     end
 
     # Add legends to the plots
     mat"""
-    legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    %legend(ax_energy, 'show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
     """
 end
     
