@@ -44,6 +44,10 @@ function paperPlots()
     plotPhase(data) # phase plot for high pressure, low gamma
     data = FilterData(simulation_data, .001, :pressure, .01, :omega, .5, :gamma, 1, :seed)
     plotPhase(data) # phase plot for high pressure, low gamma
+
+    # Amp and Phase Ratio Plots
+    plotAmpRatio(simulation_data, .5)
+    plotPhaseRatio(simulation_data, .5)
 end
 
 # Ellipse

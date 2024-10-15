@@ -10,9 +10,151 @@ export
     plotGuess,
     plotAmp,
     plotPhase,
-    plotPhaseScatter
+    plotPhaseRatio,
+    plotAmpRatio
 
-function plotPhaseScatter(γ_value) 
+function plotAmpRatio(simulation_data, γ_value)
+   
+    # filter the data based on those that are close to gamma_value
+    closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+    closest_γ_value = simulation_data[closest_γ_index].gamma
+    matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+    plot_gamma = γ_value
+    gamma_value = γ_value
+
+    # Get a list of unique input pressures
+    pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
+
+    # Limit range to data
+    upper_limit_line_x = [1*γ_value; 1*γ_value]
+    upper_limit_line_y = [1E-5; 1]
+    lower_limit_line_x = [.1*γ_value; .1*γ_value]
+    lower_limit_line_y = [1E-5; 1]
+
+    # # Start MATLAB session
+    # mat"""
+    # figure_main = figure;
+    # %tiled_main = tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 2 rows, 1 column
+
+    # % Axes for Attenuation
+    # ax_attenuation = nexttile;
+    # hold(ax_attenuation, 'on');
+    # % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    # ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
+    # set(ax_attenuation, 'XScale', 'log');
+    # set(ax_attenuation, 'YScale', 'log')
+    # set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
+    # grid(ax_attenuation, 'on');
+    # box(ax_attenuation, 'on');
+    # %plot(ax_attenuation, $(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$');
+    # %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
+    # set(ax_attenuation, 'XTickLabel', []);
+
+    # % Axes for Energy
+    # ax_energy = nexttile;
+    # hold(ax_energy, 'on');
+    # xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    # ylabel(ax_energy, '\$ \\overline{\\frac{A_{\\parallel}}{A_{\\perp}}} \$', "FontSize", 15, "Interpreter", "latex");
+    # set(ax_energy, 'XScale', 'log');
+    # set(ax_energy, 'YScale', 'log')
+    # set(get(ax_energy, 'ylabel'), 'rotation', 0);
+    # grid(ax_energy, 'on');
+    # box(ax_energy, 'on');
+    # %set(ax_energy, 'XTickLabel', []);
+    # """
+
+    mat"""
+    ax_energy = figure;
+    xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\overline{\\frac{A_{\\parallel}}{A_{\\perp}}} \$', "FontSize", 20, "Interpreter", "latex");
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    set(gca, 'XScale', 'log');
+    grid on;
+    box on; 
+    hold on;
+    """
+
+    # get a range for plotting color from 0 to 1
+    normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+    # Create a line for each pressure
+    for pressure_value in pressure_list
+
+        # Assign a color
+        idx = findfirst(element -> element == pressure_value, pressure_list) # find the first index that matches
+        marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+        # Only look at data for current pressure value
+        matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_γ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+        # Initizalized vectors for just this pressure
+        loop_mean_E_list = Float64[];
+        loop_mean_attenuation_list = Float64[];
+
+        # Look at a single omega gamma value since each one spans all seeds
+        matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
+        
+        for omega_gamma_value in matching_omega_gamma_list
+
+            # Only look at data for current omega_gamma value
+            matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+            # Get the mean over all seeds       
+            jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+            E_ratio_list = Float64[]
+            seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
+            for k_seed in seed_list
+                k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
+                k_seed_omega = k_seed_data[1].omega
+                phase_vector_y = k_seed_data[1].unwrapped_phase_vector_y
+                # Wrap the phase vector around 2π
+                wrapped_phase = mod.(phase_vector_y, 2π)
+                distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
+                # mean_distance = meanDistNeighbor(distance_from_wall, wrapped_phase)
+                mean_distance = plotAmp(k_seed_data; plot=false)
+                push!(E_ratio_list, mean_distance)
+            end
+            j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
+            push!(loop_mean_E_list, j_E_ratio)
+            push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
+        end
+
+        # Filter data to include only points where omega_gamma <= gamma_value
+        # valid_indices = matching_omega_gamma_list .<= gamma_value.*2
+        # matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
+        # loop_mean_E_list = loop_mean_E_list[valid_indices]
+        # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
+        @bp
+        # This is needed because MATLAB.jl has a hard time escaping \'s
+        pressure_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
+
+        # Transfer data to MATLAB
+        mat"""
+        omega_gamma = $(matching_omega_gamma_list);
+        loop_mean_E_list = $(loop_mean_E_list);
+        mean_attenuation_x = $(loop_mean_attenuation_list);
+        iloop_pressure_value = $(pressure_value);
+        plot_gamma = $(plot_gamma);
+        marker_color = $(marker_color);
+        pressure_label = $(pressure_label);
+
+        % Plot Attenuation
+        %loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        
+        % Plot Aspect Ratio
+        plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        """
+    end
+
+    # Add legends to the plots
+    mat"""
+    %legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    """ 
+        
+end
+
+function plotPhaseRatio(simulation_data, γ_value) 
 
     # filter the data based on those that are close to gamma_value
     closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
@@ -53,7 +195,7 @@ function plotPhaseScatter(γ_value)
     ax_energy = nexttile;
     hold(ax_energy, 'on');
     xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel(ax_energy, '\$ \\left< S^{\\perp}_\\phi \\right>   \$', "FontSize", 15, "Interpreter", "latex");
+    ylabel(ax_energy, '\$ \\overline{\\Delta \\phi}_{\\perp} \$', "FontSize", 15, "Interpreter", "latex");
     set(ax_energy, 'XScale', 'log');
     set(ax_energy, 'YScale', 'log')
     set(get(ax_energy, 'ylabel'), 'rotation', 0);
@@ -98,7 +240,8 @@ function plotPhaseScatter(γ_value)
                 # Wrap the phase vector around 2π
                 wrapped_phase = mod.(phase_vector_y, 2π)
                 distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
-                mean_distance = meanDistNeighbor(distance_from_wall, wrapped_phase)
+                # mean_distance = meanDistNeighbor(distance_from_wall, wrapped_phase)
+                mean_distance = plotPhase(k_seed_data; plot=false)
                 push!(E_ratio_list, mean_distance)
             end
             j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
@@ -882,29 +1025,36 @@ function plotAmp(filtered_data; plot=true)
     y = filtered_data[1].amplitude_vector_x
     coeffs = fitLogLine(x,y)
     yIntercept_amp_x = coeffs[1]
-    display_name = @sprintf("\$ A_{||}(x) \$")
-    mat"""
-    figure
-    scatter($(x), $(y), "DisplayName", $(display_name))
-    set(gca, 'YScale', 'log')
-    grid on
-    xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-    ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
-    set(get(gca, 'ylabel'), 'rotation', 0);
-    box on
-    hold on 
-    """
+
+    if plot==true
+        display_name = @sprintf("\$ A_{||}(x) \$")
+        mat"""
+        figure
+        scatter($(x), $(y), "DisplayName", $(display_name))
+        set(gca, 'YScale', 'log')
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        """
+    end
+
     x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
     y = filtered_data[1].amplitude_vector_y
     coeffs = fitLogLine(x,y)
     yIntercept_amp_y = coeffs[1]
-    display_name = @sprintf("\$ A_\\perp(x) \$")
-    mat"""
-    scatter($(x), $(y), "DisplayName", $(display_name))
-    set(gca, 'YScale', 'log')
-    grid on
-    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
-    """
+    if plot == true
+        display_name = @sprintf("\$ A_\\perp(x) \$")
+        mat"""
+        scatter($(x), $(y), "DisplayName", $(display_name))
+        set(gca, 'YScale', 'log')
+        grid on
+        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        """
+    end
+    
     return yIntercept_amp_x / yIntercept_amp_y
 end
 
@@ -918,19 +1068,22 @@ function plotPhase(filtered_data; plot=true)
     scatter_x = meanDistNeighbor(distance_x, phase_x)
     scatter_y = meanDistNeighbor(distance_y, phase_y)
 
-    mat"""
-    figure
-    scatter($(distance_x), $(phase_x), "DisplayName", "\$ \\phi_{||} \$")
-    hold on
-    scatter($(distance_y), $(phase_y), "DisplayName", "\$ \\phi_{\\perp} \$")
-    grid on
-    box on
-    set(gca,'YTick', [0, pi, 2*pi], 'YTickLabel', {'0', ' \$ \\pi \$', '\$ 2\\pi \$'}, 'TickLabelInterpreter', 'latex');
-    ylabel("\$ \\Delta \\phi \$", "Interpreter", 'latex', "FontSize", 15)
-    xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-    set(get(gca, 'ylabel'), 'rotation', 0);
-    legend('Interpreter', 'latex')
-    ylim([0,2*pi])
-    """
-    return scatter_y / scatter_x
+    if plot==true
+        mat"""
+        figure
+        scatter($(distance_x), $(phase_x), "DisplayName", "\$ \\phi_{||} \$")
+        hold on
+        scatter($(distance_y), $(phase_y), "DisplayName", "\$ \\phi_{\\perp} \$")
+        grid on
+        box on
+        set(gca,'YTick', [0, pi, 2*pi], 'YTickLabel', {'0', ' \$ \\pi \$', '\$ 2\\pi \$'}, 'TickLabelInterpreter', 'latex');
+        ylabel("\$ \\Delta \\phi \$", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        legend('Interpreter', 'latex')
+        ylim([0,2*pi])
+        """
+    end
+
+    return  scatter_y
 end
