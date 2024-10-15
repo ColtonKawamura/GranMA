@@ -48,6 +48,11 @@ function paperPlots()
     # Amp and Phase Ratio Plots
     plotAmpRatio(simulation_data, .5)
     plotPhaseRatio(simulation_data, .5)
+
+    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+    data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
+    plotGausAttenuation2d(data_gaus)
+
 end
 
 # Ellipse
