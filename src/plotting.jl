@@ -11,7 +11,70 @@ export
     plotAmp,
     plotPhase,
     plotPhaseRatio,
-    plotAmpRatio
+    plotAmpRatio,
+    plotGausPressDep
+
+function plotGausPressDep(simulation_data, omega_value; plot=true)
+    loop_mean_attenuation_list = []
+    matching_omega_data = filterDataGaus(simulation_data, omega_value, :omega)
+
+    # Get a list of unique input pressures
+    pressure_list = sort(unique([entry.pressure for entry in matching_omega_data])) # goes through each entry of simulation_data and get the P value at that entry
+    plot_pressure = pressure_list
+
+    if plot
+        mat"""
+        figure_attenuation = figure;
+        xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
+        ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        set(gca, 'XScale', 'log');
+        set(gca, 'YScale', 'log')
+        grid on;
+        box on;
+        """
+    end
+        # Initizalized vectors for just this pressure
+        loop_mean_attenuation_list = Float64[];
+        loop_std_attenuation_list = Float64[]
+    for pressure_value in pressure_list
+
+        # Only look at data for current pressure value
+        matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_omega_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+
+
+        loop_mean_alphaoveromega = mean(filter(x -> x > 0, [entry.attenuation for entry in matching_pressure_data])) ./ omega_value
+        loop_std_alphaoveromega =  std(entry.attenuation for entry in matching_pressure_data) ./ omega_value
+        push!(loop_std_attenuation_list, loop_std_alphaoveromega)
+
+        push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+    end
+    
+    if plot
+        # Transfer data to MATLAB
+        mat"""
+        x = $(pressure_list);
+        mean_attenuation_x = $(loop_mean_attenuation_list);
+        figure(figure_attenuation);
+        set(gca, 'Yscale', 'log');
+        loglog(x, mean_attenuation_x, '-o')
+        hold on
+        loglog([x(2), x(end)], [mean_attenuation_x(2), mean_attenuation_x(2)*(x(end)/x(2))^-.75], '--')
+        grid on
+        box on
+        """
+    end
+    if plot
+        # Add legends to the plots
+        mat"""
+        % Add legends to the MATLAB plots
+        figure(figure_attenuation);
+        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        """
+    end
+    return loop_mean_attenuation_list 
+end
 
 function plotAmpRatio(simulation_data, γ_value)
    
