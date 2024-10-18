@@ -55,6 +55,46 @@ function paperPlots()
 
 end
 
+
+function plotFit(simulation_data, data_gaus, pressure_value)
+    match_pressure_data = FilterData(simulation_data, pressure_value, :pressure, 1, :gamma)
+    pressure_value = match_pressure_data[1].pressure
+    match_pressure_data_gaus = filterDataGaus(data_gaus, pressure_value, :pressure)
+    mean_diameter = 1.2
+
+    omega_gamma_list = sort(unique(x.omega_gamma for x in match_pressure_data))
+
+    sim_attenuation = Float64[]
+    for omega_gamma_value in omega_gamma_list
+        matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, match_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+        # Get the mean over all seeds
+        loop_mean_alphaoveromega = mean_diameter .* mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+        push!(sim_attenuation, loop_mean_alphaoveromega)
+    end
+
+    omega_list = sort(unique(x.omega for x in match_pressure_data_gaus)) 
+    gaus_attenuation = Float64[]
+    for omega_value in omega_list
+        matching_omega_data = filter(entry -> entry.omega == omega_value, match_pressure_data_gaus) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+        # Get the mean over all seeds
+        loop_mean_alphaoveromega = mean(entry.attenuation for entry in matching_omega_data) ./ omega_value
+        push!(gaus_attenuation, loop_mean_alphaoveromega)
+    end
+
+    gaus_attenuation_new = gaus_attenuation * 32 * pressure_value * 1 ./ omega_list
+    mat"""
+    loglog($(omega_gamma_list), $(sim_attenuation), "-o")
+    hold on
+    loglog($(omega_list), $(gaus_attenuation), "-o")
+    loglog($(omega_list), $(gaus_attenuation_new), "-o")
+    grid on
+    """
+
+end
+
+
+
+
 # Ellipse
 
 function plot_ellipse_width_effect(ω_value, γ_value, pressure_value)

@@ -73,7 +73,7 @@ function plotGausPressDep(simulation_data, omega_value; plot=true)
         legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
         """
     end
-    return loop_mean_attenuation_list 
+    return loop_mean_attenuation_list, pressure_list 
 end
 
 function plotAmpRatio(simulation_data, γ_value)
@@ -600,9 +600,9 @@ function plotGausAttenuation2d(simulation_data; plot=true)
         mat"""
         figure_attenuation = figure;
         % loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
-        loglog($(theory_x), $(theory_x) ./ 15, 'k--', 'DisplayName', 'Slope 1');
+        % loglog($(theory_x), $(theory_x) ./ 15, 'k--', 'DisplayName', 'Slope 1');
         hold on;
-        loglog($(theory_x), $(theory_x).^.5 ./ 15, 'k:', 'DisplayName', 'Slope 1/2');
+        % loglog($(theory_x), $(theory_x).^.5 ./ 15, 'k:', 'DisplayName', 'Slope 1/2');
         loglog($(theory_x), $(theory_x).^1.5 ./ 15, 'k', 'DisplayName', 'Slope 3/2');
         xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
         ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");

@@ -2,7 +2,24 @@ export
     packPoly2d,
     sim2d,
     sim2dPoly,
-    sim2dGauss
+    sim2dGauss,
+    packBi2d
+
+function packBi2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
+    mat"""
+    addpath('src/matlab_functions/')
+    N =double($(N))
+    K = double($(K))
+    D = double($(D))
+    M = double($(M))
+    G = double($(G))
+    P_target = double($(P_target))
+    W_factor = double($(W_factor))
+    seed = double($(seed))
+    plotit = double($(plotit))
+    packing_bi_2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
+    """
+end
 
     
 function packPoly2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
