@@ -82,6 +82,7 @@ function plotFit(simulation_data, data_gaus, pressure_value)
     end
 
     gaus_attenuation_new = gaus_attenuation * 32 * pressure_value * 1 ./ omega_list
+    # gaus_attenuation_new = gaus_attenuation + 3.5 .* omega_list.^.5 * pressure_value
     mat"""
     loglog($(omega_gamma_list), $(sim_attenuation), "-o")
     hold on
