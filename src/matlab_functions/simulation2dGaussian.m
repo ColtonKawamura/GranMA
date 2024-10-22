@@ -85,9 +85,9 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     neighbor_list_all = [];
     spring_list_all = [];
     for nn = 1:N
-        neighbor_list_nn = [];
+        neighbor_list_nn = []; % initialize the neighbor list for particle nn
         spring_list_nn = [];
-        for mm = [1:nn-1,nn+1:N]
+        for mm = [1:nn-1,nn+1:N] % mm is each N that's not nn
             dy = y(mm)-y(nn);
             dy = dy - round(dy/Ly)*Ly;
             Dnm = (1+skin)*(Dn(nn) + Dn(mm))/2;
@@ -96,13 +96,13 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
                 dnm = dx.^2+dy.^2;
                 if(dnm < Dnm^2)
     
-                    neighbor_list_nn = [neighbor_list_nn, mm];
+                    neighbor_list_nn = [neighbor_list_nn, mm]; % polulation the nn's neighbort list with N's that are neighbors
                     spring_list_nn = [spring_list_nn, sqrt(dnm)];
     
                 end
             end
         end
-        neighbor_list_all{nn} = neighbor_list_nn;
+        neighbor_list_all{nn} = neighbor_list_nn; % each neighbor list{nn} is a list of N's that are nn's neighbor
         spring_list_all{nn} = spring_list_nn;
         Zn_list = [Zn_list;length(spring_list_nn)];
     end
@@ -165,7 +165,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
             spring_list = spring_list_all{nn};
             neighbor_list = neighbor_list_all{nn};
             for mm_counter = 1:length(neighbor_list)
-                mm = neighbor_list(mm_counter);
+                mm = neighbor_list(mm_counter); % mm is every N that's not nn
                 dy = y(mm)-y(nn);
                 dy = dy - round(dy/Ly)*Ly;
                 Dnm = spring_list(mm_counter);
