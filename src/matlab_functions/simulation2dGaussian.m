@@ -97,13 +97,13 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
                 if(dnm < Dnm^2)
     
                     neighbor_list_nn = [neighbor_list_nn, mm]; % polulation the nn's neighbort list with N's that are neighbors
-                    spring_list_nn = [spring_list_nn, sqrt(dnm)];
+                    spring_list_nn = [spring_list_nn, sqrt(dnm)]; % equilibrium distance between nn and mm
     
                 end
             end
         end
         neighbor_list_all{nn} = neighbor_list_nn; % each neighbor list{nn} is a list of N's that are nn's neighbor
-        spring_list_all{nn} = spring_list_nn;
+        spring_list_all{nn} = spring_list_nn; % each particle nn get's a list of equilibrium (compressed spring length) with it's neighbor
         Zn_list = [Zn_list;length(spring_list_nn)];
     end
     
