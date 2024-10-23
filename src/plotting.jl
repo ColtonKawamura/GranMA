@@ -130,7 +130,7 @@ function plotAmpRatio(simulation_data, γ_value)
     mat"""
     ax_energy = figure;
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ \\overline{\\frac{A_{\\parallel}}{A_{\\perp}}} \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$  \\overline{\\frac{A_{\\perp}}{A_{\\parallel}}} \$', "FontSize", 20, "Interpreter", "latex");
     set(get(gca, 'ylabel'), 'rotation', 0);
     set(gca, 'XScale', 'log');
     grid on;
@@ -206,14 +206,16 @@ function plotAmpRatio(simulation_data, γ_value)
         %loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         
         % Plot Aspect Ratio
-        plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        loglog( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        ylim([.01, .6])
+        xlim([min(oemga_gamma), 1])
         """
     end
 
     # Add legends to the plots
     mat"""
     %legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
     """ 
         
 end
@@ -1096,16 +1098,18 @@ end
 # Single Simulaiton plots
 
 function plotAmp(filtered_data; plot=true)
-    x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft
     y = filtered_data[1].amplitude_vector_x
-    coeffs = fitLogLine(x,y)
+    coeffs = fitLogLine(x_parra,y)
     yIntercept_amp_x = coeffs[1]
+    slope_amp_x = coeffs[2]
 
     if plot==true
         display_name = @sprintf("\$ A_{||}(x) \$")
         mat"""
         figure
-        scatter($(x), $(y), "DisplayName", $(display_name))
+        scatter($(x_parra), $(y), "DisplayName", $(display_name))
+        hold on
         set(gca, 'YScale', 'log')
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -1116,21 +1120,24 @@ function plotAmp(filtered_data; plot=true)
         """
     end
 
-    x = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
     y = filtered_data[1].amplitude_vector_y
-    coeffs = fitLogLine(x,y)
+    coeffs = fitLogLine(x_perp,y)
     yIntercept_amp_y = coeffs[1]
+    slope_amp_y = coeffs[2]
     if plot == true
         display_name = @sprintf("\$ A_\\perp(x) \$")
         mat"""
-        scatter($(x), $(y), "DisplayName", $(display_name))
+        scatter($(x_perp), $(y), "DisplayName", $(display_name))
+        plot($(x_perp), exp($(yIntercept_amp_y) + $(slope_amp_y) .* $(x_perp)), 'HandleVisibility', 'off')
+        plot($(x_parra), exp($(yIntercept_amp_x) + $(slope_amp_x) .* $(x_parra)), 'HandleVisibility', 'off')
         set(gca, 'YScale', 'log')
         grid on
-        legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         """
     end
     
-    return yIntercept_amp_x / yIntercept_amp_y
+    return exp(yIntercept_amp_y) / exp(yIntercept_amp_x)  
 end
 
 function plotPhase(filtered_data; plot=true)
@@ -1200,7 +1207,6 @@ function combinePlots()
         h = [h2;h1];
         hasDisplayName = ~cellfun('isempty',get(h,'DisplayName'));
         legend(ax, h(hasDisplayName),'Location', leg1.Location, 'Interpreter', 'Latex')
-
 
         % Copy axis labels
         xlabel(ax, fig2ax.XLabel.String, 'Interpreter', 'Latex', 'FontSize', 20)
