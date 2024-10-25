@@ -24,7 +24,7 @@ plot(bin_centers, abs(binned_rot_angle_values), '-o', 'DisplayName', ['$\theta$'
 ylabel('$\theta$', 'Interpreter', 'latex', 'FontSize', 20);
 set(get(gca,'ylabel'),'rotation',0)
 % legend('show', 'Interpreter', 'latex');
-xlabel('Distance from Oscillating Wall (particle diameters)','Interpreter', 'latex', 'FontSize', 15);
+xlabel('$x$','Interpreter', 'latex', 'FontSize', 15);
 grid on;
 xlim([0 max_distance_from_wall])
 ylim([0 30])
@@ -35,7 +35,7 @@ title(['$\theta_\mathrm{avg} =$' num2str(mean_rotation_angles)], "Interpreter", 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure;
 semilogy(bin_centers, binned_semi_major_values, '-o', 'DisplayName', ['a']);
-xlabel('Distance from Oscillating Wall (particle diameters)','Interpreter', 'latex', 'FontSize', 15);
+xlabel('$x$','Interpreter', 'latex', 'FontSize', 15);
 ylabel('Displacement (particle diameters)', 'Interpreter', 'latex', 'FontSize', 15);
 
 grid on;
@@ -43,3 +43,4 @@ hold on;
 semilogy(bin_centers, binned_semi_minor_values, '-o', 'DisplayName', ['b']);
 legend('show', 'Interpreter', 'latex');
 xlim([0 max_distance_from_wall])
+box on
