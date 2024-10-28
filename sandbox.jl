@@ -45,6 +45,18 @@ function paperPlots()
     data = FilterData(simulation_data, .001, :pressure, .01, :omega, .5, :gamma, 1, :seed)
     plotPhase(data) # phase plot for high pressure, low gamma
 
+    # Tiled Plots
+    # high omega
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # High Pressure
+    plotAmpTiled(data)
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed) # low pressure
+    plotAmpTiled(data)
+    #low omega
+    data = FilterData(simulation_data, .1, :pressure, .01, :omega, .5, :gamma, 1, :seed) # high pressure
+    plotAmpTiled(data)
+    data = FilterData(simulation_data, .001, :pressure, .01, :omega, .5, :gamma, 1, :seed) # low pressuer
+    plotAmpTiled(data)
+ 
     # Amp and Phase Ratio Plots
     plotAmpRatio(simulation_data, .5)
     plotPhaseRatio(simulation_data, .5)

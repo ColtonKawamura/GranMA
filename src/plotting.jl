@@ -14,7 +14,8 @@ export
     plotAmpRatio,
     plotGausPressDep,
     combinePlots,
-    plotEllipseAttenuation2d
+    plotEllipseAttenuation2d,
+    plotAmpTiled
 
 # Ellipse Plots
 function plotEllipseAttenuation2d(simulation_data, γ_value) 
@@ -1354,4 +1355,97 @@ function combinePlots()
         ylabel(ax, fig2ax.YLabel.String, 'Interpreter', 'Latex', 'FontSize', 20)
         set(get(gca, 'ylabel'), 'rotation', 0);
     """
+end
+
+function plotAmpTiled(filtered_data_a; plot=true)
+    x_parra_a = filtered_data_a[1].initial_distance_from_oscillation_output_x_fft
+    y_a = filtered_data_a[1].amplitude_vector_x
+
+    if plot==true
+        display_name = @sprintf("\$ A_{||}(x) \$")
+        mat"""
+        figure_main = figure;
+        tiled_main = tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 2rows, 1 column
+        figure_amp = nexttile
+        scatter(figure_amp, $(x_parra_a), $(y_a), "DisplayName", $(display_name))
+        hold(figure_amp, 'on')
+        set(figure_amp, 'YScale', 'log')
+        grid(figure_amp, 'on')
+        ylabel(figure_amp, "\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(figure_amp, 'ylabel'), 'rotation', 0);
+        set(figure_amp, 'XTickLabel', []);
+        box on
+        hold on 
+        """
+    end
+
+    x_perp_a = filtered_data_a[1].initial_distance_from_oscillation_output_y_fft
+    y_a = filtered_data_a[1].amplitude_vector_y
+    if plot == true
+        display_name = @sprintf("\$ A_\\perp(x) \$")
+        mat"""
+        scatter(figure_amp, $(x_perp_a), $(y_a), "DisplayName", $(display_name))
+        set(figure_amp, gca, 'YScale', 'log')
+        
+        grid on
+        """
+    end
+    filtered_data = filtered_data_a # i'm lazy
+    distance_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    distance_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    phase_y = filtered_data[1].unwrapped_phase_vector_y
+    phase_x = filtered_data[1].unwrapped_phase_vector_x
+    phase_y = mod.(phase_y, 2π)
+    phase_x = mod.(phase_x, 2π)
+    scatter_x = meanDistNeighbor(distance_x, phase_x)
+    scatter_y = meanDistNeighbor(distance_y, phase_y)
+    if plot==true
+        mat"""
+        figure_phase = nexttile
+        scatter(figure_phase, $(distance_x), $(phase_x), "DisplayName", "\$ \\hat{x} \$")
+        hold on
+        scatter(figure_phase, $(distance_y), $(phase_y), "DisplayName", "\$ \\hat{y} \$")
+        grid(figure_phase, 'on')
+        box(figure_phase, 'on')
+        set(figure_phase,'YTick', [0, pi, 2*pi], 'YTickLabel', {'0', ' \$ \\pi \$', '\$ 2\\pi \$'}, 'TickLabelInterpreter', 'latex');
+        ylabel(figure_phase, "\$ \\Delta \\phi \$", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(figure_phase, 'ylabel'), 'rotation', 0);
+        legend(figure_phase, 'Interpreter', 'latex', "FontSize", 15)
+        ylim(figure_phase, [0,2*pi])
+        """
+    end
+
+# This is an artifact, but dont' want to delete yet because might actuall use 
+    # x_parra_b = filtered_data_b[1].initial_distance_from_oscillation_output_x_fft
+    # y_b = filtered_data_b[1].amplitude_vector_x
+
+    # if plot==true
+    #     display_name = @sprintf("\$ A_{||}(x) \$")
+    #     mat"""
+    #     figure
+    #     scatter($(x_parra_b), $(y_b), "DisplayName", $(display_name))
+    #     hold on
+    #     set(gca, 'YScale', 'log')
+    #     grid on
+    #     xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+    #     ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+    #     set(get(gca, 'ylabel'), 'rotation', 0);
+    #     box on
+    #     hold on 
+    #     """
+    # end
+
+    # x_perp_b = filtered_data_b[1].initial_distance_from_oscillation_output_y_fft
+    # y_b = filtered_data_b[1].amplitude_vector_y
+    # if plot == true
+    #     display_name = @sprintf("\$ A_\\perp(x) \$")
+    #     mat"""
+    #     scatter($(x_perp_b), $(y_b), "DisplayName", $(display_name))
+    #     set(gca, 'YScale', 'log')
+    #     grid on
+    #     legend('show', 'Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 15);
+    #     """
+    # end
+
 end
