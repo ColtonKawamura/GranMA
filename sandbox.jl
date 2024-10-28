@@ -56,7 +56,10 @@ function paperPlots()
     # ellipse Plots
     sim2d(100, 1, 5, 1, 5000, .1 ,5,  1) # high pressure, 
     sim2d(100, 1, 5, 1, 5000, .001 ,5,  1)
+    sim2d(100, 1, 5, .3, 5000, .001 ,5,  1) # new one
 
+
+    plotEllipseAttenuation2d(simulation_data, .5)
 end
 
 # Ellipse
