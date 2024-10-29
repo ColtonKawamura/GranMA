@@ -232,7 +232,17 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     
     % Add the path to the "functions" directory
     addpath('./src/matlab_functions')
-
+    time_vector = (1:Nt)*dt;
+    [~,index_particles] = sort(x0);
+    index_oscillating_wall = left_wall_list;
+    driving_frequency = w_D/6.2832;
+    driving_amplitude=A;
+    position_particles = x_all;
+    initial_distance_from_oscillation = x0;
+    index_particles = initial_distance_from_oscillation < 100;
+    position_particles = position_particles(index_particles_below_100, :);
+    initial_distance_from_oscillation = initial_distance_from_oscillation(index_particles_below_100);
+    process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
     % Dn = Dn';
 
     % Sorting based on the initial x positions (first column of xOut)
