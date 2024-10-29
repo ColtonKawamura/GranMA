@@ -92,7 +92,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
         Zn_list = [Zn_list;length(spring_list_nn)];
     end
     
-    [Hessian, eigD] = HessYale(x, y, Dn, N, Ly)
+    [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly);
     % identify wall particles
     left_wall_list = (x<Dn/2);
     right_wall_list = (x>Lx-Dn/2);
