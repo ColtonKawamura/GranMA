@@ -1,4 +1,4 @@
-function [Hessian, eigD] = HessYale(x, y, Dn, N, L)
+function [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, L)
 % L = Ly (periodic in y)
 % x = xy(1:N);
 % y = xy(N+1:end);
@@ -49,4 +49,4 @@ end
 %%
 Hessian = d2Ddr1dr2 + d2Ddr1dr2';
 
-eigD = eig(Hessian);
+[eigen_values, eigen_vectors] = eig(Hessian); % [V,D] = eig(A) returns diagonal matrix D of eigenvalues and matrix V whose columns are the corresponding right eigenvectors, so that A*V = V*D.
