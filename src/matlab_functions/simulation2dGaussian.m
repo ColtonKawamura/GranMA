@@ -15,14 +15,14 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     addpath('./src/matlab_functions') 
     
     % % Script Variables for debugging
-    %  K = 100;
-    %  M = 1;
-    %  Bv = 0;
-    %  w_D = .2 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
-    %  N = 5000;
-    %  P = 0.001; % 0.021544 0.046416
-    %  W = 5;
-    %  seed = 1;
+     K = 100;
+     M = 1;
+     Bv = 0;
+     w_D = .5 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+     N = 5000;
+     P = 0.01; % 0.021544 0.046416
+     W = 5;
+     seed = 1;
 
     % save_interval = 10;
     % xOut = [];
@@ -233,16 +233,87 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % Add the path to the "functions" directory
     addpath('./src/matlab_functions')
     time_vector = (1:Nt)*dt;
+    % Find a value that is closest to the wall and plot the individual trajectory 
+    [~, idx_particle] = min(abs(x0 - 2));
+    figure;
+    plot(time_vector(1:length(x_all(idx_particle, :))), x_all(idx_particle, :));% length of time vectory is weird because the oscillation stops before all the time finsihes
+    grid on
+
+    % split the time vector
+    target_time = 140;
+    [~, idx_time_split] = min(abs(time_vector - target_time));
+    time_vector_before = time_vector(1:idx_time_split);
+    time_vector_after = time_vector(idx_time_split+1:idx_time_split + length(x_all(idx_particle, idx_time_split+1:end)));
+    particle_x_before = x_all(idx_particle, 1:idx_time_split);
+    particle_x_after =  x_all(idx_particle, idx_time_split+1:end);
+    particle_y_before = y_all(idx_particle, 1:idx_time_split);
+    particle_y_after =  y_all(idx_particle, idx_time_split+1:end);
+
+    % visually verify
+    plot(time_vector_before, particle_x_before); 
+    plot(time_vector_before, particle_y_before); 
+    figure;
+    plot(time_vector_after, particle_x_after);
+    plot(time_vector_after, particle_y_after);
+    
+    % fft time
+    % fft parameters from the big function
+    average_dt = mean(diff(time_vector_before));  % Average time step
+    sampling_freq = 1 / average_dt;  % Sampling frequency
+    nyquist_freq = sampling_freq / 2;  % Nyquist frequency
+    num_bins = 2000;  % Number of bins for frequency vector
+    freq_vector = linspace(0, nyquist_freq, num_bins);  % Frequency vector up to Nyquist frequency
+    grid on
+
+    % FFT for particle_x_before
+    position_nn = particle_x_before - mean(particle_x_before);  % Center the data
+    normalized_fft_data = fft(position_nn) / length(position_nn);
+    normalized_fft_data_single_sided = abs(normalized_fft_data(1:num_bins)) * 2;
+    figure; stem(freq_vector, normalized_fft_data_single_sided);
+    title('fft x before');
+    xlim([0, 1.4]);
+    grid on
+
+    % FFT for particle_y_before
+    position_nn = particle_y_before - mean(particle_y_before);  % Center the data
+    normalized_fft_data = fft(position_nn) / length(position_nn);
+    normalized_fft_data_single_sided = abs(normalized_fft_data(1:num_bins)) * 2;
+    figure; stem(freq_vector, normalized_fft_data_single_sided);
+    title('fft x after');
+    xlim([0, 1.4]);
+    grid on
+
+    % FFT for particle_x_after
+    position_nn = particle_x_after - mean(particle_x_after);  % Center the data
+    normalized_fft_data = fft(position_nn) / length(position_nn);
+    normalized_fft_data_single_sided = abs(normalized_fft_data(1:num_bins)) * 2;
+    figure; stem(freq_vector, normalized_fft_data_single_sided);
+    title('fft of y before');
+    xlim([0, 1.4]);
+    grid on
+
+    % FFT for particle_y_after
+    position_nn = particle_y_after - mean(particle_y_after);  % Center the data
+    normalized_fft_data = fft(position_nn) / length(position_nn);
+    normalized_fft_data_single_sided = abs(normalized_fft_data(1:num_bins)) * 2;
+    figure; stem(freq_vector, normalized_fft_data_single_sided);
+    title('fft of y after');
+    xlim([0, 1.4]);
+    grid on
+
+    
+
+    % big fft
     [~,index_particles] = sort(x0);
     index_oscillating_wall = left_wall_list;
-    driving_frequency = w_D/6.2832;
+    driving_frequency = w_D;
     driving_amplitude=A;
     position_particles = x_all;
     initial_distance_from_oscillation = x0;
-    index_particles = initial_distance_from_oscillation < 100;
-    position_particles = position_particles(index_particles_below_100, :);
-    initial_distance_from_oscillation = initial_distance_from_oscillation(index_particles_below_100);
-    process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
+    % index_particles = initial_distance_from_oscillation < 100;
+    % position_particles = position_particles(index_particles, :);
+    % initial_distance_from_oscillation = initial_distance_from_oscillation(index_particles);
+    % process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
     % Dn = Dn';
 
     % Sorting based on the initial x positions (first column of xOut)
