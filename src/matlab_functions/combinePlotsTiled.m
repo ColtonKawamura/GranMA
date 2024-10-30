@@ -28,6 +28,7 @@ function combinePlotsTiled(f1, f2)
     ylabel(figure_1, fig1ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig1
     set(get(figure_1, 'ylabel'), 'rotation', 0);
     set(figure_1, 'XTickLabel', ''); % Hide x-tick labels but keep tick marks visible
+    xlim(figure_1, [.013, 3])
 
     % Second tile - general plot 2
     figure_2 = nexttile;
