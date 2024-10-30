@@ -15,8 +15,13 @@ export
     plotGausPressDep,
     combinePlots,
     plotEllipseAttenuation2d,
-    plotAmpTiled
+    plotAmpTiled,
+    combinePlotsTiled
 
+
+function combinePlotsTiled()
+    mat"combinePlotsTiled('fig1.fig', 'fig2.fig');"
+end
 # Ellipse Plots
 function plotEllipseAttenuation2d(simulation_data, γ_value) 
 
@@ -332,7 +337,7 @@ function plotAmpRatio(simulation_data, γ_value)
         # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
         @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        pressure_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
+        pressure_label = @sprintf("\$\\hat{P} = %.4f\$", pressure_value)
 
         # Transfer data to MATLAB
         mat"""
