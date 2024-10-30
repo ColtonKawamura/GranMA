@@ -14,15 +14,15 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     % Add Ek(nt) storage inside loop
     
     
-    % % Script Variables for debugging
-    % K = 100;
-    % M = 1;
-    % Bv = .1;
-    % w_D = 0.36; % 
-    % N = 5000;
-    % P = 0.001; % 0.021544 0.046416
-    % W = 5;
-    % seed = 1;
+    % Script Variables for debugging
+    K = 100;
+    M = 1;
+    Bv = .1;
+    w_D = 0.36; % 
+    N = 5000;
+    P = 0.001; % 0.021544 0.046416
+    W = 5;
+    seed = 1;
     
     
     % Create the packing name with the exact number format for P

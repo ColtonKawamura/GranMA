@@ -1,6 +1,6 @@
 function packBi2dRep(N, K, D, G, M, P_target, W_factor, seed, plotit)
 %Function to create 2D packing with following input parameters:
-% N, Number of Particles
+% N, Number of Particles packBi2dRep(100, 100, 1, 1.4, 1, .01, 10, 1, 1)
 % K, spring constant
 % D, Average Diameter
 % G, Ratio of large to small particles (typically 1.4)

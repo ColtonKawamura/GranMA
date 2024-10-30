@@ -1,7 +1,7 @@
 function packPoly2dRep(N, K, D, G, M, P_target, W_factor, seed, plotit)
 %Function to create 2D packing with following input parameters:
-% N, Number of Particles
-% K, spring constant
+% N, Number of Particles  packPoly2dRep(100, 100, 1, 1.4, 1, .01, 10, 1, 1)
+%  dsf K, spring constant
 % D, Average Diameter
 % G, Ratio of large to small particles (typically 1.4)
 % M, mass of particles
