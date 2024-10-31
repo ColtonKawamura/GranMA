@@ -465,7 +465,8 @@ function plotPhaseRatio(simulation_data, γ_value)
                 distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
                 # mean_distance = meanDistNeighbor(distance_from_wall, wrapped_phase)
                 mean_distance = plotPhase(k_seed_data; plot=false)
-                push!(E_ratio_list, mean_distance)
+                mean_distance = isinf(mean_distance) ? NaN : mean_distance # saftey for infinite values
+                push!(E_ratio_list, 1-cos(mean_distance))
             end
             j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
             push!(loop_mean_E_list, j_E_ratio)
@@ -1402,8 +1403,10 @@ function plotAmpTiled(filtered_data_a; plot=true)
     phase_x = filtered_data[1].unwrapped_phase_vector_x
     phase_y = mod.(phase_y, 2π)
     phase_x = mod.(phase_x, 2π)
-    scatter_x = meanDistNeighbor(distance_x, phase_x)
-    scatter_y = meanDistNeighbor(distance_y, phase_y)
+    # scatter_x = meanDistNeighbor(distance_x, phase_x)
+    # scatter_y = meanDistNeighbor(distance_y, phase_y)
+    scatter_x = meanDeltaYNeighbor(distance_x, phase_x)
+    scatter_y = meanDeltaYNeighbor(distance_y, phase_y)
     if plot==true
         mat"""
         figure_phase = nexttile
