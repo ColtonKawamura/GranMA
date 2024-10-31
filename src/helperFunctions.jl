@@ -39,9 +39,11 @@ function meanDistNeighbor(x_values, y_values)
                 # Calculate Euclidean distance for x and wrapped distance for y
                 dist_x = abs(x_values[i] - x_values[j])
                 dist_y = wrappedDistance(y_values[i], y_values[j])
-                dist_to_others[j] = sqrt(dist_x^2 + dist_y^2)
+                # dist_to_others[j] = sqrt(dist_x^2 + dist_y^2)
+                dist_to_others[j] = dist_y
             else
-                dist_to_others[j] = Inf  # Exclude the point itself
+                # dist_to_others[j] = Inf  # Exclude the point itself
+                dist_to_others[j] = NaN  # Exclude the point itself
             end
         end
         
