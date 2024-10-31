@@ -83,6 +83,6 @@ function meanDeltaYNeighbor(x_values, y_values)
         
         closest_y_distances[i] = min_dist_y
     end
-    
+    println(mean(closest_y_distances)) 
     return mean(closest_y_distances)
 end
