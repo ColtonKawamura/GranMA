@@ -14,17 +14,25 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     % Add Ek(nt) storage inside loop
     
     
-    % Script Variables for debugging
-    addpath("/Users/coltonkawamura/Documents/GranMA/src/matlab_functions")
-    K = 100;
-    M = 1;
-    Bv = .1;
-    w_D = 0.36; % 
-    N = 5000;
-    P = 0.001; % 0.021544 0.046416
-    W = 5;
-    seed = 1;
-    
+    % % Script Variables for debugging
+    % addpath("/Users/coltonkawamura/Documents/GranMA/src/matlab_functions")
+    % K = 100;
+    % M = 1;
+    % Bv = .1;
+    % w_D = 0.36; % 
+    % N = 5000;
+    % P = 0.01; % 0.021544 0.046416
+    % W = 5;
+    % seed = 1;
+
+    % K = 100;
+    % M = 1;
+    % Bv = .1;
+    % w_D = 0.36; % 
+    % N = 12;
+    % P = 0.01; % 0.021544 0.046416
+    % W = 3;
+    % seed = 1;    
     
     % Create the packing name with the exact number format for P
     packing_name = sprintf('2D_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
@@ -94,7 +102,14 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     end
     
     [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly);
-    mode_to_plot = 1; % should just be the column
+    % sort eigen_vector's columns in ascending order, then short eignvectors accordingly
+    % [ascending_eigen_values, eigen_idx] = sort(eigen_values, 1);
+    % ascending_eigen_vectors = zeros(size(ascending_eigen_values));
+    % for col = 1:size(ascending_eigen_vectors, 2) % Go throuch each column 
+    %     ascending_eigen_vectors(:, col) = eigen_vectors(eigen_idx(:, col), col); % grab all the rows from each column in eigen_vectors and 
+    % end
+
+    mode_to_plot = 5000; % should just be the column
     plotEigenmode(x0', y0', eigen_vectors, mode_to_plot)
     % identify wall particles
     left_wall_list = (x<Dn/2);
