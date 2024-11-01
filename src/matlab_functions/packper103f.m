@@ -1,6 +1,7 @@
 function [x y D Gn nu Ek Ep Ct Dt nt tc]=packper103f(Lx,Ly,Dn,Gam,seed,ispack,plotit,tol,ic,fx,fy)
 rng(seed)
-%% Molecular Dynamics Simulator
+% Example N = 20; Dn_list = 1+0.4*(rand([1,N])>0.5); packper103f(1,1,Dn_list,0,2)
+% Molecular Dynamics Simulator
 % <md.m> Mark D. Shattuck 7/22/2010
 
 % revision history:
