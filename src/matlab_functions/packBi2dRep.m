@@ -217,8 +217,8 @@ for nt = 1:Nt
     % Fx = Fx-K*(x-(Lx-Dn/2)).*(RW_contacts);  % Right wall
     % Fy = Fy-K*(y-(Ly-D/2)).*(y>Ly-D/2);  % Top wall
     
-    y=mod(y,Ly); %periodic boundaries for top and bottom
-    x = mod(x, Lx);
+    % y=mod(y,Ly); %periodic boundaries for top and bottom
+    % x = mod(x, Lx);
     Ek(nt) = 1/2*M*sum((vx).^2+(vy).^2);
     Ek(nt) = Ek(nt)/N;
     Ep(nt) = Ep(nt)/N;
@@ -233,7 +233,8 @@ for nt = 1:Nt
 
     vx = vx+(ax_old+ax).*dt/2;
     vy = vy+(ay_old+ay).*dt/2;
-    
+    vx(Zn == 0) = 0;
+    vy(Zn == 0) = 0;
 %     no_cont_list = (Zn == 0 & ~LW_contacts & ~RW_contacts);
 %     vx(no_cont_list) = 0;
 %     vy(no_cont_list) = 0;
