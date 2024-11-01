@@ -1301,8 +1301,8 @@ function plotPhase(filtered_data; plot=true)
     phase_x = mod.(phase_x, 2π)
     # scatter_x = meanDistNeighbor(distance_x, phase_x)
     # scatter_y = meanDistNeighbor(distance_y, phase_y)
-    scatter_x = meanPhaseDev(distance_x, phase_x, 2)
-    scatter_y = meanPhaseDev(distance_y, phase_y, 2)
+    scatter_x = meanPhaseDev(distance_x, phase_x, 1)
+    scatter_y = meanPhaseDev(distance_y, phase_y, 1)
 
     if plot==true
         mat"""
