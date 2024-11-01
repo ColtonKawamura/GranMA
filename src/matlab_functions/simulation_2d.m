@@ -15,6 +15,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     
     
     % Script Variables for debugging
+    addpath("/Users/coltonkawamura/Documents/GranMA/src/matlab_functions")
     K = 100;
     M = 1;
     Bv = .1;
@@ -93,6 +94,8 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     end
     
     [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly);
+    mode_to_plot = 1; % should just be the column
+    plotEigenmode(x0', y0', eigen_vectors, mode_to_plot)
     % identify wall particles
     left_wall_list = (x<Dn/2);
     right_wall_list = (x>Lx-Dn/2);
