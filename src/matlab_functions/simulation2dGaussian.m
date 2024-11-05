@@ -236,7 +236,8 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     addpath('./src/matlab_functions')
     time_vector = (1:Nt)*dt;
     % Find a value that is closest to the wall and plot the individual trajectory 
-    [~, idx_particle] = min(abs(x0 - 2));
+    target_distance = 10;
+    [~, idx_particle] = min(abs(x0 - target_distance));
     figure;
     plot(time_vector(1:length(x_all(idx_particle, :))), x_all(idx_particle, :));% length of time vectory is weird because the oscillation stops before all the time finsihes
     grid on
