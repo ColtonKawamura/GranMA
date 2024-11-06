@@ -3,6 +3,10 @@ function [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, L)
 % x = xy(1:N);
 % y = xy(N+1:end);
 
+% ID the wall particles
+left_wall_list = (x<Dn/2);
+right_wall_list = (x>Lx-Dn/2);
+
 d2Ddr1dr2 = zeros(2*N, 2*N);
 
 for n = 1:N-1
