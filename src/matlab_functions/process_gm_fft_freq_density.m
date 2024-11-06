@@ -61,7 +61,7 @@ for nn = index_particles(1:iskip:end)  % Incremental index processing
                     amp_value = normalized_fft_data_single_sided_nn(mM);
                     amp_index = (amp_value - amp_min) / (amp_max - amp_min); % Normalize between 0 and 1
                     amp_index = max(1, min(64, round(amp_index * 63) + 1)); % Scale to 1-64, avoiding index exceeding 64
-                    plot(distance_from_oscillation, log(freq_vector(mM)), 'o', 'Color', cmap(amp_index, :), 'MarkerFaceColor', cmap(amp_index, :)); %cmap(row = which color, all columns = full RGB for that row-color)
+                    plot(distance_from_oscillation, freq_vector(mM), 'o', 'Color', cmap(amp_index, :), 'MarkerFaceColor', cmap(amp_index, :)); %cmap(row = which color, all columns = full RGB for that row-color)
 
                 end
             end

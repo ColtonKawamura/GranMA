@@ -109,7 +109,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %     ascending_eigen_vectors(:, col) = eigen_vectors(eigen_idx(:, col), col); % grab all the rows from each column in eigen_vectors and 
     % end
 
-    mode_to_plot = 5000; % should just be the column
+    mode_to_plot = 2; % should just be the column
     plotEigenmode(x0', y0', eigen_vectors, mode_to_plot)
     % identify wall particles
     left_wall_list = (x<Dn/2);
@@ -238,7 +238,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     amplitude_vector_x = amplitude_vector;
     cleaned_particle_index_x = cleaned_particle_index;
     
-    % process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
+    process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation, driving_frequency)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Y Direction Post Processing
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

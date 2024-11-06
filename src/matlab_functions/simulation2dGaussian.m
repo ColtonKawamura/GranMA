@@ -17,7 +17,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % % Script Variables for debugging
      K = 100;
      M = 1;
-     Bv = 0;
+     Bv = .5;
      w_D = .5 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
      N = 5000;
      P = 0.01; % 0.021544 0.046416
@@ -148,7 +148,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
         x  =  x+vx*dt+ax_old.*dt.^2/2;
         y  =  y+vy*dt+ay_old.*dt.^2/2;
     
-        x(left_wall_list) = x0(left_wall_list)+A*cos(w_D*((nt)*dt-t_max))*f(nt*dt,t_max,sigma);
+        x(left_wall_list) = x0(left_wall_list)+A*cos(w_D*((nt)*dt-t_max));%*f(nt*dt,t_max,sigma);
         % x(left_wall_list) = x0(left_wall_list)+A*cos(w_D*((nt)*dt-t_max));
         y(left_wall_list) = y0(left_wall_list);
         x(right_wall_list) = x0(right_wall_list);
@@ -268,6 +268,9 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     freq_vector = linspace(0, nyquist_freq, num_bins);  % Frequency vector up to Nyquist frequency
     grid on
 
+
+    %%%%%
+
     % FFT for particle_x_before
     position_nn = particle_x_before - mean(particle_x_before);  % Center the data
     normalized_fft_data = fft(position_nn) / length(position_nn);
@@ -277,6 +280,10 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     xlim([0, 1.4]);
     grid on
 
+
+    %%% Abe's Code
+    plotfft(position_nn, 1/dt)
+    
     % FFT for particle_y_before
     position_nn = particle_y_before - mean(particle_y_before);  % Center the data
     normalized_fft_data = fft(position_nn) / length(position_nn);
