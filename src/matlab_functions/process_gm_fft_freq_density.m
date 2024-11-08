@@ -24,8 +24,6 @@ sampling_freq = 1 / average_dt;
 % nyquist_freq = sampling_freq / 2;  % Nyquist frequency is sampling_freq / 2, but I increased for more bins for better looking graphs. computationally more expensive though.
 % freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq;
 nyquist_freq = sampling_freq / 2;  % Nyquist frequency is sampling_freq / 2
-% % num_bins = 2000;  % Increase this value for more bins
-% freq_vector = linspace(0, nyquist_freq, num_bins);  % Use linspace with num_bins
 freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq; % creates vector of posible frequecies from 0 to the nyquist frequency (upper limit)
 index_vector = 1:numel(freq_vector);
 
