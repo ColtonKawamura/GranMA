@@ -44,13 +44,13 @@ freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq; % cre
 index_vector = 1:numel(freq_vector);
 number_elements_time = numel(time_vector);
 
-for nn = index_particles(1:iskip:end)
-    if ~index_oscillating_wall(nn)
-        position_nn = position_particles(nn, :);
+for nn = index_particles(1:iskip:end) % go through all th eparticles
+    if ~index_oscillating_wall(nn) % only look at partciles not wall particles
+        position_nn = position_particles(nn, :); % grab the position (one dimension) of particle nn over time
 
-        if length(unique(position_nn)) > 10
+        if length(unique(position_nn)) > 10 % don't bother with particles that 
             centered_data = position_nn - mean(position_nn); % Center the data on zero for mean
-            normalized_fft_data = fft(centered_data) / number_elements_time;
+            normalized_fft_data = fft(centered_data) / number_elements_time; % need to normalize beceause not all particles have the same time-vector (if they don't oscilalte until wave hits them)
 
             % Ignore frequencies below a certain threshold if needed
             if ignore_below_threshold
