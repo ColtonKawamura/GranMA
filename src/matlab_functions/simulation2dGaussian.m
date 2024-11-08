@@ -17,8 +17,8 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % % Script Variables for debugging
      K = 100;
      M = 1;
-     Bv = .5;
-     w_D = .5 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+     Bv = 0;
+     w_D = .3 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
      N = 5000;
      P = 0.01; % 0.021544 0.046416
      W = 5;
@@ -148,7 +148,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
         x  =  x+vx*dt+ax_old.*dt.^2/2;
         y  =  y+vy*dt+ay_old.*dt.^2/2;
     
-        x(left_wall_list) = x0(left_wall_list)+A*cos(w_D*((nt)*dt-t_max));%*f(nt*dt,t_max,sigma);
+        x(left_wall_list) = x0(left_wall_list)+A*cos(w_D*((nt)*dt-t_max))*f(nt*dt,t_max,sigma);
         % x(left_wall_list) = x0(left_wall_list)+A*cos(w_D*((nt)*dt-t_max));
         y(left_wall_list) = y0(left_wall_list);
         x(right_wall_list) = x0(right_wall_list);
@@ -236,7 +236,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     addpath('./src/matlab_functions')
     time_vector = (1:Nt)*dt;
     % Find a value that is closest to the wall and plot the individual trajectory 
-    target_distance = 2;
+    target_distance = 2 ;
     [~, idx_particle] = min(abs(x0 - target_distance));
     figure;
     plot(time_vector(1:length(x_all(idx_particle, :))), x_all(idx_particle, :));% length of time vectory is weird because the oscillation stops before all the time finsihes
@@ -264,9 +264,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     average_dt = mean(diff(time_vector_before));  % Average time step
     sampling_freq = 1 / average_dt;  % Sampling frequency
     nyquist_freq = sampling_freq / 2;  % Nyquist frequency
-    num_bins = 2000;  % Number of bins for frequency vector
-    freq_vector = linspace(0, nyquist_freq, num_bins);  % Frequency vector up to Nyquist frequency
-    grid on
+    freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq; % creates vector of posible frequecies from 0 to the nyquist frequency (upper limit)    grid on
 
 
     %%%%%
@@ -280,10 +278,6 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     xlim([0, 1.4]);
     grid on
 
-
-    %%% Abe's Code
-    plotfft(position_nn, 1/dt)
-    
     % FFT for particle_y_before
     position_nn = particle_y_before - mean(particle_y_before);  % Center the data
     normalized_fft_data = fft(position_nn) / length(position_nn);
