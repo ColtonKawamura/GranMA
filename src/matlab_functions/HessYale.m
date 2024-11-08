@@ -5,9 +5,11 @@ function [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, L)
 
 % ID the wall particles
 left_wall_list = (x<Dn/2);
-right_wall_list = (x>Lx-Dn/2);
+% right_wall_list = (x>Lx-Dn/2);
 
 d2Ddr1dr2 = zeros(2*N, 2*N);
+
+rad = Dn/2;
 
 for n = 1:N-1
     ix_n = n;
@@ -15,7 +17,7 @@ for n = 1:N-1
     for m = n+1:N
         ix_m = m;
         iy_m = m + N;
-        Dnm = Dn(n) + Dn(m);
+        Dnm = rad(n) + rad(m);
         
         dx = x(m) - x(n);
         % dx = dx - round(dx / L) * L;
@@ -46,6 +48,8 @@ for n = 1:N-1
                 d2Ddr1dr2(ix_n, iy_m) = d2Ddr1dr2(ix_n, iy_m) - d2Ddxdy;
                 d2Ddr1dr2(ix_m, iy_n) = d2Ddr1dr2(ix_m, iy_n) - d2Ddxdy;
                 d2Ddr1dr2(iy_n, iy_m) = d2Ddr1dr2(iy_n, iy_m) - 2 * d2Ddy2;
+
+                % if x(n) <Dn
             end
         end
     end                    
