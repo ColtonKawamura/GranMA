@@ -40,7 +40,7 @@ freq_match_tolerance = 0.05;
 average_dt = mean(diff(time_vector));
 sampling_freq = 1 / average_dt;
 nyquist_freq = sampling_freq / 2;  % Nyquist frequency
-freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq;
+freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq; % creates vector of posible frequecies from 0 to the nyquist frequency (upper limit)
 index_vector = 1:numel(freq_vector);
 number_elements_time = numel(time_vector);
 
