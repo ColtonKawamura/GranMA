@@ -4,26 +4,25 @@ function [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, L)
 % y = xy(N+1:end);
 
 % ID the wall particles
-left_wall_list = (x<Dn/2);
+% left_wall_list = (x<Dn/2);
 % right_wall_list = (x>Lx-Dn/2);
-
 d2Ddr1dr2 = zeros(2*N, 2*N);
 
 rad = Dn/2;
 
-for n = 1:N-1
-    ix_n = n;
-    iy_n = n + N;
-    for m = n+1:N
-        ix_m = m;
-        iy_m = m + N;
-        Dnm = rad(n) + rad(m);
+for n = 1:N-1 % start with the first particle (not sorted)
+    ix_n = n; % index for the x-coord of particle n 
+    iy_n = n + N; % index for y-coord
+    for m = n+1:N % These are the neighbors of particle n
+        ix_m = m; % index for partcile m's x-coord
+        iy_m = m + N; % index y-coord
+        Dnm = rad(n) + rad(m); % distance between n and m
         
         dx = x(m) - x(n);
-        % dx = dx - round(dx / L) * L;
+        dx = dx - round(dx / L) * L; % for periodic boundary in x
         if abs(dx) < Dnm
             dy = y(m) - y(n);
-            dy = dy - round(dy / L) * L;
+            dy = dy - round(dy / L) * L; % for periddib boundarty in y
             d = sqrt(dx^2 + dy^2);
             if d < Dnm
                 dd = 1 - Dnm / d;
@@ -36,11 +35,11 @@ for n = 1:N-1
                 d2Ddy2 = (dy_sq + dd * dx_sq) / Dnm_sq / 2;
                 d2Ddxdy = dx * dy * (1 - dd) / Dnm_sq;
 
-                d2Ddr1dr2(ix_n, ix_n) = d2Ddr1dr2(ix_n, ix_n) + d2Ddx2;
-                d2Ddr1dr2(ix_n, iy_n) = d2Ddr1dr2(ix_n, iy_n) + d2Ddxdy;
-                d2Ddr1dr2(iy_n, iy_n) = d2Ddr1dr2(iy_n, iy_n) + d2Ddy2;
+                d2Ddr1dr2(ix_n, ix_n) = d2Ddr1dr2(ix_n, ix_n) + d2Ddx2; % for n = 1: M(1, 1)
+                d2Ddr1dr2(ix_n, iy_n) = d2Ddr1dr2(ix_n, iy_n) + d2Ddxdy; % M(1, 5001)
+                d2Ddr1dr2(iy_n, iy_n) = d2Ddr1dr2(iy_n, iy_n) + d2Ddy2; %M(5001, 5001)
 
-                d2Ddr1dr2(ix_m, ix_m) = d2Ddr1dr2(ix_m, ix_m) + d2Ddx2;
+                d2Ddr1dr2(ix_m, ix_m) = d2Ddr1dr2(ix_m, ix_m) + d2Ddx2; 
                 d2Ddr1dr2(ix_m, iy_m) = d2Ddr1dr2(ix_m, iy_m) + d2Ddxdy;
                 d2Ddr1dr2(iy_m, iy_m) = d2Ddr1dr2(iy_m, iy_m) + d2Ddy2;
 
