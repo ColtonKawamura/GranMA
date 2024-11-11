@@ -19,7 +19,7 @@ for n = 1:N-1 % start with the first particle (not sorted)
         Dnm = rad(n) + rad(m); % distance between n and m
         
         dx = x(m) - x(n);
-        dx = dx - round(dx / L) * L; % for periodic boundary in x
+        % dx = dx - round(dx / L) * L; % for periodic boundary in x
         if abs(dx) < Dnm
             dy = y(m) - y(n);
             dy = dy - round(dy / L) * L; % for periddib boundarty in y
