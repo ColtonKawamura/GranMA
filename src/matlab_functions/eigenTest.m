@@ -11,11 +11,11 @@ file_name = sprintf('in/2D_N5000_P0.01_Width5_Seed1.mat'); % regular packing
 
 load(file_name)
 
-[Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly, K);
+[Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly, K, Lx);
 
 % Plot Mode
 mode_to_plot = 6; % should just be the column
 figure;
 plotEigenmode(x', y', eigen_vectors, mode_to_plot)
 
-eigen_values
+eigen_values(1:10, 1:10)
