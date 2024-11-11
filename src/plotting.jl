@@ -419,8 +419,7 @@ function plotPhaseRatio(simulation_data, γ_value)
     mat"""
     ax_energy = figure;
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ 1-\\cos \\overline{\\sigma_{\\Delta \\phi_{\\perp}}} \$', "FontSize", 20, "Interpreter", "latex");
-    set(get(gca, 'ylabel'), 'rotation', 0);
+    ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
     grid on;
     box on; 
@@ -484,7 +483,7 @@ function plotPhaseRatio(simulation_data, γ_value)
         # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
         @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        pressure_label = @sprintf("\$\\hat{P} = %.4f, \\hat{\\gamma} = %.2f\$", pressure_value, plot_gamma)
+        pressure_label = @sprintf("\$\\hat{P} = %.4f\$", pressure_value)
 
         # Transfer data to MATLAB
         mat"""
@@ -508,7 +507,7 @@ function plotPhaseRatio(simulation_data, γ_value)
     # Add legends to the plots
     mat"""
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex');
+    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
     """
 end
     

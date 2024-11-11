@@ -57,7 +57,7 @@ for i = 1:N % go throuch each particle
     if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
         ix_i = i;  % x index for particle i
         iy_i = i + N;  % y index for particle i
-        d2Ddr1dr2(ix_i, ix_i) = d2Ddr1dr2(ix_i, ix_i) + K;  % Add K to the x-coordinate diagonal
+        d2Ddr1dr2(ix_i, ix_i) = d2Ddr1dr2(ix_i, ix_i) + K;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
         d2Ddr1dr2(iy_i, iy_i) = d2Ddr1dr2(iy_i, iy_i) + K;  % same for y-coordinate diagonal
     end
 end

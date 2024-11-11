@@ -35,10 +35,11 @@ function combinePlotsTiled(f1, f2)
     copyobj(fig2axChildren, figure_2);
     grid(figure_2, 'on');
     box(figure_2, 'on'); % Turn on the box for the second tile
-    set(figure_2, 'YScale', 'log', 'XScale', 'log');
+    % set(figure_2, 'YScale', 'log', 'XScale', 'log'); % Both y and x log
+    set(figure_2, 'XScale', 'log'); % just x asix
     ylabel(figure_2, fig2ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig2
     xlabel(figure_2, fig2ax.XLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original x-label for fig2
-    set(get(figure_2, 'ylabel'), 'rotation', 0);
+    % set(get(figure_2, 'ylabel'), 'rotation', 0);
 
     % Match x-limits
     ylim(figure_1, [.03, .7])
@@ -49,7 +50,7 @@ function combinePlotsTiled(f1, f2)
     h1 = get(figure_1, 'Children');
     hasDisplayName = ~cellfun('isempty', get(h1, 'DisplayName'));
     legend_entries = h1(hasDisplayName);
-    legend(figure_1, legend_entries, 'Interpreter', 'latex', 'FontSize', 15, 'Location', 'northeastoutside', 'Orientation', 'vertical');
+    legend(figure_1, legend_entries, 'Interpreter', 'latex', 'FontSize', 12, 'Location', 'northeastoutside', 'Orientation', 'vertical');
 
     % Close original figures
     close(fig1);
