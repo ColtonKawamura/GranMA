@@ -101,7 +101,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
         Zn_list = [Zn_list;length(spring_list_nn)];
     end
     
-    [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly);
+    [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly, K);
     % sort eigen_vector's columns in ascending order, then short eignvectors accordingly
     % [ascending_eigen_values, eigen_idx] = sort(eigen_values, 1);
     % ascending_eigen_vectors = zeros(size(ascending_eigen_values));
