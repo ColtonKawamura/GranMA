@@ -18,7 +18,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
      K = 100;
      M = 1;
      Bv = 0;
-     w_D = .5 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+     w_D = .7 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
      N = 5000;
      P = 0.01; % 0.021544 0.046416
      W = 5;
@@ -243,7 +243,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     grid on
 
     % split the time vector
-    target_time = 140;
+    target_time = 97;
     [~, idx_time_split] = min(abs(time_vector - target_time));
     time_vector_before = time_vector(1:idx_time_split);
     time_vector_after = time_vector(idx_time_split+1:idx_time_split + length(x_all(idx_particle, idx_time_split+1:end)));
@@ -271,40 +271,27 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
 
     % FFT for particle_x_before
     position_nn = particle_x_before - mean(particle_x_before);  % Center the data
-    normalized_fft_data = fft(position_nn) / length(position_nn);
-    normalized_fft_data_single_sided = abs(normalized_fft_data) * 2;
-    figure; stem(freq_vector, normalized_fft_data_single_sided);
-    title('fft x before');
-    xlim([0, 1.4]);
-    grid on
+    data = position_nn
+    fps = 1 / mean(diff(time_vector_before));
+    plotfft(data, fps)
 
     % FFT for particle_y_before
     position_nn = particle_y_before - mean(particle_y_before);  % Center the data
-    normalized_fft_data = fft(position_nn) / length(position_nn);
-    normalized_fft_data_single_sided = abs(normalized_fft_data) * 2;
-    figure; stem(freq_vector, normalized_fft_data_single_sided);
-    title('fft x after');
-    xlim([0, 1.4]);
-    grid on
+    data = position_nn
+    fps = 1 / mean(diff(time_vector));
+    plotfft(data, fps)
 
     % FFT for particle_x_after
     position_nn = particle_x_after - mean(particle_x_after);  % Center the data
-    normalized_fft_data = fft(position_nn) / length(position_nn);
-    normalized_fft_data_single_sided = abs(normalized_fft_data(1:num_bins)) * 2;
-    figure; stem(freq_vector, normalized_fft_data_single_sided);
-    title('fft of y before');
-    xlim([0, 1.4]);
-    grid on
+    data = position_nn
+    fps = 1 / mean(diff(time_vector));
+    plotfft(data, fps)
 
     % FFT for particle_y_after
     position_nn = particle_y_after - mean(particle_y_after);  % Center the data
-    normalized_fft_data = fft(position_nn) / length(position_nn);
-    normalized_fft_data_single_sided = abs(normalized_fft_data(1:num_bins)) * 2;
-    figure; stem(freq_vector, normalized_fft_data_single_sided);
-    title('fft of y after');
-    xlim([0, 1.4]);
-    grid on
-
+    data = position_nn
+    fps = 1 / mean(diff(time_vector));
+    plotfft(data, fps)
     
 
     % big fft
