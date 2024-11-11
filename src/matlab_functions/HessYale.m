@@ -1,11 +1,11 @@
-function [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, L)
+function [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, L, K)
 % L = Ly (periodic in y)
 % x = xy(1:N);
 % y = xy(N+1:end);
 
 % ID the wall particles
-% left_wall_list = (x<Dn/2);
-% right_wall_list = (x>Lx-Dn/2);
+left_wall_list = (x<Dn/2);
+right_wall_list = (x>Lx-Dn/2);
 d2Ddr1dr2 = zeros(2*N, 2*N);
 
 rad = Dn/2;
@@ -48,12 +48,21 @@ for n = 1:N-1 % start with the first particle (not sorted)
                 d2Ddr1dr2(ix_m, iy_n) = d2Ddr1dr2(ix_m, iy_n) - d2Ddxdy;
                 d2Ddr1dr2(iy_n, iy_m) = d2Ddr1dr2(iy_n, iy_m) - 2 * d2Ddy2;
 
-                % if x(n) <Dn
             end
         end
     end                    
 end
-%%
+%% Adds K to the diagnals of the wall particles for non-perioldic sims
+for i = 1:N % go throuch each particle 
+    if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
+        ix_i = i;  % x index for particle i
+        iy_i = i + N;  % y index for particle i
+        d2Ddr1dr2(ix_i, ix_i) = d2Ddr1dr2(ix_i, ix_i) + K;  % Add K to the x-coordinate diagonal
+        d2Ddr1dr2(iy_i, iy_i) = d2Ddr1dr2(iy_i, iy_i) + K;  % same for y-coordinate diagonal
+    end
+end
+
+
 Hessian = d2Ddr1dr2 + d2Ddr1dr2';
 
 [eigen_vectors, eigen_values] = eig(Hessian); % [V,D] = eig(A) returns diagonal matrix D of eigenvalues and matrix V whose columns are the corresponding right eigenvectors, so that A*V = V*D.

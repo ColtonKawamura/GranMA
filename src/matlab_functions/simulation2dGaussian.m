@@ -18,7 +18,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
      K = 100;
      M = 1;
      Bv = 0;
-     w_D = .3 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
+     w_D = .5 % Low wend is .2 (before hitting wall @ Nt = 20K) high is 1 @ 5000, 2tracking @ omega = .8, P.1
      N = 5000;
      P = 0.01; % 0.021544 0.046416
      W = 5;
@@ -272,7 +272,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % FFT for particle_x_before
     position_nn = particle_x_before - mean(particle_x_before);  % Center the data
     normalized_fft_data = fft(position_nn) / length(position_nn);
-    normalized_fft_data_single_sided = abs(normalized_fft_data(1:num_bins)) * 2;
+    normalized_fft_data_single_sided = abs(normalized_fft_data) * 2;
     figure; stem(freq_vector, normalized_fft_data_single_sided);
     title('fft x before');
     xlim([0, 1.4]);
@@ -281,7 +281,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % FFT for particle_y_before
     position_nn = particle_y_before - mean(particle_y_before);  % Center the data
     normalized_fft_data = fft(position_nn) / length(position_nn);
-    normalized_fft_data_single_sided = abs(normalized_fft_data(1:num_bins)) * 2;
+    normalized_fft_data_single_sided = abs(normalized_fft_data) * 2;
     figure; stem(freq_vector, normalized_fft_data_single_sided);
     title('fft x after');
     xlim([0, 1.4]);
