@@ -1,4 +1,4 @@
-function [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, L, K)
+function [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, L, K, Lx)
 % L = Ly (periodic in y)
 % x = xy(1:N);
 % y = xy(N+1:end);
