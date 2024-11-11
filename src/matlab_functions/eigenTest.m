@@ -4,9 +4,9 @@
 N = 30;
 Dn_list = 1+0.4*(rand([1,N])>0.5); 
 packper103f(1,1,Dn_list,0,1);
-
-%  Get eigenstuff
 % file_name = sprintf('in/2D_Repeating/2D_N%d_P0_Width0_Seed1.mat', N); % fully periodic
+
+N = 5000;
 file_name = sprintf('in/2D_N5000_P0.01_Width5_Seed1.mat'); % regular packing
 
 load(file_name)
