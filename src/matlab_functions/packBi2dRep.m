@@ -319,15 +319,31 @@ x = x_repeated;
 y = y_repeated;
 Dn = Dn_repeated; % Set Dn to the repeated diameters
 
+% figure;
+% hold on;
+% axis equal;
+% for np = 1:N
+%     rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], 'Curvature', [1, 1], 'EdgeColor', 'b');
+% end
+% axis([0, N_repeated * Lx, 0, Ly]);
+% hold off;
+% pause
 figure;
 hold on;
 axis equal;
-for np = 1:N
-    rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], 'Curvature', [1, 1], 'EdgeColor', 'b');
-end
 axis([0, N_repeated * Lx, 0, Ly]);
+
+% Loop through each particle and plot its rectangle
+for np = 1:N
+    % Compute the position for the rectangle using the center coordinates (x, y)
+    % and the diameter Dn (width and height).
+    rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], ...
+        'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); % Optional LineWidth for better visibility
+end
+% Update the figure display
+drawnow;
 hold off;
-pause
+
 
 
 disp(['number of excess contacts per cell= ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
