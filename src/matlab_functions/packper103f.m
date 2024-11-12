@@ -82,7 +82,7 @@ end
 x0=x; %#ok<NASGU>
 y0=y; %#ok<NASGU>
 
-% find initial D
+%% find initial D
 dx=repmat(x,N,1);
 dx=dx-dx';
 dx=dx-round(dx/Lx)*Lx;  % Periodic x
