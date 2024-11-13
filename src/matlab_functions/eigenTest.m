@@ -7,7 +7,9 @@ packper103f(1,1,Dn_list,0,1);
 % file_name = sprintf('in/2D_Repeating/2D_N%d_P0_Width0_Seed1.mat', N); % fully periodic
 
 N = 5000;
-file_name = sprintf('in/2D_N5000_P0.1_Width5_Seed1.mat'); % regular packing
+% file_name = sprintf('in/2D_N5000_P0.1_Width5_Seed1.mat'); % regular packing
+N = 26;
+file_name = sprintf('in/2D_N26_P0.1_Width5_Seed1.mat'); % regular packing
 
 load(file_name)
 
