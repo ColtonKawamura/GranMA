@@ -31,9 +31,13 @@ for n = 1:N-1 % start with the first particle (not sorted)
                 dy = dy / d;
                 dx_sq = dx^2;
                 dy_sq = dy^2;
-                d2Ddx2 = (dx_sq + dd * dy_sq) / Dnm_sq / 2;
-                d2Ddy2 = (dy_sq + dd * dx_sq) / Dnm_sq / 2;
-                d2Ddxdy = dx * dy * (1 - dd) / Dnm_sq;
+                % d2Ddx2 = (dx_sq + dd * dy_sq) / Dnm_sq / 2;
+                % d2Ddy2 = (dy_sq + dd * dx_sq) / Dnm_sq / 2;
+                % d2Ddxdy = dx * dy * (1 - dd) / Dnm_sq;
+
+                d2Ddx2 = (dx_sq + dd * dy_sq) / 1/ 2;
+                d2Ddy2 = (dy_sq + dd * dx_sq) / 1 / 2;
+                d2Ddxdy = dx * dy * (1 - dd) / 1;
 
                 d2Ddr1dr2(ix_n, ix_n) = d2Ddr1dr2(ix_n, ix_n) + d2Ddx2; % for n = 1: M(1, 1)
                 d2Ddr1dr2(ix_n, iy_n) = d2Ddr1dr2(ix_n, iy_n) + d2Ddxdy; % M(1, 5001)
@@ -57,8 +61,8 @@ for i = 1:N % go throuch each particle
     if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
         ix_i = i;  % x index for particle i
         iy_i = i + N;  % y index for particle i
-        d2Ddr1dr2(ix_i, ix_i) = d2Ddr1dr2(ix_i, ix_i) + K;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
-        d2Ddr1dr2(iy_i, iy_i) = d2Ddr1dr2(iy_i, iy_i) + K;  % same for y-coordinate diagonal
+        d2Ddr1dr2(ix_i, ix_i) = d2Ddr1dr2(ix_i, ix_i) + K/2;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
+        d2Ddr1dr2(iy_i, iy_i) = d2Ddr1dr2(iy_i, iy_i) + K/2;  % same for y-coordinate diagonal
     end
 end
 
