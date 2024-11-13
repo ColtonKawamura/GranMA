@@ -14,7 +14,7 @@ load(file_name)
 [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly, K, Lx);
 
 % Plot Mode
-mode_to_plot = 19; % should just be the column
+mode_to_plot = 1; % should just be the column
 figure;
 plotEigenmode(x', y', eigen_vectors, mode_to_plot)
 
