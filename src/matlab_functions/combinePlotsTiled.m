@@ -35,7 +35,7 @@ function combinePlotsTiled(f1, f2)
     copyobj(fig2axChildren, figure_2);
     grid(figure_2, 'on');
     box(figure_2, 'on'); % Turn on the box for the second tile
-    % set(figure_2, 'YScale', 'log', 'XScale', 'log'); % Both y and x log
+    set(figure_2, 'YScale', 'log', 'XScale', 'log'); % Both y and x log
     set(figure_2, 'XScale', 'log'); % just x asix
     ylabel(figure_2, fig2ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig2
     xlabel(figure_2, fig2ax.XLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original x-label for fig2
@@ -46,12 +46,12 @@ function combinePlotsTiled(f1, f2)
     xLimits = xlim(figure_1);  % Get x-limits from the first plot
     xlim(figure_2, xLimits);   % Apply the same x-limits to the second plot
 
-    % Legend from a single simulation (figure_1 only)
-    h1 = get(figure_1, 'Children');
-    hasDisplayName = ~cellfun('isempty', get(h1, 'DisplayName'));
-    legend_entries = h1(hasDisplayName);
-    legend(figure_1, legend_entries, 'Interpreter', 'latex', 'FontSize', 12, 'Location', 'northeastoutside', 'Orientation', 'vertical');
-
+    % Legend from a single simulation (pulls from figure_2 only)
+    fig_handle = get(figure_2, 'Children');
+    hasDisplayName = ~cellfun('isempty', get(fig_handle, 'DisplayName'));
+    legend_entries = fig_handle(hasDisplayName);
+    leg = legend(figure_2, legend_entries, 'Interpreter', 'latex', 'FontSize', 12, 'Location', 'northeastoutside', 'Orientation', 'vertical');
+    title(leg, "$ \hat{P}$ ")
     % Close original figures
     close(fig1);
     close(fig2);
