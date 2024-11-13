@@ -421,6 +421,7 @@ function plotPhaseRatio(simulation_data, γ_value)
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
+    set(gca, 'YScale', 'log');
     grid on;
     box on; 
     hold on;
@@ -500,7 +501,7 @@ function plotPhaseRatio(simulation_data, γ_value)
         
         % Plot Aspect Ratio
         % plot(ax_energy, omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-        plot( omega_gamma, log(loop_mean_E_list), 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         """
     end
 
