@@ -56,6 +56,7 @@ for n = 1:N-1 % start with the first particle (not sorted)
         end
     end                    
 end
+% K = .01;
 %% Adds K to the diagnals of the wall particles for non-perioldic sims
 for i = 1:N % go throuch each particle 
     if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
