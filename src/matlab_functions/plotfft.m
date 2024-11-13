@@ -1,8 +1,6 @@
-function [f,fft_out]=plotfft(data,fps,deltaf)
+function [f,fft_out]=plotfft(data,fps, marker_color)
 
-if ~exist('deltaf')
-    deltaf=1;
-end
+deltaf = 1;
 
 T=1/fps;
 L=length(data);
@@ -12,5 +10,5 @@ f = fps/2*linspace(0,1,NFFT/2+1);
 fft_out=2*smooth(abs(Y(1:NFFT/2+1)),deltaf);
 % Plot single-sided amplitude spectrum.
 % figure, plot(data)
-figure, plot(f,fft_out,'r.')
+figure(100), plot(f, fft_out, strcat('-o', marker_color)), hold on
 end

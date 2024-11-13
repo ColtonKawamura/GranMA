@@ -27,7 +27,7 @@ for n = 1:N-1 % start with the first particle (not sorted)
             if d < Dnm
                 dd = 1 - Dnm / d;
                 Dnm_sq = Dnm^2;
-                dx = dx / d;
+                dx = dx / d; %
                 dy = dy / d;
                 dx_sq = dx^2;
                 dy_sq = dy^2;

@@ -17,5 +17,4 @@ load(file_name)
 mode_to_plot = 1; % should just be the column
 figure;
 plotEigenmode(x', y', eigen_vectors, mode_to_plot)
-
 eigen_values(1:10, 1:10)

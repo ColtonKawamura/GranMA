@@ -48,7 +48,7 @@ for target_distance = linspace(particle_position_range(1), particle_position_ran
     position_nn = particle_x_before - mean(particle_x_before);  % Center the data
     data = position_nn
     fps = 1 / mean(diff(time_vector_before));
-    plotfft(data, fps)
+    plotfft(data, fps, "b")
     title("fft  x before")
     % % FFT for particle_y_before
     % position_nn = particle_y_before - mean(particle_y_before);  % Center the data
@@ -60,7 +60,7 @@ for target_distance = linspace(particle_position_range(1), particle_position_ran
     position_nn = particle_x_after - mean(particle_x_after);  % Center the data
     data = position_nn
     fps = 1 / mean(diff(time_vector));
-    plotfft(data, fps)
+    plotfft(data, fps, "r")
     title("fft  x after")
     % % FFT for particle_y_after
     % position_nn = particle_y_after - mean(particle_y_after);  % Center the data

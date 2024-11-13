@@ -21,5 +21,5 @@ function plotEigenmode(x0, y0, eigen_vectors, mode_to_plot)
     % axis equal;
     grid on;
     % ylim([0,y_limit])
-    % figure; semilogy(dx,dy, '.')
+    figure; semilogy(x0,dx, '.')
 end
