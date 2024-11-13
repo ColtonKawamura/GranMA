@@ -11,6 +11,6 @@ Y = fft(data-mean(data),NFFT)/L;
 f = fps/2*linspace(0,1,NFFT/2+1);
 fft_out=2*smooth(abs(Y(1:NFFT/2+1)),deltaf);
 % Plot single-sided amplitude spectrum.
-figure(1), plot(data)
-figure(2), plot(f,fft_out,'r.')
+% figure, plot(data)
+figure, plot(f,fft_out,'r.')
 end
