@@ -483,7 +483,7 @@ function plotPhaseRatio(simulation_data, γ_value)
         # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
         @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        pressure_label = @sprintf("\$\\hat{P} = %.4f\$", pressure_value)
+        pressure_label = @sprintf("\$ %.4f\$", pressure_value)
 
         # Transfer data to MATLAB
         mat"""
@@ -507,7 +507,8 @@ function plotPhaseRatio(simulation_data, γ_value)
     # Add legends to the plots
     mat"""
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+    leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+    title(leg, "\$ \\hat{P} \$")
     """
 end
     
