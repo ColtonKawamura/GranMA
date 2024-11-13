@@ -235,8 +235,8 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     % Add the path to the "functions" directory
     addpath('./src/matlab_functions')
     time_vector = (1:Nt)*dt;
-    particle_position_range = [1,5];
-    number_of_particles_to_view = 2;
+    particle_position_range = [10,15];
+    number_of_particles_to_view = 1;
     fftGaus(time_vector, particle_position_range, number_of_particles_to_view, x0, x_all, y_all)
     % Find a value that is closest to the wall and plot the individual trajectory 
     target_distance = 2 ;
