@@ -47,7 +47,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     A = P_target/100;
     
     
-    dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
+    dt = pi*sqrt(M/K)*0.01; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
     Nt = round(.9.*(Lx ./ c_0)./(dt))
     ax_old = 0*x;
@@ -411,7 +411,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     gamma_dimensionless = Bv/sqrt(K*mass_particle_average);
     pressure_dimensionless = P;
     % Save the file
-    save(['out/simulation_2d/K100_everything2/' filename_output], 'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
+    save(['out/simulation_2d/K100_everything_smaller_dt/' filename_output], 'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
         'rot_ang_bins', 'rot_ang_counts', 'time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
         'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
          'wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
