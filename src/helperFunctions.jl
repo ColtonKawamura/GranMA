@@ -4,7 +4,15 @@ export
     meanDistNeighbor,
     wrappedDistance,
     meanDeltaYNeighbor,
-    meanPhaseDev
+    meanPhaseDev,
+    getMeanField
+
+function getMeanField(filtered_data)
+    attenuation = simulation_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
+    omega = simulation_data[1].omega # but this is dimensionelss
+    A = simulation_data[1].pressure/100
+    mean_field = exp(-attenuation*x)*A*cos(omega*t)
+end
 
 function fitLogLine(x, y)
     X = hcat(ones(length(x)), x)  # Create matrix for linear regression [1 x]
