@@ -18,17 +18,17 @@ for n = 1:N-1 % start with the first particle (not sorted)
         iy_m = m + N; % index y-coord
         Dnm = rad(n) + rad(m); % distance between n and m
         
-        dx = x(m) - x(n);
+        dx = x(m) - x(n); %actual x distance between particles
         % dx = dx - round(dx / L) * L; % for periodic boundary in x
-        if abs(dx) < Dnm
-            dy = y(m) - y(n);
+        if abs(dx) < Dnm % if they are close enough to potentially overlap...
+            dy = y(m) - y(n); % y distance between particles
             dy = dy - round(dy / L) * L; % for periddib boundarty in y
-            d = sqrt(dx^2 + dy^2);
-            if d < Dnm
-                dd = 1 - Dnm / d;
+            d = sqrt(dx^2 + dy^2); % euclidian distance (NOT squared)
+            if d < Dnm % if they are actually overlapping...
+                dd = 1 - Dnm / d; % overlap perecentage 
                 Dnm_sq = Dnm^2;
-                dx = dx / d; %
-                dy = dy / d;
+                dx = dx / d; % normalize x overlap  
+                dy = dy / d; % normalize y overlap
                 dx_sq = dx^2;
                 dy_sq = dy^2;
                 % d2Ddx2 = (dx_sq + dd * dy_sq) / Dnm_sq / 2;
