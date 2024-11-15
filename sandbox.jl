@@ -72,6 +72,12 @@ function paperPlots()
     sim2d(100, 1, 5, 1, 5000, .001 ,5,  1)
 
     plotEllipseAttenuation2d(simulation_data, .5)
+    
+    # Derek's Mean field theory
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data) # amplitude plot for low pressure, low gamma
+    mean_field = getMeanField(data)
+
 end
 
 # Ellipse
