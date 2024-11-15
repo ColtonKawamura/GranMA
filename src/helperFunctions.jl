@@ -7,11 +7,78 @@ export
     meanPhaseDev,
     getMeanField
 
-function getMeanField(filtered_data)
-    attenuation = simulation_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
-    omega = simulation_data[1].omega # but this is dimensionelss
-    A = simulation_data[1].pressure/100
-    mean_field = exp(-attenuation*x)*A*cos(omega*t)
+function getMeanField(filtered_data; plot = true)
+    attenuation = filtered_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
+    distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    omega = filtered_data[1].omega # but this is dimensionelss
+
+    A = filtered_data[1].pressure/100
+    mean_field = A*exp.(-attenuation*omega*distance_from_wall)
+    x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    y = filtered_data[1].amplitude_vector_x    
+    prime_field = abs.(y - mean_field)
+
+
+    if plot==true
+        mat"""
+        figure
+        scatter($(x_parra), $(prime_field), "o", "DisplayName", "x prime field")
+        hold on
+        set(gca, 'YScale', 'log')
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show")
+        """
+    end
+
+
+    if plot==true
+        mat"""
+        scatter($(x_parra), $(y), "v", "DisplayName", "raw x-amplitude")
+        hold on
+        set(gca, 'YScale', 'log')
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show")
+        """
+    end
+    
+    if plot==true
+        mat"""
+        scatter($(x_parra), $(mean_field), "DisplayName", "mean field")
+        hold on
+        set(gca, 'YScale', 'log')
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show")
+        """
+    end
+    
+    x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    y = filtered_data[1].amplitude_vector_y
+    if plot == true
+        mat"""
+        scatter($(x_perp), $(y), "*", "DisplayName", "raw y-amplitude")
+        set(gca, 'YScale', 'log')
+        grid on
+        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+        set(gca, 'FontSize', 15);
+        legend('FontSize', 15)
+        """
+    end
+    return mean_field
 end
 
 function fitLogLine(x, y)
