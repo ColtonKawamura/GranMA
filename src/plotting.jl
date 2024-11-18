@@ -128,6 +128,7 @@ function plotPhaseRatioMeanField(simulation_data, γ_value)
                 distance_y = k_seed_data[1].initial_distance_from_oscillation_output_x_fft
                 scatter_y = meanPhaseDev(distance_y, prime_field_phase, 1)
                 mean_distance = scatter_y
+                # mean_distance = scatter_y - mean(mean_distance)
                 mean_distance = isinf(mean_distance) ? NaN : mean_distance # saftey for infinite values
                 push!(E_ratio_list, 1-cos(mean_distance))
             end
@@ -159,16 +160,17 @@ function plotPhaseRatioMeanField(simulation_data, γ_value)
         %loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         
         % Plot Aspect Ratio
-        % plot(ax_energy, omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-        plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        % plot(ax_energy, omega_gamma, loop_mean_E_list, 'o-', 'Color', marker_color, 'DisplayName', pressure_label);
+        % plot( omega_gamma, loop_mean_E_list, 'o-', 'Color', marker_color, 'DisplayName', pressure_label);
+        plot( omega_gamma, loop_mean_E_list, 'o-', 'Color', marker_color);
         """
     end
 
     # Add legends to the plots
     mat"""
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
-    title(leg, "\$ \\hat{P} \$")
+    % leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+    % title(leg, "\$ \\hat{P} \$")
     """
 end
 function plotAmpRatioMeanField(simulation_data, γ_value)
@@ -286,7 +288,7 @@ function plotAmpRatioMeanField(simulation_data, γ_value)
         # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
         @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        pressure_label = @sprintf("\$\\hat{P} = %.4f\$", pressure_value)
+        pressure_label = @sprintf("\$ %.4f \$", pressure_value)
 
         # Transfer data to MATLAB
         mat"""
@@ -298,11 +300,8 @@ function plotAmpRatioMeanField(simulation_data, γ_value)
         marker_color = $(marker_color);
         pressure_label = $(pressure_label);
 
-        % Plot Attenuation
-        %loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-        
-        % Plot Aspect Ratio
-        loglog( omega_gamma, loop_mean_E_list, 'o-', 'Color', marker_color, 'DisplayName', pressure_label);
+        % loglog( omega_gamma, loop_mean_E_list, 'o-', 'Color', marker_color, 'DisplayName', pressure_label);
+        loglog( omega_gamma, loop_mean_E_list, 'o-', 'Color', marker_color);
         ylim([.01, .6])
         xlim([min(omega_gamma), 1])
         """
@@ -310,8 +309,8 @@ function plotAmpRatioMeanField(simulation_data, γ_value)
 
     # Add legends to the plots
     mat"""
-    %legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+    % leg = legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+    % title(leg, "\$ \\hat{P} \$")
     """ 
 end
     
@@ -467,15 +466,22 @@ function getMeanField(filtered_data; plot = true)
 
     A = filtered_data[1].pressure/100
     mean_field_amp = A*exp.(-attenuation*omega*distance_from_wall)
+    # log_amplitude = log.(abs(amplitude_vector_x))
+    # coefficents = polyfit(distance_from_wall, log_amplitude, 1)
     x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft
     y = filtered_data[1].amplitude_vector_x    
     prime_field_amp = abs.(y - mean_field_amp)
-
+    
 
     if plot==true
         mat"""
+        coefficients = polyfit($(distance_from_wall), log(abs($(y))), 1);
+        fitted_attenuation = coefficients(1);
+        intercept_attenuation = coefficients(2);
+        mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
+        prime_field_amp_new = abs($(y)-mean_field_new);
         figure
-        scatter($(x_parra), $(prime_field_amp), "*", "DisplayName", "x prime field")
+        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", "x prime field")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -506,7 +512,7 @@ function getMeanField(filtered_data; plot = true)
     
     if plot==true
         mat"""
-        scatter($(x_parra), $(mean_field_amp), "v","DisplayName", "mean field")
+        scatter($(x_parra), mean_field_new, "v","DisplayName", "mean field")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -551,7 +557,8 @@ function getMeanField(filtered_data; plot = true)
     if plot==true
         mat"""
         figure
-        scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "x prime field")
+        prime_field_amp_new = $(prime_field_phase) - mean($(prime_field_phase));
+        scatter($(distance_from_wall), prime_field_amp_new, "*", "DisplayName", "x prime field")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -938,7 +945,7 @@ function plotAmpRatio(simulation_data, γ_value)
         # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
         @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
-        pressure_label = @sprintf("\$\\hat{P} = %.4f\$", pressure_value)
+        pressure_label = @sprintf("\$ %.4f\$", pressure_value)
 
         # Transfer data to MATLAB
         mat"""
@@ -949,9 +956,6 @@ function plotAmpRatio(simulation_data, γ_value)
         plot_gamma = $(plot_gamma);
         marker_color = $(marker_color);
         pressure_label = $(pressure_label);
-
-        % Plot Attenuation
-        %loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         
         % Plot Aspect Ratio
         loglog( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
@@ -962,8 +966,8 @@ function plotAmpRatio(simulation_data, γ_value)
 
     # Add legends to the plots
     mat"""
-    %legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-    legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+    leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+    title(leg, "\$ \\hat{P} \$")
     """ 
         
 end
