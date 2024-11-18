@@ -79,7 +79,7 @@ function paperPlots()
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
     # mean field over all simulations
-    
+    plotAmpRatioMeanField(simulation_data, .5)  # save the figure for this
 end
 
 # Ellipse
