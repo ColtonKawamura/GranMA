@@ -2,7 +2,7 @@ function combinePlotsTiled(f1, f2)
     % combinePlotsTiled Combines two .fig files in a tiled layout with a single legend.
     % 
     % Parameters:
-    % f1 - Filename of the first .fig file
+    % f1 - Filename of the first .fig file in "string" format
     % f2 - Filename of the second .fig file
 
     % Load figures
