@@ -80,6 +80,7 @@ function paperPlots()
 
     # mean field over all simulations
     plotAmpRatioMeanField(simulation_data, .5)  # save the figure for this
+    plotPhaseRatioMeanField(simulation_data, .5)
 end
 
 # Ellipse
