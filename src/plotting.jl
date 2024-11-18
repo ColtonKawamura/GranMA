@@ -155,7 +155,7 @@ function plotAmpRatioMeanField(simulation_data, γ_value)
         % Plot Aspect Ratio
         loglog( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         ylim([.01, .6])
-        xlim([min(oemga_gamma), 1])
+        xlim([min(omega_gamma), 1])
         """
     end
 
@@ -1709,7 +1709,7 @@ function plotAmp(filtered_data; plot=true)
     coeffs = fitLogLine(x_parra,y)
     yIntercept_amp_x = coeffs[1]
     slope_amp_x = coeffs[2]
-
+    y_x = y
     if plot==true
         display_name = @sprintf("\$ A_{||}(x) \$")
         mat"""
@@ -1743,7 +1743,7 @@ function plotAmp(filtered_data; plot=true)
         """
     end
     
-    return exp(yIntercept_amp_y) / exp(yIntercept_amp_x)  
+    return exp(yIntercept_amp_y) / exp(yIntercept_amp_x) # Can't do  mean(y ./ y_x), because not same length
 end
 
 function plotPhase(filtered_data; plot=true)
