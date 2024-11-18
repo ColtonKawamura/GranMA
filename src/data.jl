@@ -163,41 +163,41 @@ function crunch(datapath::String)
                                                         Float64[]
 
         
-        yfft_posY = isa(iloop_file_data["y_all_yfft"], Array) ? 
-                            vec(iloop_file_data["y_all_yfft"]) : 
-                            [iloop_file_data["y_all_yfft"]]
+        # yfft_posY = isa(iloop_file_data["y_all_yfft"], Array) ? 
+        #                     vec(iloop_file_data["y_all_yfft"]) : 
+        #                     [iloop_file_data["y_all_yfft"]]
 
-        yfft_posX = isa(iloop_file_data["x_all_yfft"], Array) ? 
-                            vec(iloop_file_data["x_all_yfft"]) : 
-                            [iloop_file_data["x_all_yfft"]]
+        # yfft_posX = isa(iloop_file_data["x_all_yfft"], Array) ? 
+        #                     vec(iloop_file_data["x_all_yfft"]) : 
+        #                     [iloop_file_data["x_all_yfft"]]
 
-        yfft_init_posX = isa(iloop_file_data["x0_yfft"], Array) ? 
-                            vec(iloop_file_data["x0_yfft"]) : 
-                            [iloop_file_data["x0_yfft"]]
+        # yfft_init_posX = isa(iloop_file_data["x0_yfft"], Array) ? 
+        #                     vec(iloop_file_data["x0_yfft"]) : 
+        #                     [iloop_file_data["x0_yfft"]]
 
-        yfft_init_posY = isa(iloop_file_data["y0_yfft"], Array) ? 
-                            vec(iloop_file_data["y0_yfft"]) : 
-                            [iloop_file_data["y0_yfft"]]
+        # yfft_init_posY = isa(iloop_file_data["y0_yfft"], Array) ? 
+        #                     vec(iloop_file_data["y0_yfft"]) : 
+        #                     [iloop_file_data["y0_yfft"]]
 
-        xfft_posY = isa(iloop_file_data["y_all_xfft"], Array) ? 
-                            vec(iloop_file_data["y_all_xfft"]) : 
-                            [iloop_file_data["y_all_xfft"]]
+        # xfft_posY = isa(iloop_file_data["y_all_xfft"], Array) ? 
+        #                     vec(iloop_file_data["y_all_xfft"]) : 
+        #                     [iloop_file_data["y_all_xfft"]]
 
-        xfft_posX = isa(iloop_file_data["x_all_xfft"], Array) ? 
-                            vec(iloop_file_data["x_all_xfft"]) : 
-                            [iloop_file_data["x_all_xfft"]]
+        # xfft_posX = isa(iloop_file_data["x_all_xfft"], Array) ? 
+        #                     vec(iloop_file_data["x_all_xfft"]) : 
+        #                     [iloop_file_data["x_all_xfft"]]
 
-        xfft_init_posX = isa(iloop_file_data["x0_xfft"], Array) ? 
-                            vec(iloop_file_data["x0_xfft"]) : 
-                            [iloop_file_data["x0_xfft"]]
+        # xfft_init_posX = isa(iloop_file_data["x0_xfft"], Array) ? 
+        #                     vec(iloop_file_data["x0_xfft"]) : 
+        #                     [iloop_file_data["x0_xfft"]]
 
-        xfft_init_posY = isa(iloop_file_data["y0_xfft"], Array) ? 
-                            vec(iloop_file_data["y0_xfft"]) : 
-                            [iloop_file_data["y0_xfft"]]
+        # xfft_init_posY = isa(iloop_file_data["y0_xfft"], Array) ? 
+        #                     vec(iloop_file_data["y0_xfft"]) : 
+        #                     [iloop_file_data["y0_xfft"]]
         
-        timeVec = isa(iloop_file_data["tvec"], Array) ? 
-                            vec(iloop_file_data["tvec"]) : 
-                            [iloop_file_data["tvec"]]
+        # timeVec = isa(iloop_file_data["tvec"], Array) ? 
+        #                     vec(iloop_file_data["tvec"]) : 
+        #                     [iloop_file_data["tvec"]]
 
 
         # Handle potentially empty arrays for fft limits
@@ -239,11 +239,11 @@ function crunch(datapath::String)
             # yfft_posX,
             # yfft_init_posX,
             # yfft_init_posY,
-            xfft_posY,
-            xfft_posX,
-            xfft_init_posX,
-            xfft_init_posY,
-            timeVec
+            # xfft_posY,
+            # xfft_posX,
+            # xfft_init_posX,
+            # xfft_init_posY,
+            # timeVec
         )
 
         push!(simulation_data, data_entry)
