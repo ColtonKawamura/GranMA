@@ -61,7 +61,7 @@ function paperPlots()
     # Amp and Phase Ratio Plots
     plotAmpRatio(simulation_data, .5)
     plotPhaseRatio(simulation_data, .5)
-    combinePlotsTiled()
+    combinePlotsTiled() # better to use the matlab version...
 
     plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
     data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
@@ -73,11 +73,13 @@ function paperPlots()
 
     plotEllipseAttenuation2d(simulation_data, .5)
     
-    # Derek's Mean field theory
+    # Derek's Mean field theory for single sim
     data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
     plotAmp(data) # amplitude plot for low pressure, low gamma
-    mean_field = getMeanField(data)
+    mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
+    # mean field over all simulations
+    
 end
 
 # Ellipse
