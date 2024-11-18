@@ -11,6 +11,7 @@ using Plots
 using MAT
 using Polynomials
 using LinearAlgebra
+using PolyFit
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 
@@ -79,8 +80,10 @@ function paperPlots()
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
     # mean field over all simulations
-    plotAmpRatioMeanField(simulation_data, .5)  # save the figure for this
-    plotPhaseRatioMeanField(simulation_data, .5)
+    plotAmpRatioMeanField(simulation_data, .5)  # save the figure as fig3.fig
+    plotPhaseRatioMeanField(simulation_data, .5) # save this one too as fig4.fig
+    mat"addpath('src/matlab_functions'); combinePlots('fig1.fig', 'fig3.fig')"
+    mat"addpath('src/matlab_functions'); combinePlots('fig2.fig', 'fig4.fig')"
 end
 
 # Ellipse
