@@ -41,38 +41,7 @@ function plotPhaseRatioMeanField(simulation_data, γ_value)
     lower_limit_line_x = [.1*γ_value; .1*γ_value]
     lower_limit_line_y = [1E-5; 1]
 
-    # # Start MATLAB session
-    # mat"""
-    # figure_main = figure;
-    # tiled_main = tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 2 rows, 1 column
-
-    # % Axes for Attenuation
-    # ax_attenuation = nexttile;
-    # hold(ax_attenuation, 'on');
-    # % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    # ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
-    # set(ax_attenuation, 'XScale', 'log');
-    # set(ax_attenuation, 'YScale', 'log')
-    # set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
-    # grid(ax_attenuation, 'on');
-    # box(ax_attenuation, 'on');
-    # %plot(ax_attenuation, $(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$');
-    # %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
-    # set(ax_attenuation, 'XTickLabel', []);
-
-    # % Axes for Energy
-    # ax_energy = nexttile;
-    # hold(ax_energy, 'on');
-    # xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    # ylabel(ax_energy, '\$ \\overline{\\Delta \\phi}_{\\perp} \$', "FontSize", 15, "Interpreter", "latex");
-    # set(ax_energy, 'XScale', 'log');
-    # set(ax_energy, 'YScale', 'log')
-    # set(get(ax_energy, 'ylabel'), 'rotation', 0);
-    # grid(ax_energy, 'on');
-    # box(ax_energy, 'on');
-    # %set(ax_energy, 'XTickLabel', []);
-    # """
-    mat"""
+   mat"""
     ax_energy = figure;
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
@@ -116,6 +85,7 @@ function plotPhaseRatioMeanField(simulation_data, γ_value)
                 k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
                 k_seed_omega = k_seed_data[1].omega
                 phase_vector_y = k_seed_data[1].unwrapped_phase_vector_y
+
                 # Wrap the phase vector around 2π
                 wrapped_phase = mod.(phase_vector_y, 2π)
                 distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
@@ -137,16 +107,10 @@ function plotPhaseRatioMeanField(simulation_data, γ_value)
             push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
         end
 
-        # Filter data to include only points where omega_gamma <= gamma_value
-        # valid_indices = matching_omega_gamma_list .<= gamma_value.*2
-        # matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
-        # loop_mean_E_list = loop_mean_E_list[valid_indices]
-        # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
-        @bp
+       @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$ %.4f\$", pressure_value)
 
-        # Transfer data to MATLAB
         mat"""
         omega_gamma = $(matching_omega_gamma_list);
         loop_mean_E_list = $(loop_mean_E_list);
@@ -552,13 +516,13 @@ function getMeanField(filtered_data; plot = true)
     mean_field_phase = mod.(mean_field_phase, 2π)
     prime_field_phase = phase .- mean_field_phase
     prime_field_phase = mod.(prime_field_phase, 2π)
-
+    prime_field_amp_new = prime_field_phase.- mean(prime_field_phase);
+    
 
     if plot==true
         mat"""
         figure
-        prime_field_amp_new = $(prime_field_phase) - mean($(prime_field_phase));
-        scatter($(distance_from_wall), prime_field_amp_new, "*", "DisplayName", "x prime field")
+        scatter($(distance_from_wall), $(prime_field_amp_new), "*", "DisplayName", "x prime field")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
