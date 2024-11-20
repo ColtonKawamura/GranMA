@@ -60,9 +60,13 @@ function paperPlots()
     plotAmpTiled(data)
  
     # Amp and Phase Ratio Plots
-    plotAmpRatio(simulation_data, .5)
-    plotPhaseRatio(simulation_data, .5)
-    combinePlotsTiled() # better to use the matlab version...
+    plotAmpRatio(simulation_data, .5) # save as fig1.fig
+    plotPhaseRatio(simulation_data, .5) # save as fig2.fig
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1_0.01.fig', 'fig2_0.01.fig')" # better to use the matlab version...
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1_0.05.fig', 'fig2_0.05.fig')" # better to use the matlab version...
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1_0.1.fig', 'fig2_0.1.fig')" # better to use the matlab version...
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1_0.5.fig', 'fig2_0.5.fig')" # better to use the matlab version...
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1.fig', 'fig2.fig')" # better to use the matlab version...
 
     plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
     data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
@@ -80,8 +84,8 @@ function paperPlots()
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
     # mean field over all simulations
-    plotAmpRatioMeanField(simulation_data, .5)  # save the figure as fig3.fig
-    plotPhaseRatioMeanField(simulation_data, .5) # save this one too as fig4.fig
+    plotAmpRatioMeanField(simulation_data, .1)  # save the figure as fig3.fig
+    plotPhaseRatioMeanField(simulation_data, .1) # save this one too as fig4.fig
     mat"addpath('src/matlab_functions'); combinePlots('fig1.fig', 'fig3.fig')"
     mat"addpath('src/matlab_functions'); combinePlots('fig2.fig', 'fig4.fig')"
 end

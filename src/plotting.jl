@@ -1040,6 +1040,7 @@ function plotPhaseRatio(simulation_data, γ_value)
                 mean_distance = plotPhase(k_seed_data; plot=false)
                 mean_distance = isinf(mean_distance) ? NaN : mean_distance # saftey for infinite values
                 push!(E_ratio_list, 1-cos(mean_distance))
+                # push!(E_ratio_list, mean_distance)
             end
             j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
             push!(loop_mean_E_list, j_E_ratio)
