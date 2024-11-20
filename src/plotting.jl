@@ -954,37 +954,6 @@ function plotPhaseRatio(simulation_data, γ_value)
     lower_limit_line_x = [.1*γ_value; .1*γ_value]
     lower_limit_line_y = [1E-5; 1]
 
-    # # Start MATLAB session
-    # mat"""
-    # figure_main = figure;
-    # tiled_main = tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'none'); % 2 rows, 1 column
-
-    # % Axes for Attenuation
-    # ax_attenuation = nexttile;
-    # hold(ax_attenuation, 'on');
-    # % xlabel(ax_attenuation, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    # ylabel(ax_attenuation, '\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}}\$', "FontSize", 20, "Interpreter", "latex");
-    # set(ax_attenuation, 'XScale', 'log');
-    # set(ax_attenuation, 'YScale', 'log')
-    # set(get(ax_attenuation, 'ylabel'), 'rotation', 0);
-    # grid(ax_attenuation, 'on');
-    # box(ax_attenuation, 'on');
-    # %plot(ax_attenuation, $(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$');
-    # %plot(ax_attenuation, $(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$');
-    # set(ax_attenuation, 'XTickLabel', []);
-
-    # % Axes for Energy
-    # ax_energy = nexttile;
-    # hold(ax_energy, 'on');
-    # xlabel(ax_energy, '\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    # ylabel(ax_energy, '\$ \\overline{\\Delta \\phi}_{\\perp} \$', "FontSize", 15, "Interpreter", "latex");
-    # set(ax_energy, 'XScale', 'log');
-    # set(ax_energy, 'YScale', 'log')
-    # set(get(ax_energy, 'ylabel'), 'rotation', 0);
-    # grid(ax_energy, 'on');
-    # box(ax_energy, 'on');
-    # %set(ax_energy, 'XTickLabel', []);
-    # """
     mat"""
     ax_energy = figure;
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
@@ -1047,16 +1016,11 @@ function plotPhaseRatio(simulation_data, γ_value)
             push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
         end
 
-        # Filter data to include only points where omega_gamma <= gamma_value
-        # valid_indices = matching_omega_gamma_list .<= gamma_value.*2
-        # matching_omega_gamma_list = matching_omega_gamma_list[valid_indices]
-        # loop_mean_E_list = loop_mean_E_list[valid_indices]
-        # loop_mean_attenuation_list = loop_mean_attenuation_list[valid_indices]
-        @bp
+
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$ %.4f\$", pressure_value)
 
-        # Transfer data to MATLAB
+        gamma_val = γ_value
         mat"""
         omega_gamma = $(matching_omega_gamma_list);
         loop_mean_E_list = $(loop_mean_E_list);
@@ -1066,11 +1030,7 @@ function plotPhaseRatio(simulation_data, γ_value)
         marker_color = $(marker_color);
         pressure_label = $(pressure_label);
 
-        % Plot Attenuation
-        %loglog(ax_attenuation, omega_gamma, mean_attenuation_x, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-        
-        % Plot Aspect Ratio
-        % plot(ax_energy, omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        % plot( omega_gamma/$(gamma_val), loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         """
     end
