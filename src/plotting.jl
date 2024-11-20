@@ -1055,10 +1055,10 @@ function plotPhaseRatio(simulation_data, γ_value)
         @bp
         # This is needed because MATLAB.jl has a hard time escaping \'s
         pressure_label = @sprintf("\$ %.4f\$", pressure_value)
-
+        gamma_values = γ_value
         # Transfer data to MATLAB
         mat"""
-        omega_gamma = $(matching_omega_gamma_list);
+        omega_gamma = $(matching_omega_gamma_list)/$(gamma_value;
         loop_mean_E_list = $(loop_mean_E_list);
         mean_attenuation_x = $(loop_mean_attenuation_list);
         iloop_pressure_value = $(pressure_value);
