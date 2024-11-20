@@ -19,8 +19,121 @@ export
     combinePlotsTiled,
     getMeanField,
     plotAmpRatioMeanField,
-    plotPhaseRatioMeanField
+    plotPhaseRatioMeanField,
+    plotStitchPhaseScatter
 
+
+
+function plotStitchPhaseScatter(simulation_data, gamma_values) 
+
+    for γ_value in gamma_values
+        # filter the data based on those that are close to gamma_value
+        closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+        closest_γ_value = simulation_data[closest_γ_index].gamma
+        matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+        plot_gamma = γ_value
+        gamma_value = γ_value
+
+        # Get a list of unique input pressures
+        pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
+
+        # Limit range to data
+        upper_limit_line_x = [1*γ_value; 1*γ_value]
+        upper_limit_line_y = [1E-5; 1]
+        lower_limit_line_x = [.1*γ_value; .1*γ_value]
+        lower_limit_line_y = [1E-5; 1]
+
+        mat"""
+        ax_energy = figure;
+        xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
+        %xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+        ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
+        set(gca, 'XScale', 'log');
+        set(gca, 'YScale', 'log');
+        grid on;
+        box on; 
+        hold on;
+        """
+
+        # get a range for plotting color from 0 to 1
+        normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+        # Create a line for each pressure
+        for pressure_value in pressure_list
+
+            # Assign a color
+            idx = findfirst(element -> element == pressure_value, pressure_list) # find the first index that matches
+            marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+            # Only look at data for current pressure value
+            matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_γ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+            # Initizalized vectors for just this pressure
+            loop_mean_E_list = Float64[];
+            loop_mean_attenuation_list = Float64[];
+
+            # Look at a single omega gamma value since each one spans all seeds
+            matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
+            
+            for omega_gamma_value in matching_omega_gamma_list
+
+                # Only look at data for current omega_gamma value
+                matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+                # Get the mean over all seeds       
+                jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+                E_ratio_list = Float64[]
+                seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
+                for k_seed in seed_list
+                    k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
+                    k_seed_omega = k_seed_data[1].omega
+                    phase_vector_y = k_seed_data[1].unwrapped_phase_vector_y
+                    # Wrap the phase vector around 2π
+                    wrapped_phase = mod.(phase_vector_y, 2π)
+                    distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
+                    # mean_distance = meanDistNeighbor(distance_from_wall, wrapped_phase)
+                    if isempty(k_seed_data[1].unwrapped_phase_vector_y)
+                        println("Empty y-phase vector for: Pressure $(pressure_value) OmegaGamma $(omega_gamma_value) seed $(k_seed)")
+                        continue
+                    end
+                    mean_distance = plotPhase(k_seed_data; plot=false)
+                    mean_distance = isinf(mean_distance) ? NaN : mean_distance # saftey for infinite values
+                    push!(E_ratio_list, 1-cos(mean_distance))
+                    # push!(E_ratio_list, mean_distance)
+                end
+                j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
+                push!(loop_mean_E_list, j_E_ratio)
+                push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
+            end
+
+
+            # This is needed because MATLAB.jl has a hard time escaping \'s
+            pressure_label = @sprintf("\$ %.4f\$", pressure_value)
+
+            gamma_val = γ_value
+            mat"""
+            omega_gamma = $(matching_omega_gamma_list);
+            loop_mean_E_list = $(loop_mean_E_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            plot_gamma = $(plot_gamma);
+            marker_color = $(marker_color);
+            pressure_label = $(pressure_label);
+
+            plot( omega_gamma/$(gamma_val), loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            %plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            """
+        end
+
+        # Add legends to the plots
+        mat"""
+        % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+        leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+        title(leg, "\$ \\hat{P} \$")
+        """
+    end
+
+end
 
 
 function plotPhaseRatioMeanField(simulation_data, γ_value) 
@@ -956,6 +1069,7 @@ function plotPhaseRatio(simulation_data, γ_value)
 
     mat"""
     ax_energy = figure;
+    %xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
     ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
@@ -1030,7 +1144,7 @@ function plotPhaseRatio(simulation_data, γ_value)
         marker_color = $(marker_color);
         pressure_label = $(pressure_label);
 
-        % plot( omega_gamma/$(gamma_val), loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+        %plot( omega_gamma/$(gamma_val), loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         """
     end
