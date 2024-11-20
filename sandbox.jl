@@ -11,7 +11,6 @@ using Plots
 using MAT
 using Polynomials
 using LinearAlgebra
-using PolyFit
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 
