@@ -25,7 +25,17 @@ export
 
 
 function plotStitchPhaseScatter(simulation_data, gamma_values) 
-
+    mat"""
+    ax_energy = figure;
+    xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
+    %xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'XScale', 'log');
+    set(gca, 'YScale', 'log');
+    grid on;
+    box on; 
+    hold on;
+    """
     for γ_value in gamma_values
         # filter the data based on those that are close to gamma_value
         closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
@@ -36,24 +46,7 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
 
         # Get a list of unique input pressures
         pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
-
-        # Limit range to data
-        upper_limit_line_x = [1*γ_value; 1*γ_value]
-        upper_limit_line_y = [1E-5; 1]
-        lower_limit_line_x = [.1*γ_value; .1*γ_value]
-        lower_limit_line_y = [1E-5; 1]
-
-        mat"""
-        ax_energy = figure;
-        xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
-        %xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-        ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
-        set(gca, 'XScale', 'log');
-        set(gca, 'YScale', 'log');
-        grid on;
-        box on; 
-        hold on;
-        """
+        pressure_list = [minimum(pressure_list), maximum(pressure_list)] # just get the limits
 
         # get a range for plotting color from 0 to 1
         normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
@@ -84,6 +77,7 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
                 jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
                 E_ratio_list = Float64[]
                 seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
+
                 for k_seed in seed_list
                     k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
                     k_seed_omega = k_seed_data[1].omega
@@ -101,11 +95,11 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
                     push!(E_ratio_list, 1-cos(mean_distance))
                     # push!(E_ratio_list, mean_distance)
                 end
+
                 j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
                 push!(loop_mean_E_list, j_E_ratio)
                 push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
             end
-
 
             # This is needed because MATLAB.jl has a hard time escaping \'s
             pressure_label = @sprintf("\$ %.4f\$", pressure_value)
@@ -125,14 +119,14 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
             """
         end
 
-        # Add legends to the plots
-        mat"""
-        % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
-        leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
-        title(leg, "\$ \\hat{P} \$")
-        """
-    end
 
+    end
+    # Add legends to the plots
+    mat"""
+    % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+    title(leg, "\$ \\hat{P} \$")
+    """ 
 end
 
 
