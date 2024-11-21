@@ -87,6 +87,9 @@ function paperPlots()
     plotPhaseRatioMeanField(simulation_data, .1) # save this one too as fig4.fig
     mat"addpath('src/matlab_functions'); combinePlots('fig1.fig', 'fig3.fig')"
     mat"addpath('src/matlab_functions'); combinePlots('fig2.fig', 'fig4.fig')"
+
+    gamma_values = [.01, .05, .1, .5]
+    plotStitchPhaseScatter(simulation_data, gamma_values) 
 end
 
 # Ellipse
