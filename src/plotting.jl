@@ -36,6 +36,8 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
     box on; 
     hold on;
     """
+    marker_shape_vector = ["-*", "-o", "-v", "-+", "-.", "-x", "d"]
+
     for γ_value in gamma_values
         # filter the data based on those that are close to gamma_value
         closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
@@ -105,6 +107,7 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
             pressure_label = @sprintf("\$ %.4f\$", pressure_value)
 
             gamma_val = γ_value
+            marker_shape = marker_shape_vector[findfirst(==(gamma_val), gamma_values)]
             mat"""
             omega_gamma = $(matching_omega_gamma_list);
             loop_mean_E_list = $(loop_mean_E_list);
@@ -113,9 +116,10 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
             plot_gamma = $(plot_gamma);
             marker_color = $(marker_color);
             pressure_label = $(pressure_label);
+            marker_shape = $(marker_shape)
 
-            plot( omega_gamma/$(gamma_val), loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-            %plot( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            plot( omega_gamma/$(gamma_val), loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
         end
 
@@ -125,7 +129,7 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
     mat"""
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
-    title(leg, "\$ \\hat{P} \$")
+    title(leg, "\$ \\hat{\\gamma} \$")
     """ 
 end
 
