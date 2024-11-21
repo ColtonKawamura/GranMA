@@ -24,17 +24,20 @@ export
     plotStitchAttenuation
 
 
-function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter) 
+function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter; shave=false) 
+    # Define the plot limits to match the 1D theory plot curves
+    theory_x = collect(3E-4:1E-5:3)
+    theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
     mat"""
-    ax_energy = figure;
-    xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
-    %xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
-    set(gca, 'XScale', 'log');
-    set(gca, 'YScale', 'log');
-    grid on;
-    box on; 
+    figure_attenuation = figure;
+    loglog($(theory_x), $(theory_y), 'k', 'DisplayName', '1-D Theory');
     hold on;
+    xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\frac{\\hat{\\alpha}}{\\hat{\\omega}} \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'XScale', 'log');
+    set(get(gca, 'ylabel'), 'rotation', 0);
+    grid on;
+    box on;
     """
     marker_shape_vector = ["-*", "-o", "-v", "-+", "-.", "-x", "d"]
 
@@ -87,6 +90,12 @@ function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter)
 
             gamma_val = γ_value
             marker_shape = marker_shape_vector[findfirst(==(gamma_val), gamma_values)]
+            if shave
+                middle_shave_length = 4
+                start_index = div(length(loop_mean_attenuation_list) - middle_shave_length, 2) + 1
+                loop_mean_attenuation_list = loop_mean_attenuation_list[start_index:start_index + (middle_shave_length - 1)]
+                matching_omega_gamma_list = matching_omega_gamma_list[start_index:start_index + (middle_shave_length - 1)]
+            end
             mat"""
             x = $(matching_omega_gamma_list);
             y = $(loop_mean_attenuation_list);
@@ -97,7 +106,7 @@ function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter)
             pressure_label = $(pressure_label);
             marker_shape = $(marker_shape)
 
-            plot( x, y, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            plot( x, y, marker_shape, 'Color', marker_color, 'DisplayName', pressure_label);
             %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
         end
