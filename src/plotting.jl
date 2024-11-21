@@ -20,10 +20,97 @@ export
     getMeanField,
     plotAmpRatioMeanField,
     plotPhaseRatioMeanField,
-    plotStitchPhaseScatter
+    plotStitchPhaseScatter,
+    plotStitchAttenuation
 
 
+function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter) 
+    mat"""
+    ax_energy = figure;
+    xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
+    %xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'XScale', 'log');
+    set(gca, 'YScale', 'log');
+    grid on;
+    box on; 
+    hold on;
+    """
+    marker_shape_vector = ["-*", "-o", "-v", "-+", "-.", "-x", "d"]
 
+    for γ_value in gamma_values
+        # filter the data based on those that are close to gamma_value
+        closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+        closest_γ_value = simulation_data[closest_γ_index].gamma
+        matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+        plot_gamma = γ_value
+        gamma_value = γ_value
+
+        # Get a list of unique input pressures
+        pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
+        pressure_list = [minimum(pressure_list), maximum(pressure_list)] # just get the limits
+
+        # get a range for plotting color from 0 to 1
+        normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+        # Create a line for each pressure
+        for pressure_value in pressure_list
+
+            # Assign a color
+            idx = findfirst(element -> element == pressure_value, pressure_list) # find the first index that matches
+            marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+            # Only look at data for current pressure value
+            matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_γ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+            # Initizalized vectors for just this pressure
+            loop_mean_E_list = Float64[];
+            loop_mean_attenuation_list = Float64[];
+
+            # Look at a single omega gamma value since each one spans all seeds
+            matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
+            
+            for omega_gamma_value in matching_omega_gamma_list
+
+                # Only look at data for current pressure value
+                matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+    
+                # Get the mean over all seeds
+                loop_mean_alphaoveromega = mean_diameter .* mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+    
+                # Append values
+                push!(loop_mean_attenuation_list, loop_mean_alphaoveromega)
+            end
+
+            # This is needed because MATLAB.jl has a hard time escaping \'s
+            pressure_label = @sprintf("\$ %.4f, %.4f \$", pressure_value, gamma_value)
+
+            gamma_val = γ_value
+            marker_shape = marker_shape_vector[findfirst(==(gamma_val), gamma_values)]
+            mat"""
+            x = $(matching_omega_gamma_list);
+            y = $(loop_mean_attenuation_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            plot_gamma = $(plot_gamma);
+            marker_color = $(marker_color);
+            pressure_label = $(pressure_label);
+            marker_shape = $(marker_shape)
+
+            plot( x, y, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            """
+        end
+
+
+    end
+    # Add legends to the plots
+    mat"""
+    % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+    title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
+    """ 
+end
 function plotStitchPhaseScatter(simulation_data, gamma_values) 
     mat"""
     ax_energy = figure;
@@ -104,7 +191,7 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
             end
 
             # This is needed because MATLAB.jl has a hard time escaping \'s
-            pressure_label = @sprintf("\$ %.4f\$", pressure_value)
+            pressure_label = @sprintf("\$ %.4f, %.4f \$", pressure_value, gamma_value)
 
             gamma_val = γ_value
             marker_shape = marker_shape_vector[findfirst(==(gamma_val), gamma_values)]
@@ -129,7 +216,7 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
     mat"""
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
-    title(leg, "\$ \\hat{\\gamma} \$")
+    title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
     """ 
 end
 

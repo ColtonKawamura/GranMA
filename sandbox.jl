@@ -90,6 +90,8 @@ function paperPlots()
 
     gamma_values = [.01, .05, .1, .5]
     plotStitchPhaseScatter(simulation_data, gamma_values) 
+
+    plotStitchAttenuation(simulation_data, gamma_values, 1.2)
 end
 
 # Ellipse
