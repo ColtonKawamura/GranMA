@@ -51,6 +51,8 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
 
         # Get a list of unique input pressures
         pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
+        # closest_p_idx = argmin(abs.(pressure_list .- .05))
+        # pressure_list = [minimum(pressure_list), pressure_list[closest_p_idx], maximum(pressure_list)] # just get the limits
         pressure_list = [minimum(pressure_list), maximum(pressure_list)] # just get the limits
 
         # get a range for plotting color from 0 to 1
@@ -98,7 +100,8 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
                     mean_distance = plotAmp(k_seed_data; plot=false)
                     mean_phase = plotPhase(k_seed_data; plot=false)
                     mean_scatter = 1-cos(mean_phase)
-                    mean_distance = mean_scatter.*mean_distance.^2
+                    # mean_distance = mean_scatter.*mean_distance.^2
+                    mean_distance = mean_scatter.*mean_distance.^2 ./ k_seed_omega^2
                     push!(E_ratio_list, mean_distance)
                 end
 
@@ -122,8 +125,8 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
             pressure_label = $(pressure_label);
             marker_shape = $(marker_shape)
 
-            plot( omega_gamma/$(gamma_val), $(gamma_val)*loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-            %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            %plot( omega_gamma/$(gamma_val), $(gamma_val)*loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
         end
 
