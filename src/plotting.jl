@@ -22,16 +22,129 @@ export
     plotPhaseRatioMeanField,
     plotStitchPhaseScatter,
     plotStitchAttenuation,
-    plotStitchAmpRatio
+    plotStitchAmpRatio,
+    plotStitchAmpPhase
 
 
 #-----------------------------------------------Stitched PLots------------------------------------------------------------
-function plotStitchAmpRatio(simulation_data, gamma_values) 
+function plotStitchAmpPhase(simulation_data, gamma_values) 
     mat"""
     ax_energy = figure;
     xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
     %xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ 1-\\cos \\overline{\\sigma}_{\\Delta \\phi_{\\perp}} \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\hat{\\gamma}\\left( 1 - \\cos\\overline{\\sigma_{\\Delta \\phi_{ij}}} \\right)\\left(\\overline{\\frac{A_{\\perp}}{A_{\\parallel}}}\\right)^2 \$', "FontSize", 20, "Interpreter", "latex");
+    set(gca, 'XScale', 'log');
+    set(gca, 'YScale', 'log');
+    grid on;
+    box on; 
+    hold on;
+    """
+    marker_shape_vector = ["-*", "-o", "-v", "-+", "-.", "-x", "d"]
+
+    for γ_value in gamma_values
+        # filter the data based on those that are close to gamma_value
+        closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
+        closest_γ_value = simulation_data[closest_γ_index].gamma
+        matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+        plot_gamma = γ_value
+        gamma_value = γ_value
+
+        # Get a list of unique input pressures
+        pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
+        pressure_list = [minimum(pressure_list), maximum(pressure_list)] # just get the limits
+
+        # get a range for plotting color from 0 to 1
+        normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
+
+        # Create a line for each pressure
+        for pressure_value in pressure_list
+
+            # Assign a color
+            idx = findfirst(element -> element == pressure_value, pressure_list) # find the first index that matches
+            marker_color = [normalized_variable[idx], 0, 1-normalized_variable[idx]]
+
+            # Only look at data for current pressure value
+            matching_pressure_data = filter(entry -> entry.pressure == pressure_value, matching_γ_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+            # Initizalized vectors for just this pressure
+            loop_mean_E_list = Float64[];
+            loop_mean_attenuation_list = Float64[];
+
+            # Look at a single omega gamma value since each one spans all seeds
+            matching_omega_gamma_list = sort(unique([entry.omega_gamma for entry in matching_pressure_data]))
+            
+            for omega_gamma_value in matching_omega_gamma_list
+
+                # Only look at data for current omega_gamma value
+                matching_omega_gamma_data = filter(entry -> entry.omega_gamma == omega_gamma_value, matching_pressure_data) # for every entry in simluation_data, replace (->) that entry with result of the boolean expression
+
+                # Get the mean over all seeds       
+                jvalue_mean_alphaoveromega = mean(entry.alphaoveromega_x for entry in matching_omega_gamma_data)
+                E_ratio_list = Float64[]
+                seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
+
+                for k_seed in seed_list
+                    k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
+                    k_seed_omega = k_seed_data[1].omega
+                    phase_vector_y = k_seed_data[1].unwrapped_phase_vector_y
+                    # Wrap the phase vector around 2π
+                    wrapped_phase = mod.(phase_vector_y, 2π)
+                    distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
+                    # mean_distance = meanDistNeighbor(distance_from_wall, wrapped_phase)
+                    if isempty(k_seed_data[1].unwrapped_phase_vector_y)
+                        println("Empty y-phase vector for: Pressure $(pressure_value) OmegaGamma $(omega_gamma_value) seed $(k_seed)")
+                        continue
+                    end
+                    mean_distance = plotAmp(k_seed_data; plot=false)
+                    mean_phase = plotPhase(k_seed_data; plot=false)
+                    mean_scatter = 1-cos(mean_phase)
+                    mean_distance = mean_scatter.*mean_distance.^2
+                    push!(E_ratio_list, mean_distance)
+                end
+
+                j_E_ratio = mean(E_ratio_list) # mean of the seeds for a single simulation
+                push!(loop_mean_E_list, j_E_ratio)
+                push!(loop_mean_attenuation_list, jvalue_mean_alphaoveromega)
+            end
+
+            # This is needed because MATLAB.jl has a hard time escaping \'s
+            pressure_label = @sprintf("\$ %.4f, %.4f \$", pressure_value, gamma_value)
+
+            gamma_val = γ_value
+            marker_shape = marker_shape_vector[findfirst(==(gamma_val), gamma_values)]
+            mat"""
+            omega_gamma = $(matching_omega_gamma_list);
+            loop_mean_E_list = $(loop_mean_E_list);
+            mean_attenuation_x = $(loop_mean_attenuation_list);
+            iloop_pressure_value = $(pressure_value);
+            plot_gamma = $(plot_gamma);
+            marker_color = $(marker_color);
+            pressure_label = $(pressure_label);
+            marker_shape = $(marker_shape)
+
+            plot( omega_gamma/$(gamma_val), $(gamma_val)*loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            """
+        end
+
+    end
+    # Add legends to the plots
+    mat"""
+    % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
+    leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+    title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
+    fitx = [.03, 2]
+    fity = .1*fitx.^2
+    plot(fitx, fity, 'k-', 'DisplayName', 'slope=1', 'LineWidth', 3)
+    """ 
+end
+function plotStitchAmpRatio(simulation_data, gamma_values) 
+    mat"""
+    ax_energy = figure;
+    xlabel('\$  \\hat{\\omega} \$', "FontSize", 20, "Interpreter", "latex");
+
+    %xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\hat{\\gamma} \\left( \\overline{\\frac{A_{\\perp}}{A_{\\parallel}}} \\right) ^2\$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
     set(gca, 'YScale', 'log');
     grid on;
@@ -116,9 +229,9 @@ function plotStitchAmpRatio(simulation_data, gamma_values)
             plot_gamma = $(plot_gamma);
             marker_color = $(marker_color);
             pressure_label = $(pressure_label);
-            marker_shape = $(marker_shape)
+            marker_shape = $(marker_shape);
 
-            plot( omega_gamma/$(gamma_val), loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            plot( omega_gamma/$(gamma_val), plot_gamma*loop_mean_E_list.^2, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
         end
@@ -129,6 +242,10 @@ function plotStitchAmpRatio(simulation_data, gamma_values)
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
     title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
+    fitx = [.03, 2]
+    fity = .1*fitx.^1
+    plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', 'slope = 1')
+    set(get(gca, 'ylabel'), 'rotation', 0);
     """ 
 end
 
@@ -336,6 +453,11 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
     title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
+    fitx = [.03, 2]
+    fity = 3*fitx.^.5
+    fitz = 1*fitx.^2
+    plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', 'slope = 1/2')
+    plot(fitx, fitz, 'k-',  'LineWidth', 3,'DisplayName', 'slope = 2')
     """ 
 end
 
@@ -762,7 +884,7 @@ function getMeanField(filtered_data; plot = true)
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
         prime_field_amp_new = abs($(y)-mean_field_new);
         figure
-        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", "x prime field")
+        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", " Prime Field ")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -778,7 +900,7 @@ function getMeanField(filtered_data; plot = true)
 
     if plot==true
         mat"""
-        scatter($(x_parra), $(y), "o", "DisplayName", "raw x-amplitude")
+        scatter($(x_parra), $(y), "o", "DisplayName", "Longitudinal Data")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -793,7 +915,7 @@ function getMeanField(filtered_data; plot = true)
     
     if plot==true
         mat"""
-        scatter($(x_parra), mean_field_new, "v","DisplayName", "mean field")
+        scatter($(x_parra), mean_field_new, "v","DisplayName", "Mean Field")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -811,7 +933,7 @@ function getMeanField(filtered_data; plot = true)
     y = filtered_data[1].amplitude_vector_y
     if plot == true
         mat"""
-        scatter($(x_perp), $(y), "o", "DisplayName", "raw y-amplitude")
+        scatter($(x_perp), $(y), "o", "DisplayName", "Transverse Data")
         set(gca, 'YScale', 'log')
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
@@ -839,7 +961,7 @@ function getMeanField(filtered_data; plot = true)
     if plot==true
         mat"""
         figure
-        scatter($(distance_from_wall), $(prime_field_amp_new), "*", "DisplayName", "x prime field")
+        scatter($(distance_from_wall), $(prime_field_amp_new), "*", "DisplayName", "Prime Field")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -854,7 +976,7 @@ function getMeanField(filtered_data; plot = true)
 
     if plot==true
         mat"""
-        scatter($(distance_from_wall), $(phase), "o", "DisplayName", "raw x-phase")
+        scatter($(distance_from_wall), $(phase), "o", "DisplayName", "Longitudinal Data")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -868,7 +990,7 @@ function getMeanField(filtered_data; plot = true)
     
     if plot==true
         mat"""
-        scatter($(distance_from_wall), $(mean_field_phase), "v","DisplayName", "mean field")
+        scatter($(distance_from_wall), $(mean_field_phase), "v","DisplayName", "Mean Field")
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
         ylabel("\$ \\phi(x) \$", "Interpreter", 'latex', "FontSize", 15)
@@ -885,7 +1007,7 @@ function getMeanField(filtered_data; plot = true)
     y = mod.(y, 2π)
     if plot == true
         mat"""
-        scatter($(x_perp), $(y), "o", "DisplayName", "raw y-phase")
+        scatter($(x_perp), $(y), "o", "DisplayName", "Transverse Data")
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15)
