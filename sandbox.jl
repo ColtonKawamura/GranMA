@@ -89,8 +89,10 @@ function paperPlots()
     mat"addpath('src/matlab_functions'); combinePlots('fig2.fig', 'fig4.fig')"
 
     # Stiched plots
-    gamma_values = [.01, .05, .1, .5]
+    gamma_values = [ .05, .1, .5, 1]
     plotStitchPhaseScatter(simulation_data, gamma_values) 
+    plotStitchAmpRatio(simulation_data, gamma_values)
+    plotStitchAmpPhase(simulation_data, gamma_values)
 
     gamma_values = [.08, .1,.3, .5, .6, .8, 1]
     plotStitchAttenuation(simulation_data, gamma_values, 1.2)
