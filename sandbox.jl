@@ -79,6 +79,7 @@ function paperPlots()
     
     # Derek's Mean field theory for single sim
     data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    # data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
     plotAmp(data) # amplitude plot for low pressure, low gamma
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
