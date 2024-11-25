@@ -1,6 +1,6 @@
 function packBi2dRep(N, K, D, G, M, P_target, W_factor, seed, plotit)
 %Function to create 2D packing with following input parameters:
-% N, Number of Particles
+% N, Number of Particles packBi2dRep(100, 100, 1, 1.4, 1, .01, 10, 1, 1)
 % K, spring constant
 % D, Average Diameter
 % G, Ratio of large to small particles (typically 1.4)
@@ -217,8 +217,8 @@ for nt = 1:Nt
     % Fx = Fx-K*(x-(Lx-Dn/2)).*(RW_contacts);  % Right wall
     % Fy = Fy-K*(y-(Ly-D/2)).*(y>Ly-D/2);  % Top wall
     
-    y=mod(y,Ly); %periodic boundaries for top and bottom
-    x = mod(x, Lx);
+    % y=mod(y,Ly); %periodic boundaries for top and bottom
+    % x = mod(x, Lx);
     Ek(nt) = 1/2*M*sum((vx).^2+(vy).^2);
     Ek(nt) = Ek(nt)/N;
     Ep(nt) = Ep(nt)/N;
@@ -233,7 +233,8 @@ for nt = 1:Nt
 
     vx = vx+(ax_old+ax).*dt/2;
     vy = vy+(ay_old+ay).*dt/2;
-    
+    vx(Zn == 0) = 0;
+    vy(Zn == 0) = 0;
 %     no_cont_list = (Zn == 0 & ~LW_contacts & ~RW_contacts);
 %     vx(no_cont_list) = 0;
 %     vy(no_cont_list) = 0;
@@ -318,15 +319,31 @@ x = x_repeated;
 y = y_repeated;
 Dn = Dn_repeated; % Set Dn to the repeated diameters
 
+% figure;
+% hold on;
+% axis equal;
+% for np = 1:N
+%     rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], 'Curvature', [1, 1], 'EdgeColor', 'b');
+% end
+% axis([0, N_repeated * Lx, 0, Ly]);
+% hold off;
+% pause
 figure;
 hold on;
 axis equal;
-for np = 1:N
-    rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], 'Curvature', [1, 1], 'EdgeColor', 'b');
-end
 axis([0, N_repeated * Lx, 0, Ly]);
+
+% Loop through each particle and plot its rectangle
+for np = 1:N
+    % Compute the position for the rectangle using the center coordinates (x, y)
+    % and the diameter Dn (width and height).
+    rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], ...
+        'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); % Optional LineWidth for better visibility
+end
+% Update the figure display
+drawnow;
 hold off;
-pause
+
 
 
 disp(['number of excess contacts per cell= ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])

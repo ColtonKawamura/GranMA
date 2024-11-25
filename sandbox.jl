@@ -14,7 +14,8 @@ using LinearAlgebra
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 
-data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
+# data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
+data_gaus = loadGausData("out/processed/2d_gaus_withDamping.jld2")
 # data_gaus = filter(x -> x.omega >= 0.03, data_gaus) # This is used for the presentation of the program review 
 data_gaus = filter(x -> x.omega > .02, data_gaus) # This is for the wavespeed plot
 data_gaus = filter(x -> x.pressure >= .001, data_gaus) 
@@ -45,9 +46,26 @@ function paperPlots()
     data = FilterData(simulation_data, .001, :pressure, .01, :omega, .5, :gamma, 1, :seed)
     plotPhase(data) # phase plot for high pressure, low gamma
 
+    # Tiled Plots
+    # high omega
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # High Pressure
+    plotAmpTiled(data)
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed) # low pressure
+    plotAmpTiled(data)
+    #low omega
+    data = FilterData(simulation_data, .1, :pressure, .01, :omega, .5, :gamma, 1, :seed) # high pressure
+    plotAmpTiled(data)
+    data = FilterData(simulation_data, .001, :pressure, .01, :omega, .5, :gamma, 1, :seed) # low pressuer
+    plotAmpTiled(data)
+ 
     # Amp and Phase Ratio Plots
-    plotAmpRatio(simulation_data, .5)
-    plotPhaseRatio(simulation_data, .5)
+    plotAmpRatio(simulation_data, .5) # save as fig1.fig
+    plotPhaseRatio(simulation_data, .5) # save as fig2.fig
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1_0.01.fig', 'fig2_0.01.fig')" # better to use the matlab version...
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1_0.05.fig', 'fig2_0.05.fig')" # better to use the matlab version...
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1_0.1.fig', 'fig2_0.1.fig')" # better to use the matlab version...
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1_0.5.fig', 'fig2_0.5.fig')" # better to use the matlab version...
+    mat"addpath('src/matlab_functions'); combinePlotsTiled('fig1.fig', 'fig2.fig')" # better to use the matlab version...
 
     plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
     data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
@@ -56,10 +74,31 @@ function paperPlots()
     # ellipse Plots
     sim2d(100, 1, 5, 1, 5000, .1 ,5,  1) # high pressure, 
     sim2d(100, 1, 5, 1, 5000, .001 ,5,  1)
-    sim2d(100, 1, 5, .3, 5000, .001 ,5,  1) # new one
-
 
     plotEllipseAttenuation2d(simulation_data, .5)
+    
+    # Derek's Mean field theory for single sim
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    # data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data) # amplitude plot for low pressure, low gamma
+    mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
+
+    # mean field over all simulations
+    plotAmpRatioMeanField(simulation_data, .1)  # save the figure as fig3.fig
+    plotPhaseRatioMeanField(simulation_data, .1) # save this one too as fig4.fig
+    mat"addpath('src/matlab_functions'); combinePlots('fig1.fig', 'fig3.fig')"
+    mat"addpath('src/matlab_functions'); combinePlots('fig2.fig', 'fig4.fig')"
+
+    # Stiched plots
+    gamma_values = [ .05, .1, .5, 1]
+    plotStitchPhaseScatter(simulation_data, gamma_values) 
+    plotStitchAmpRatio(simulation_data, gamma_values)
+    plotStitchAmpPhase(simulation_data, gamma_values)
+
+    gamma_values = [.08, .1,.3, .5, .6, .8, 1]
+    plotStitchAttenuation(simulation_data, gamma_values, 1.2)
+    plotStitchAttenuation(simulation_data, gamma_values, 1.2; shave=true)
+
 end
 
 # Ellipse

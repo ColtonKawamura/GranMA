@@ -40,17 +40,17 @@ freq_match_tolerance = 0.05;
 average_dt = mean(diff(time_vector));
 sampling_freq = 1 / average_dt;
 nyquist_freq = sampling_freq / 2;  % Nyquist frequency
-freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq;
+freq_vector = linspace(0, 1, fix(length(time_vector)/2)+1) * nyquist_freq; % creates vector of posible frequecies from 0 to the nyquist frequency (upper limit)
 index_vector = 1:numel(freq_vector);
 number_elements_time = numel(time_vector);
 
-for nn = index_particles(1:iskip:end)
-    if ~index_oscillating_wall(nn)
-        position_nn = position_particles(nn, :);
+for nn = index_particles(1:iskip:end) % go through all th eparticles
+    if ~index_oscillating_wall(nn) % only look at partciles not wall particles
+        position_nn = position_particles(nn, :); % grab the position (one dimension) of particle nn over time
 
-        if length(unique(position_nn)) > 10
+        if length(unique(position_nn)) > 10 % don't bother with particles that 
             centered_data = position_nn - mean(position_nn); % Center the data on zero for mean
-            normalized_fft_data = fft(centered_data) / number_elements_time;
+            normalized_fft_data = fft(centered_data) / number_elements_time; % need to normalize beceause not all particles have the same time-vector (if they don't oscilalte until wave hits them)
 
             % Ignore frequencies below a certain threshold if needed
             if ignore_below_threshold
