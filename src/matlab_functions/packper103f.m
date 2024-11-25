@@ -1,6 +1,7 @@
 function [x y D Gn nu Ek Ep Ct Dt nt tc]=packper103f(Lx,Ly,Dn,Gam,seed,ispack,plotit,tol,ic,fx,fy)
 rng(seed)
-%% Molecular Dynamics Simulator
+% Example N = 10; Dn_list = 1+0.4*(rand([1,N])>0.5); packper103f(1,1,Dn_list,0,1)
+% Molecular Dynamics Simulator
 % <md.m> Mark D. Shattuck 7/22/2010
 
 % revision history:
@@ -21,12 +22,19 @@ rng(seed)
 
 %% Experimental Parmeters
 
+
 N=length(Dn);    % number particles
 Ds=min(Dn);      % smallest particle
 %Dl=max(Dn);      % largest particle
 Gn=Dn/Ds;        % particle ratios
 K=100;   % spring constant for harmonic force law
 B=1;     % damping
+P = 0;
+% File naming - just numbers to fit into the simulation_2D.m function for testing.
+P_target = 0; % big enough to know that this is NOT a regular packing
+W_factor = 0;
+filename = ['in/2D_Repeating/2D_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
+% %%%%%
 
 if(~exist('tol','var')|| isempty(tol))
   tol=1e-6;
@@ -74,7 +82,7 @@ end
 x0=x; %#ok<NASGU>
 y0=y; %#ok<NASGU>
 
-% find initial D
+%% find initial D
 dx=repmat(x,N,1);
 dx=dx-dx';
 dx=dx-round(dx/Lx)*Lx;  % Periodic x
@@ -356,3 +364,4 @@ fprintf(1,' %f\n',nu);
 % C0=Ct(nt);
 % 
 
+save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P');
