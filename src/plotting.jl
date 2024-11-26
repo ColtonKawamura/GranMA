@@ -1015,7 +1015,9 @@ function getMeanField(filtered_data; plot = true)
     y = mod.(y, 2π)
     
 
-    transverse_fitline = -1/6 .* x_perp
+    transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    # transverse_fitline = 1/7 .* x_perp # for the higher pressure     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+
     transverse_fitline = mod.(transverse_fitline, 2π)
     z = abs.(transverse_fitline .- y)
 
@@ -1026,9 +1028,6 @@ function getMeanField(filtered_data; plot = true)
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15)
-        x = linspace(0,50);
-        y = -1/6*x;
-        y = mod(y, 2*pi)
         plot($(x_perp),$(transverse_fitline), "o", "DisplayName", "Transverse Fit")
         plot($(x_perp), $(z), "o", "DisplayName", "Transverse Fit-Data")
         legend('FontSize', 15)
