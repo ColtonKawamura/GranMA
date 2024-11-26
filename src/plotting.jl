@@ -1014,9 +1014,8 @@ function getMeanField(filtered_data; plot = true)
     y = filtered_data[1].unwrapped_phase_vector_y
     y = mod.(y, 2π)
     
-
-    transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-    # transverse_fitline = 1/7 .* x_perp # for the higher pressure     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    # transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    transverse_fitline = 1/7 .* x_perp # for the higher pressure     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
 
     transverse_fitline = mod.(transverse_fitline, 2π)
     z = abs.(transverse_fitline .- y)
