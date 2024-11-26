@@ -217,8 +217,8 @@ for nt = 1:Nt
     % Fx = Fx-K*(x-(Lx-Dn/2)).*(RW_contacts);  % Right wall
     % Fy = Fy-K*(y-(Ly-D/2)).*(y>Ly-D/2);  % Top wall
     
-    % y=mod(y,Ly); %periodic boundaries for top and bottom
-    % x = mod(x, Lx);
+    y=mod(y,Ly); %periodic boundaries for top and bottom
+    x = mod(x, Lx);
     Ek(nt) = 1/2*M*sum((vx).^2+(vy).^2);
     Ek(nt) = Ek(nt)/N;
     Ep(nt) = Ep(nt)/N;
@@ -349,3 +349,7 @@ hold off;
 disp(['number of excess contacts per cell= ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
 
 save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P');
+
+saveas(figure(1), 'section.png')
+saveas(figure(2), 'graph.png')
+saveas(figure(3), 'reapeating.png')
