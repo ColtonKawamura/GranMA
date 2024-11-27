@@ -56,7 +56,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     A = P_target/100;
     
     
-    dt = pi*sqrt(M/K)*0.01; %  was pi*sqrt(M/K)*0.05
+    dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
     Nt = round(.9.*(Lx ./ c_0)./(dt))
     ax_old = 0*x;
@@ -101,7 +101,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
         Zn_list = [Zn_list;length(spring_list_nn)];
     end
     
-    [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly, K);
+    % [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly, K);
     % sort eigen_vector's columns in ascending order, then short eignvectors accordingly
     % [ascending_eigen_values, eigen_idx] = sort(eigen_values, 1);
     % ascending_eigen_vectors = zeros(size(ascending_eigen_values));
@@ -109,8 +109,8 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     %     ascending_eigen_vectors(:, col) = eigen_vectors(eigen_idx(:, col), col); % grab all the rows from each column in eigen_vectors and 
     % end
 
-    mode_to_plot = 2; % should just be the column
-    plotEigenmode(x0', y0', eigen_vectors, mode_to_plot)
+    % mode_to_plot = 2; % should just be the column
+    % plotEigenmode(x0', y0', eigen_vectors, mode_to_plot)
     % identify wall particles
     left_wall_list = (x<Dn/2);
     right_wall_list = (x>Lx-Dn/2);
