@@ -143,8 +143,10 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
     fitx = [.003, 2]
     fity = .001*fitx.^-(2/3)
     fitz = .03*fitx.^-(2/3)
-    plot(fitx, fity, 'k-', 'DisplayName', 'slope=-2/3', 'LineWidth', 3)
-    plot(fitx, fitz, 'k-', 'DisplayName', 'slope=-2/3', 'LineWidth', 3)
+    plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', '');  % No legend for fity
+    plot(fitx, fitz, 'k-', 'LineWidth', 3, 'DisplayName', '');  % No legend for fitz
+    text(2, 0.018, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
+    text(2, 0.00063, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
     """ 
 end
 function plotStitchAmpRatio(simulation_data, gamma_values) 
@@ -1014,8 +1016,8 @@ function getMeanField(filtered_data; plot = true)
     y = filtered_data[1].unwrapped_phase_vector_y
     y = mod.(y, 2π)
     
-    # transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-    transverse_fitline = 1/7 .* x_perp # for the higher pressure     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    # transverse_fitline = 1/7 .* x_perp # for the higher pressure     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
 
     transverse_fitline = mod.(transverse_fitline, 2π)
     z = abs.(transverse_fitline .- y)
