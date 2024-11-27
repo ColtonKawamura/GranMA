@@ -143,6 +143,7 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
     fitx = [.003, 2]
     fity = .001*fitx.^-(2/3)
     fitz = .03*fitx.^-(2/3)
+    leg.AutoUpdate = 'off'; 
     plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', '');  % No legend for fity
     plot(fitx, fitz, 'k-', 'LineWidth', 3, 'DisplayName', '');  % No legend for fitz
     text(2, 0.018, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
