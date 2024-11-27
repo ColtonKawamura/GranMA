@@ -112,7 +112,7 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
             end
 
             # This is needed because MATLAB.jl has a hard time escaping \'s
-            pressure_label = @sprintf("\$ %.4f, %.4f \$", pressure_value, gamma_value)
+            pressure_label = @sprintf("\$ %.4f, %.4f \$", gamma_value, pressure_value)
 
             gamma_val = γ_value
             marker_shape = marker_shape_vector[findfirst(==(gamma_val), gamma_values)]
@@ -139,15 +139,15 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
     mat"""
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
-    title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
+    title(leg, "\$  \\hat{\\gamma}, \\hat{P} \$")
     fitx = [.003, 2]
     fity = .001*fitx.^-(2/3)
     fitz = .03*fitx.^-(2/3)
     leg.AutoUpdate = 'off'; 
     plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', '');  % No legend for fity
     plot(fitx, fitz, 'k-', 'LineWidth', 3, 'DisplayName', '');  % No legend for fitz
-    text(2, 0.018, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
-    text(2, 0.00063, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
+    text(.003, .4, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
+    text(.003, .01, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
     """ 
 end
 function plotStitchAmpRatio(simulation_data, gamma_values) 
