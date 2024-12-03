@@ -8,13 +8,13 @@ function TESTpackingbi2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
 % P_thres, targeted threshold pressure
 % W_factor, Factor of the width vs number of particles d
 
-N = 30;
+N = 22;
 K = 100;
 D = 1;
 G = 1.4; 
 M = 1;
 P_target = .1;
-W_factor = 3;
+W_factor = 2;
 seed = 1;
 plotit = 1;
 
@@ -116,9 +116,8 @@ for nt = 1:Nt
                 set(h(np), 'Position', [x(np) - 0.5 * Dn(np), y(np) - 0.5 * Dn(np), Dn(np), Dn(np)]);  % [x, y, width, height]
             end
             
-            Np = N;  % Total number of particles
+            Np = N; 
             
-            % Handle periodicity in the y-direction (bottom wall)
             ii = find(y < Dn/2);  % Bottom boundary condition
             for nn = 1:length(ii)
                 np = ii(nn);
@@ -126,7 +125,6 @@ for nt = 1:Nt
             end
             Np = Np + length(ii);
             
-            % Handle periodicity in the y-direction (top wall)
             ii = find(y > Ly - Dn/2);  % Top boundary condition
             for nn = 1:length(ii)
                 np = ii(nn);
@@ -134,21 +132,18 @@ for nt = 1:Nt
             end
             Np = Np + length(ii);
             
-            % Handle periodicity in the x-direction (right wall)
             ii = find(x > Lx - Dn/2);  % Right boundary condition
             for nn = 1:length(ii)
                 np = ii(nn);
                 set(h(nn + Np), 'Position', [x(np) - 0.5 * Dn(np) - Lx, y(np) - 0.5 * Dn(np), Dn(np), Dn(np)]);
             end
             
-            % Handle periodicity in the x-direction (left wall)
             ii = find(x < Dn/2);  % Left boundary condition
             for nn = 1:length(ii)
                 np = ii(nn);
                 set(h(nn + Np), 'Position', [x(np) - 0.5 * Dn(np) + Lx, y(np) - 0.5 * Dn(np), Dn(np), Dn(np)]);
             end
             
-            % Update the y-axis limits
             figure(1);
             ylim([0, Ly]);
             title(num2str(Ly));
@@ -221,17 +216,13 @@ for nt = 1:Nt
 
                         F = -K*(Dnm/dnm-1);
 
-                        % dissipation force = B * m_red * v_N, v_N is normal component of velocity diff
                         m_red = M*M/(M+M);
                         v_dot_r=((vx(nn)-vx(mm))*dx + (vy(nn)-vy(mm))*dy);
                         Fdiss = Bv * m_red * v_dot_r;
 
                         Fx(nn) = Fx(nn)+F.*dx-Fdiss.*dx/dnm;  % particle-particle Force Law
-                        %                         Fx(mm) = Fx(mm)-F.*dx+Fdiss.*dx/dnm;
                         Fy(nn) = Fy(nn)+F.*dy-Fdiss.*dy/dnm;
-                        %                         Fy(mm) = Fy(mm)-F.*dy+Fdiss.*dy/dnm;
                         Zn(nn) = Zn(nn) + 1;
-                        %                         Zn(mm) = Zn(mm) + 1;
                         Ep(nt) = Ep(nt) + 0.5*K*(Dnm-dnm)^2;
                     end
                 end
@@ -252,7 +243,7 @@ for nt = 1:Nt
     % Fy = Fy-K*(y-(Ly-D/2)).*(y>Ly-D/2);  % Top wall
     
     y=mod(y,Ly); %periodic boundaries for top and bottom
-    x=mod(x,Lx); %periodic boundaries for top and bottom
+    x=mod(x,Lx); %periodic boundaries for left and right
 
     Ek(nt) = 1/2*M*sum((vx).^2+(vy).^2);
     Ek(nt) = Ek(nt)/N;
