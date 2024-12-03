@@ -244,8 +244,9 @@ function plotStitchAmpRatio(simulation_data, gamma_values)
             pressure_label = $(pressure_label);
             marker_shape = $(marker_shape);
             marker_size = exp(plot_gamma/$(max_gamma))*3
-
-            plot( omega_gamma/$(gamma_val), plot_gamma*loop_mean_E_list.^2, "-o", 'MarkerSize', marker_size , 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            y =  plot_gamma*loop_mean_E_list.^2;
+            y(y > 1) = NaN;
+            plot( omega_gamma/$(gamma_val),y, "-o", 'MarkerSize', marker_size , 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
         end
@@ -257,9 +258,14 @@ function plotStitchAmpRatio(simulation_data, gamma_values)
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
     title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
     fitx = [.03, 2]
-    fity = .1*fitx.^1
+    fity = .2*fitx.^1
+    fitz = .001*fitx.^1
+    leg.AutoUpdate = 'off'; 
     plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', 'slope = 1')
+    plot(fitx, fitz, 'k-', 'LineWidth', 3, 'DisplayName', 'slope = 1')
     set(get(gca, 'ylabel'), 'rotation', 0);
+    text(.2, .000, '\$ 1 \$', 'Interpreter', 'latex', 'FontSize', 20);
+    text(.2, .08, '\$ 1 \$', 'Interpreter', 'latex', 'FontSize', 20);
     """ 
 end
 
@@ -346,7 +352,7 @@ function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter; sha
             marker_color = $(marker_color);
             pressure_label = $(pressure_label);
             marker_shape = $(marker_shape);
-
+            
             plot( x, y, marker_shape, 'Color', marker_color, 'DisplayName', pressure_label);
             %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
