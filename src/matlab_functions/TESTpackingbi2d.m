@@ -110,27 +110,51 @@ for nt = 1:Nt
     if(plotit && mod(nt,Nplotskip) == 0)
         if flag
             figure(1);
+            
+            % Main loop for updating particle positions
             for np = 1:N
-                set(h(np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np) Dn(np) Dn(np)]); %[x y width height]
+                set(h(np), 'Position', [x(np) - 0.5 * Dn(np), y(np) - 0.5 * Dn(np), Dn(np), Dn(np)]);  % [x, y, width, height]
             end
-            Np=N;
-            % ii=find(y<Dn/2);
-            % for nn=1:length(ii)
-            %     np=ii(nn);
-            %     set(h(nn+Np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np)+Ly Dn(np) Dn(np)]);
-            % end
-            % Np=Np+length(ii);
-            % %Top wall
-            % ii=find(y>Ly-Dn/2);
-            % for nn=1:length(ii)
-            %     np=ii(nn);
-            %     set(h(nn+Np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np)-Ly Dn(np) Dn(np)]);
-            % end
-            Np=Np+length(ii);
-            figure(1), ylim([0, Ly]);
+            
+            Np = N;  % Total number of particles
+            
+            % Handle periodicity in the y-direction (bottom wall)
+            ii = find(y < Dn/2);  % Bottom boundary condition
+            for nn = 1:length(ii)
+                np = ii(nn);
+                set(h(nn + Np), 'Position', [x(np) - 0.5 * Dn(np), y(np) - 0.5 * Dn(np) + Ly, Dn(np), Dn(np)]);
+            end
+            Np = Np + length(ii);
+            
+            % Handle periodicity in the y-direction (top wall)
+            ii = find(y > Ly - Dn/2);  % Top boundary condition
+            for nn = 1:length(ii)
+                np = ii(nn);
+                set(h(nn + Np), 'Position', [x(np) - 0.5 * Dn(np), y(np) - 0.5 * Dn(np) - Ly, Dn(np), Dn(np)]);
+            end
+            Np = Np + length(ii);
+            
+            % Handle periodicity in the x-direction (right wall)
+            ii = find(x > Lx - Dn/2);  % Right boundary condition
+            for nn = 1:length(ii)
+                np = ii(nn);
+                set(h(nn + Np), 'Position', [x(np) - 0.5 * Dn(np) - Lx, y(np) - 0.5 * Dn(np), Dn(np), Dn(np)]);
+            end
+            
+            % Handle periodicity in the x-direction (left wall)
+            ii = find(x < Dn/2);  % Left boundary condition
+            for nn = 1:length(ii)
+                np = ii(nn);
+                set(h(nn + Np), 'Position', [x(np) - 0.5 * Dn(np) + Lx, y(np) - 0.5 * Dn(np), Dn(np), Dn(np)]);
+            end
+            
+            % Update the y-axis limits
+            figure(1);
+            ylim([0, Ly]);
             title(num2str(Ly));
-
+            
         end
+        
         figure(2), semilogy(nt, Ek(nt-1), 'ro');
         hold on, semilogy(nt, Ep(nt-1), 'bs');
         hold on, plot(nt,P,'kx')
