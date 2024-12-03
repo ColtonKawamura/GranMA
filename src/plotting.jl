@@ -172,6 +172,7 @@ function plotStitchAmpRatio(simulation_data, gamma_values)
         matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
         plot_gamma = γ_value
         gamma_value = γ_value
+        max_gamma = maximum(gamma_values)
 
         # Get a list of unique input pressures
         pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
@@ -242,8 +243,9 @@ function plotStitchAmpRatio(simulation_data, gamma_values)
             marker_color = $(marker_color);
             pressure_label = $(pressure_label);
             marker_shape = $(marker_shape);
+            marker_size = exp(plot_gamma/$(max_gamma))*3
 
-            plot( omega_gamma/$(gamma_val), plot_gamma*loop_mean_E_list.^2, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            plot( omega_gamma/$(gamma_val), plot_gamma*loop_mean_E_list.^2, "-o", 'MarkerSize', marker_size , 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
         end
@@ -896,7 +898,7 @@ function getMeanField(filtered_data; plot = true)
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
         prime_field_amp_new = abs($(y)-mean_field_new);
         figure
-        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", " Prime Field ")
+        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", " \$ \\Delta A_{||} \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -905,14 +907,14 @@ function getMeanField(filtered_data; plot = true)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
-        legend("show")
+        legend("show", "Interpreter", "latex")
         """
     end
 
 
     if plot==true
         mat"""
-        scatter($(x_parra), $(y), "o", "DisplayName", "Longitudinal Data")
+        scatter($(x_parra), $(y), "o", "DisplayName", "\$ A_{||} \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -927,7 +929,7 @@ function getMeanField(filtered_data; plot = true)
     
     if plot==true
         mat"""
-        scatter($(x_parra), mean_field_new, "v","DisplayName", "Mean Field")
+        scatter($(x_parra), mean_field_new, "v","DisplayName", "\$ \\overline{A}_{||} \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -937,7 +939,6 @@ function getMeanField(filtered_data; plot = true)
         box on
         hold on 
         legend("show")
-        title("Amplitude")
         """
     end
     
@@ -945,7 +946,7 @@ function getMeanField(filtered_data; plot = true)
     y = filtered_data[1].amplitude_vector_y
     if plot == true
         mat"""
-        scatter($(x_perp), $(y), "o", "DisplayName", "Transverse Data")
+        scatter($(x_perp), $(y), "o", "DisplayName", "\$ A_\\perp \$")
         set(gca, 'YScale', 'log')
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
@@ -972,7 +973,7 @@ function getMeanField(filtered_data; plot = true)
     if plot==true
         mat"""
         figure
-        scatter($(distance_from_wall), $(prime_field_amp_new), "*", "DisplayName", "Prime Field")
+        scatter($(distance_from_wall), $(prime_field_amp_new), "*", "DisplayName", "\$ \\Delta \\phi_{||} \$")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -987,7 +988,7 @@ function getMeanField(filtered_data; plot = true)
 
     if plot==true
         mat"""
-        scatter($(distance_from_wall), $(phase), "o", "DisplayName", "Longitudinal Data")
+        scatter($(distance_from_wall), $(phase), "o", "DisplayName", "\$ \\phi_{||} \$")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -995,21 +996,20 @@ function getMeanField(filtered_data; plot = true)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
-        legend("show")
+        legend("show", "interpreter", "latex")
         """
     end
     
     if plot==true
         mat"""
-        scatter($(distance_from_wall), $(mean_field_phase), "v","DisplayName", "Mean Field")
+        scatter($(distance_from_wall), $(mean_field_phase), "v","DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
         ylabel("\$ \\phi(x) \$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
-        legend("show")
-        title("Phase")
+        legend("show", "interpreter", "latex")
         """
     end
     
@@ -1026,13 +1026,13 @@ function getMeanField(filtered_data; plot = true)
     
     if plot == true
         mat"""
-        scatter($(x_perp), $(y), "o", "DisplayName", "Transverse Data")
+        scatter($(x_perp), $(y), "o", "DisplayName", " \$ \\phi_\\perp \$ ")
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15)
-        plot($(x_perp),$(transverse_fitline), "o", "DisplayName", "Transverse Fit")
-        plot($(x_perp), $(z), "o", "DisplayName", "Transverse Fit-Data")
-        legend('FontSize', 15)
+        % plot($(x_perp),$(transverse_fitline), "o", "DisplayName", "Transverse Fit")
+        % plot($(x_perp), $(z), "o", "DisplayName", "Transverse Fit-Data")
+        legend('FontSize', 15, "interpreter", "latex")
         """
     end
 
