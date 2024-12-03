@@ -388,6 +388,7 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
         matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
         plot_gamma = γ_value
         gamma_value = γ_value
+        max_gamma = maximum(gamma_values)
 
         # Get a list of unique input pressures
         pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
@@ -460,8 +461,9 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
             marker_color = $(marker_color);
             pressure_label = $(pressure_label);
             marker_shape = $(marker_shape)
+            marker_size = exp(plot_gamma/$(max_gamma))*3
 
-            plot( omega_gamma/$(gamma_val), loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
+            plot( omega_gamma/$(gamma_val), loop_mean_E_list, "-o", 'MarkerSize', marker_size, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
         end
@@ -473,11 +475,14 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
     title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
-    fitx = [.03, 2]
-    fity = 3*fitx.^.5
+    fitx = [.03, .8]
+    fity = 2*fitx.^.5
     fitz = 1*fitx.^2
+    leg.AutoUpdate = 'off'; 
     plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', 'slope = 1/2')
     plot(fitx, fitz, 'k-',  'LineWidth', 3,'DisplayName', 'slope = 2')
+    text(.1, 1.2, '\$ \\frac{1}{2} \$', 'Interpreter', 'latex', 'FontSize', 20);
+    text(.2, .02, '\$ 2 \$', 'Interpreter', 'latex', 'FontSize', 20)
     """ 
 end
 
