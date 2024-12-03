@@ -909,12 +909,12 @@ function getMeanField(filtered_data; plot = true)
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
         prime_field_amp_new = abs($(y)-mean_field_new);
         figure
-        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", " \$ \\Delta A_{||} \$")
+        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", " \$ A_{||}' \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -930,7 +930,7 @@ function getMeanField(filtered_data; plot = true)
         set(gca, 'YScale', 'log')
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -945,7 +945,7 @@ function getMeanField(filtered_data; plot = true)
         set(gca, 'YScale', 'log')
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -984,7 +984,7 @@ function getMeanField(filtered_data; plot = true)
     if plot==true
         mat"""
         figure
-        scatter($(distance_from_wall), $(prime_field_amp_new), "*", "DisplayName", "\$ \\Delta \\phi_{||} \$")
+        scatter($(distance_from_wall), $(prime_field_amp_new), "*", "DisplayName", "\$ \\phi_{||}' \$")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
