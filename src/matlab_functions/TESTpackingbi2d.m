@@ -8,6 +8,16 @@ function TESTpackingbi2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
 % P_thres, targeted threshold pressure
 % W_factor, Factor of the width vs number of particles d
 
+N = 30;
+K = 100;
+D = 1;
+G = 1.4; 
+M = 1;
+P_target = .1;
+W_factor = 3;
+seed = 1;
+plotit = 1;
+
 %% Set up section
 rng(seed)
 
@@ -18,8 +28,8 @@ end
 
 Lx = N*D/W_factor; % box width
 Ly = N*D/2; %starting box height
-Bv = 50; % dissipation factor
-B = 0.1; % absolute dissipation
+Bv = 100; % dissipation factor
+B = 0.5; % absolute dissipation
 T = 1; % temperature factor
 Nsmall = N/2; % Number of small
 Nbig = N/2; % Number of big
@@ -101,21 +111,21 @@ for nt = 1:Nt
         if flag
             figure(1);
             for np = 1:N
-                set(h(np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np) Dn(np) Dn(np)]);
+                set(h(np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np) Dn(np) Dn(np)]); %[x y width height]
             end
             Np=N;
-            ii=find(y<Dn/2);
-            for nn=1:length(ii)
-                np=ii(nn);
-                set(h(nn+Np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np)+Ly Dn(np) Dn(np)]);
-            end
-            Np=Np+length(ii);
-            %Top wall
-            ii=find(y>Ly-Dn/2);
-            for nn=1:length(ii)
-                np=ii(nn);
-                set(h(nn+Np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np)-Ly Dn(np) Dn(np)]);
-            end
+            % ii=find(y<Dn/2);
+            % for nn=1:length(ii)
+            %     np=ii(nn);
+            %     set(h(nn+Np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np)+Ly Dn(np) Dn(np)]);
+            % end
+            % Np=Np+length(ii);
+            % %Top wall
+            % ii=find(y>Ly-Dn/2);
+            % for nn=1:length(ii)
+            %     np=ii(nn);
+            %     set(h(nn+Np),'Position',[x(np)-.5*Dn(np) y(np)-.5*Dn(np)-Ly Dn(np) Dn(np)]);
+            % end
             Np=Np+length(ii);
             figure(1), ylim([0, Ly]);
             title(num2str(Ly));
