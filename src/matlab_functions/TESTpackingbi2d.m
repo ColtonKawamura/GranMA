@@ -331,10 +331,48 @@ function TESTpackingbi2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
     
     end
     
-    % if nt == Nt
-    %     'hello, world!!!'
+    N_repeated = 10;
+    x_repeated = [];
+    y_repeated = [];
+    Dn_repeated = [];
+    
+    for i = 0:N_repeated-1
+        x_shifted = x + i * Lx;
+        x_repeated = [x_repeated; x_shifted];
+        y_repeated = [y_repeated; y];
+        Dn_repeated = [Dn_repeated; Dn]; % Append Dn for each repetition
+    end
+    
+    N = N * N_repeated;
+    x = x_repeated;
+    y = y_repeated;
+    Dn = Dn_repeated; % Set Dn to the repeated diameters
+    
+    % figure;
+    % hold on;
+    % axis equal;
+    % for np = 1:N
+    %     rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], 'Curvature', [1, 1], 'EdgeColor', 'b');
     % end
-    % 
+    % axis([0, N_repeated * Lx, 0, Ly]);
+    % hold off;
+    % pause
+    figure;
+    hold on;
+    axis equal;
+    axis([0, N_repeated * Lx, 0, Ly]);
+    
+    % Loop through each particle and plot its rectangle
+    for np = 1:N
+        % Compute the position for the rectangle using the center coordinates (x, y)
+        % and the diameter Dn (width and height).
+        rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], ...
+            'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); % Optional LineWidth for better visibility
+    end
+    % Update the figure display
+    drawnow;
+    hold off;
+    
     disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
     
     save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P');
