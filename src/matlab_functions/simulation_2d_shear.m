@@ -120,10 +120,10 @@ function simulation_2d_shear(K, M, Bv, w_D, N, P, W, seed)
     % P = 0; % CAK not sure why this was set to zero....
     for nt = 1:Nt
         %%% Debug Plotting %%%
-        figure(1000)
-        plot(x0(idx), x(idx) - x0(idx), '.');  ylim(1.2*[-A,A]);drawnow
-        figure(2000)
-        plot(x0(idx), y(idx) - y0(idx), '.'); ylim(3*[-A,A]);drawnow
+        % figure(1000)
+        % plot(x0(idx), x(idx) - x0(idx), '.');  ylim(1.2*[-A,A]);drawnow
+        % figure(2000)
+        % plot(x0(idx), y(idx) - y0(idx), '.'); ylim(3*[-A,A]);drawnow
         %%% Debug Plotting %%%
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -281,7 +281,7 @@ function simulation_2d_shear(K, M, Bv, w_D, N, P, W, seed)
     grid on;
     hold on;  % Keep the plot for adding the fitted line
     box on;  
-    scatter(initial_distance_from_oscillation_output_y_fft, wrapped_phase_vector_y, 'o');
+    scatter(initial_distance_from_oscillation_output_y_fft, wrapped_phase_vector_y, '*');
    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
