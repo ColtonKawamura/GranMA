@@ -115,11 +115,16 @@ function simulation_2d_shear(K, M, Bv, w_D, N, P, W, seed)
     left_wall_list = (x<Dn/2);
     right_wall_list = (x>Lx-Dn/2);
     bulk_list = ~(left_wall_list | right_wall_list);
-    
+    [x0_sorted,idx]=sort(x0);
     %% Main Loop
     % P = 0; % CAK not sure why this was set to zero....
     for nt = 1:Nt
-    
+        %%% Debug Plotting %%%
+        figure(1000)
+        plot(x0(idx), x(idx) - x0(idx), '.');  ylim(1.2*[-A,A]);drawnow
+        figure(2000)
+        plot(x0(idx), y(idx) - y0(idx), '.'); ylim(3*[-A,A]);drawnow
+        %%% Debug Plotting %%%
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% First step in Verlet integration %%%%%
@@ -132,13 +137,12 @@ function simulation_2d_shear(K, M, Bv, w_D, N, P, W, seed)
         y  =  y+vy*dt+ay_old.*dt.^2/2;
     
         x(left_wall_list) = x0(left_wall_list);
-        y(left_wall_list) = y0(left_wall_list);
+        y(left_wall_list) = y0(left_wall_list)+A*sin(w_D*dt*nt);
         x(right_wall_list) = x0(right_wall_list);
-        y(right_wall_list) = y0(right_wall_list)+A*sin(w_D*dt*nt);
+        y(right_wall_list) = y0(right_wall_list);
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%% Interaction detector and Force Law %%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
         Fx = zeros(1,N);
         Fy = zeros(1,N);
         Zn = zeros(1,N);
