@@ -349,6 +349,7 @@ function packBi2dRep(N, K, D, G, M, P_target, W_factor, seed, plotit)
     x = x_repeated;
     y = y_repeated;
     Dn = Dn_repeated; % Set Dn to the repeated diameters
+    Lx = Lx * N_repeated;
     
     % figure;
     % hold on;
