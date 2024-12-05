@@ -20,8 +20,10 @@ function TESTpackingbi2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
     
     %% Set up section
     rng(seed)
+
+    N_new = N * 10;
     
-    filename = ['in/2D_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
+    filename = ['in/2D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
     if exist(filename)
         return
     end
@@ -338,9 +340,9 @@ function TESTpackingbi2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
     
     for i = 0:N_repeated-1
         x_shifted = x + i * Lx;
-        x_repeated = [x_repeated; x_shifted];
-        y_repeated = [y_repeated; y];
-        Dn_repeated = [Dn_repeated; Dn]; % Append Dn for each repetition
+        x_repeated = [x_repeated, x_shifted];
+        y_repeated = [y_repeated, y];
+        Dn_repeated = [Dn_repeated, Dn]; % Append Dn for each repetition
     end
     
     N = N * N_repeated;
@@ -375,4 +377,4 @@ function TESTpackingbi2d(N, K, D, G, M, P_target, W_factor, seed, plotit)
     
     disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
     
-    save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P');
+    save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N');
