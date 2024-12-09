@@ -16,8 +16,20 @@ figure;
 plotEigenmode(x', y', eigen_vectors, mode_to_plot)
 eigen_values(1:10, 1:10)
 
-modes_to_plot = [1,2,3,4, 500];
+modes_to_plot = [1,2,3,4,10, 20, 30, 50, 100];
 for i = 1:length(modes_to_plot)
-    mode_to_plot = modes_to_plot(i)
+    mode_to_plot = modes_to_plot(i);
     plotEigenmode(x', y', eigen_vectors, mode_to_plot)
 end
+
+
+%% Density of States
+bin_size = 1;
+bins = min(eigen_values(:)):bin_size:max(eigen_values(:));
+counts = histcounts(eigen_values, bins);
+histogram(eigen_values, 'BinWidth', bin_size, 'Normalization', 'pdf')
+set(gca,'YScale','log')
+
+% Highest mode
+[~, mode_bin_index] = max(counts);
+mode_bin_center = (bins(mode_bin_index) + bins(mode_bin_index + 1)) / 2 % the one in the middle 
