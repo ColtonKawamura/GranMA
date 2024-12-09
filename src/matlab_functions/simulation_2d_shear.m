@@ -16,14 +16,14 @@ function simulation_2d_shear(K, M, Bv, w_D, N, P, W, seed)
     
     % % Script Variables for debugging
     % addpath("/Users/coltonkawamura/Documents/GranMA/src/matlab_functions")
-    K = 100;
-    M = 1;
-    Bv = .1;
-    w_D = 0.36; % 
-    N = 5000;
-    P = 0.01; % 0.021544 0.046416
-    W = 5;
-    seed = 1;
+    % K = 100;
+    % M = 1;
+    % Bv = .1;
+    % w_D = 0.36; % 
+    % N = 5000;
+    % P = 0.01; % 0.021544 0.046416
+    % W = 5;
+    % seed = 1;
 
     % K = 100;
     % M = 1;
@@ -439,7 +439,7 @@ function simulation_2d_shear(K, M, Bv, w_D, N, P, W, seed)
     gamma_dimensionless = Bv/sqrt(K*mass_particle_average);
     pressure_dimensionless = P;
     % Save the file
-    save(['out/simulation_2d/K100_everything_smaller_dt/' filename_output], 'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
+    save(['out/simulation_2d/shear_2d_bi/' filename_output], 'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
         'rot_ang_bins', 'rot_ang_counts', 'time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
         'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
          'wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
