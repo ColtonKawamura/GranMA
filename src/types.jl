@@ -2,7 +2,39 @@ export
     Pos2D,
     Particle,
     file_data,
-    gaus_data
+    gaus_data,
+    data3d
+
+mutable struct data3d
+        pressure::Float64
+        omega::Float64
+        gamma::Float64
+        omega_gamma::Float64
+        seed::Float64
+        pressure_actual::Float64
+        attenuation_x::Float64
+        attenuation_y::Float64
+        attenuation_z::Float64
+        wavespeed_x::Float64
+        wavenumber_x::Float64
+        fft_limit_x::Float64
+        fft_limit_y::Float64
+        fft_limit_z::Float64
+        wavenumber_y::Float64
+        wavenumber_z::Float64
+        alphaoveromega_x::Float64
+        alphaoveromega_y::Float64
+        alphaoveromega_z::Float64
+        amplitude_vector_x::Vector{Float64}
+        amplitude_vector_y::Vector{Float64}
+        amplitude_vector_z::Vector{Float64}
+        unwrapped_phase_vector_x::Vector{Float64}
+        unwrapped_phase_vector_y::Vector{Float64}
+        unwrapped_phase_vector_z::Vector{Float64}
+        initial_distance_from_oscillation_output_x_fft::Vector{Float64}
+        initial_distance_from_oscillation_output_y_fft::Vector{Float64}
+        initial_distance_from_oscillation_output_z_fft::Vector{Float64}
+    end
 
 struct Pos2D{T} <: FieldVector{2,T}
     x::T
