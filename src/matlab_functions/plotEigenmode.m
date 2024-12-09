@@ -20,6 +20,8 @@ function plotEigenmode(x0, y0, eigen_vectors, mode_to_plot)
     title(['Eigenmode ', num2str(mode_to_plot)]);
     % axis equal;
     grid on;
-    % % ylim([0,y_limit])
-    % figure; semilogy(x0,dx, '.'); title("x0 vs dx")
+    % ylim([0,y_limit])
+    figure; plot(x0,dx, '.'); title("x0 vs dx")
+    hold on
+    plot(x0,dy, '.') 
 end
