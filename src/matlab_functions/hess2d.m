@@ -14,7 +14,11 @@ function H = hess2d(positions, radii, k, L_y)
     
     % Initialize the Hessian matrix
     H = zeros(2 * N, 2 * N);
-    
+
+    % ID the wall particles
+    left_wall_list = (x<Dn/2);
+    right_wall_list = (x>Lx-Dn/2);
+
     % Loop over all pairs of particles
     for i = 1:N
         for j = i+1:N
@@ -66,5 +70,14 @@ function H = hess2d(positions, radii, k, L_y)
                 H(idy_j, idx_i) = H(idy_j, idx_i) - Kxy; % sub-matrix ji, position [2,2]
             end
         end
+    end
+end
+
+for i = 1:N % go throuch each particle 
+    if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
+        idx_i = 2 * i - 1  % x index for particle i
+        idy_i = 2 * i;  % y index for particle i
+        H(idx_i, idx_i) = H(idx_i, idx_i) + K;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
+        H(idy_i, idy_i) = H(idy_i, idy_i) + K;  % same for y-coordinate diagonal
     end
 end
