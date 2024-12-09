@@ -1,4 +1,4 @@
-function H = hess2d(positions, radii, k, L_y)
+function H = hess2d(positions, radii, k, L_y, Lx)
     % Computes the Hessian matrix for a 2D granular packing with Hooke's force law.
     %
     % positions: Nx2 matrix, where each row is [x, y] for a particle
@@ -16,8 +16,8 @@ function H = hess2d(positions, radii, k, L_y)
     H = zeros(2 * N, 2 * N);
 
     % ID the wall particles
-    left_wall_list = (x<Dn/2);
-    right_wall_list = (x>Lx-Dn/2);
+    left_wall_list = (positions(:,1)<radii);
+    right_wall_list = (positions(:,1)>Lx-radii);
 
     % Loop over all pairs of particles
     for i = 1:N
@@ -71,13 +71,13 @@ function H = hess2d(positions, radii, k, L_y)
             end
         end
     end
-end
-
-for i = 1:N % go throuch each particle 
-    if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
-        idx_i = 2 * i - 1  % x index for particle i
-        idy_i = 2 * i;  % y index for particle i
-        H(idx_i, idx_i) = H(idx_i, idx_i) + K;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
-        H(idy_i, idy_i) = H(idy_i, idy_i) + K;  % same for y-coordinate diagonal
+    for i = 1:N % go throuch each particle 
+        if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
+            idx_i = 2 * i - 1;  % x index for particle i
+            idy_i = 2 * i;  % y index for particle i
+            H(idx_i, idx_i) = H(idx_i, idx_i) + k;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
+            H(idy_i, idy_i) = H(idy_i, idy_i) + k;  % same for y-coordinate diagonal
+        end
     end
 end
+
