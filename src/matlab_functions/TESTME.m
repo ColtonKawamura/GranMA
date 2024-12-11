@@ -1,4 +1,4 @@
-function [H, Zn] = hess2d(positions, radii, k, L_y, Lx)
+function [H, Zn] = TESTME(positions, radii, k, L_y, Lx)
     % Computes the Hessian matrix for a 2D granular packing with Hooke's force law.
     %
     % positions: Nx2 matrix, where each row is [x, y] for a particle
@@ -16,8 +16,8 @@ function [H, Zn] = hess2d(positions, radii, k, L_y, Lx)
     H = zeros(2 * N, 2 * N);
     Zn = zeros(N,1);
     % ID the wall particles
-    left_wall_list = (positions(:,1)<radii);
-    right_wall_list = (positions(:,1)>Lx-radii);
+    left_wall_list = (positions(:,1)<radii');
+    right_wall_list = (positions(:,1)>Lx-radii');
     Zn(left_wall_list|right_wall_list) = 1;
      
     % Loop over all pairs of particles

@@ -5,9 +5,8 @@ file_name = sprintf('in/2D_N5000_P0.1_Width5_Seed1.mat'); % regular packing
 file_name = sprintf('in/2D_N5000_P0.046416_Width5_Seed2.mat')
 
 load(file_name)
-
 positions = [x',y'];
-Hessian = hess2d(positions, Dn/2, K, Ly, Lx);
+[Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
 [eigen_vectors, eigen_values ] =  eig(Hessian);
 
 % % Plot Mode
@@ -50,3 +49,4 @@ xlabel('$\frac{i}{N}$', 'Interpreter', 'latex', 'FontSize', 20);
 ylabel('$\log(\sqrt{\lambda})$', 'Interpreter', 'latex', 'FontSize', 20);
 grid on;
 
+%% Damped Matrix
