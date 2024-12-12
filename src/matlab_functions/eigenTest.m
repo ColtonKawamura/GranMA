@@ -12,6 +12,7 @@ positions = [x',y'];
 sum(Zn == 0)
 sum(Zn == 1)
 sum(Zn == 2)
+sum(Zn == 3)
 % % Plot Mode
 % mode_to_plot = 100; % should just be the column
 % figure;
