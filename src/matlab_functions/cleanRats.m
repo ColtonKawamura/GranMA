@@ -9,7 +9,6 @@ function [positions, radii] = cleanRats(positions, radii, K, Ly, Lx)
     left_wall_list = (positions(:,1)<radii');
     right_wall_list = (positions(:,1)>Lx-radii');
     Zn(left_wall_list|right_wall_list) = 2;
-    figure(1); histogram(Zn); pause
     %% Clean the rattlers
     % Count the number of contatns to clean the rattlers 
     for i = 1:N
@@ -40,7 +39,6 @@ function [positions, radii] = cleanRats(positions, radii, K, Ly, Lx)
     radii = radii(to_keep);
     % Zn = Zn(to_keep);
     N = size(positions,1);  % Update the number of particles     
-    figure(1); histogram(Zn(to_keep)); pause
 
     %% Re-intialize
     Zn = zeros(N,1);

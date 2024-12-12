@@ -7,7 +7,7 @@ file_name = sprintf('in/2D_N5000_P0.046416_Width5_Seed2.mat')
 load(file_name)
 positions = [x',y'];
 radii = Dn./2;
-[positions, radii] = cleanRats(positions, radii, K, Ly, Lx)
+[positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
 % [Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
 Hessian = TESTME(positions, radii, K, Ly, Lx);
 [eigen_vectors, eigen_values ] =  eig(Hessian);
@@ -53,7 +53,7 @@ grid on;
 
 %% Density of modes
 
-figure; [counts, edges] = hist(sorted_sqrt_eigen_values./10, 200)
+[counts, edges] = hist(sorted_sqrt_eigen_values./10, 200)
 norm = sum(counts)*(edges(2)-edges(1))
-
+figure; plot(edges, counts./norm, "-o"); grid on
 % Next step is to do these plots for different presusres all normalized.
