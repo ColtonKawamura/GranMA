@@ -6,14 +6,12 @@ file_name = sprintf('in/2D_N5000_P0.046416_Width5_Seed2.mat')
 
 load(file_name)
 positions = [x',y'];
+radii = Dn./2;
+[positions, radii] = cleanRats(positions, radii, K, Ly, Lx)
 % [Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
-[Hessian, Zn] = TESTME(positions, Dn/2, K, Ly, Lx);
+Hessian = TESTME(positions, radii, K, Ly, Lx);
 [eigen_vectors, eigen_values ] =  eig(Hessian);
-sum(Zn == 0)
-sum(Zn == 1)
-sum(Zn == 2)
-sum(Zn == 3)
-% % Plot Mode
+ % Plot Mode
 % mode_to_plot = 100; % should just be the column
 % figure;
 % plotEigenmode(x', y', eigen_vectors, mode_to_plot)
@@ -48,9 +46,14 @@ sorted_sqrt_eigen_values = sort(sqrt_eigen_values);
 i = (1:length(sorted_sqrt_eigen_values))';  
 N = length(positions);
 figure;
-plot(i./N, log(sorted_sqrt_eigen_values), 'o');
+semilogy(i./N, sorted_sqrt_eigen_values, 'o');
 xlabel('$\frac{i}{N}$', 'Interpreter', 'latex', 'FontSize', 20);
 ylabel('$\log(\sqrt{\lambda})$', 'Interpreter', 'latex', 'FontSize', 20);
 grid on;
 
-%% Damped Matrix
+%% Density of modes
+
+figure; [counts, edges] = hist(sorted_sqrt_eigen_values./10, 200)
+norm = sum(counts)*(edges(2)-edges(1))
+
+% Next step is to do these plots for different presusres all normalized.
