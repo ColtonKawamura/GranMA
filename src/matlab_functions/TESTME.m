@@ -23,7 +23,7 @@ function [H, Zn] = TESTME(positions, radii, k, L_y, Lx)
     %% Clean the rattlers
     % Count the number of contatns to clean the rattlers 
     for i = 1:N
-        for j = i+1+N
+        for j = i+1:N
             % Compute the distance vector and magnitude
             dx = positions(i, 1) - positions(j, 1);
             dy = positions(i, 2) - positions(j, 2);
@@ -49,11 +49,11 @@ function [H, Zn] = TESTME(positions, radii, k, L_y, Lx)
     positions = positions(to_keep, :);
     radii = radii(to_keep);
     Zn = Zn(to_keep);
-    N = size(positions, 1);  % Update the number of particles     
+    N = length(positions);  % Update the number of particles     
 
     % do it one more time to get rid of "hidden" rattlers
     for i = 1:N
-        for j = i+1+N
+        for j = i+1:N
             % Compute the distance vector and magnitude
             dx = positions(i, 1) - positions(j, 1);
             dy = positions(i, 2) - positions(j, 2);
@@ -78,7 +78,7 @@ function [H, Zn] = TESTME(positions, radii, k, L_y, Lx)
     positions = positions(to_keep, :);
     radii = radii(to_keep);
     Zn = Zn(to_keep);
-    N = size(positions, 1);  % Update the number of particles     
+    N = length(positions);  % Update the number of particles     
 
     % Loop over all pairs of particles
     for i = 1:N
