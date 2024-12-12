@@ -6,9 +6,12 @@ file_name = sprintf('in/2D_N5000_P0.046416_Width5_Seed2.mat')
 
 load(file_name)
 positions = [x',y'];
-[Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
+% [Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
+[Hessian, Zn] = TESTME(positions, Dn/2, K, Ly, Lx);
 [eigen_vectors, eigen_values ] =  eig(Hessian);
-
+sum(Zn == 0)
+sum(Zn == 1)
+sum(Zn == 2)
 % % Plot Mode
 % mode_to_plot = 100; % should just be the column
 % figure;
@@ -42,7 +45,7 @@ sqrt_eigen_values = sqrt(eigen_values_diag);
 sorted_sqrt_eigen_values = sort(sqrt_eigen_values);
 
 i = (1:length(sorted_sqrt_eigen_values))';  
-
+N = length(positions);
 figure;
 plot(i./N, log(sorted_sqrt_eigen_values), 'o');
 xlabel('$\frac{i}{N}$', 'Interpreter', 'latex', 'FontSize', 20);
