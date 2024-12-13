@@ -52,16 +52,24 @@ ylabel('$\log(\sqrt{\lambda})$', 'Interpreter', 'latex', 'FontSize', 20);
 grid on;
 
 %% Density of modes
-file_name = sprintf('in/2D_N5000_P0.1_Width5_Seed1.mat'); % regular packing
-file_name = sprintf('in/2D_N5000_P0.01_Width5_Seed1.mat'); % regular packing
-file_name = sprintf('in/2D_N5000_P0.001_Width5_Seed1.mat'); % regular packing
-for i= 1:length(pressure_list)
-    pressure = pressure_list(i);
+file_name_high = "in/2D_N5000_P0.1_Width5_Seed1.mat"; % regular packing
+file_name_med = "in/2D_N5000_P0.01_Width5_Seed1.mat"; % regular packing
+file_name_low = "in/2D_N5000_P0.001_Width5_Seed1.mat"; % regular packing
+file_name_list = [file_name_low, file_name_med, file_name_high]; % concatenate as string array
+    % just get the presssure for normalziation 
+pressure_list = zeros(size(file_name_list))
+for i = 1:length(file_name_list)
+    file_name = file_name_list(i);
+    load(file_name);
+    load(file_name, "P");
+    pressure_list(i) = P;
+end
+for i= 1:length(file_name_list)
+    file_name = file_name_list(i);
     load(file_name)
     positions = [x',y'];
     radii = Dn./2;
     [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
-    % [Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
     Hessian = hess2d(positions, radii, K, Ly, Lx);
     [eigen_vectors, eigen_values ] =  eig(Hessian);
     [edges, normalized_counts] = modeDensity(eigen_values)
