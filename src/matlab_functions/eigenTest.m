@@ -8,8 +8,8 @@ load(file_name)
 positions = [x',y'];
 radii = Dn./2;
 [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
-% [Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
-Hessian = TESTME(positions, radii, K, Ly, Lx);
+Hessian = hess2d(positions, radii, K, Ly, Lx);
+% Hessian = TESTME(positions, radii, K, Ly, Lx);
 [eigen_vectors, eigen_values ] =  eig(Hessian);
  % Plot Mode
 % mode_to_plot = 100; % should just be the column
@@ -62,7 +62,7 @@ for i= 1:length(pressure_list)
     radii = Dn./2;
     [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
     % [Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
-    Hessian = TESTME(positions, radii, K, Ly, Lx);
+    Hessian = hess2d(positions, radii, K, Ly, Lx);
     [eigen_vectors, eigen_values ] =  eig(Hessian);
     [edges, normalized_counts] = modeDensity(eigen_values)
     plot(edges, normalized_counts, "-o"); grid on; hold on
