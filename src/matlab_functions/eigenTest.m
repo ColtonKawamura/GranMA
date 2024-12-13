@@ -52,10 +52,14 @@ ylabel('$\log(\sqrt{\lambda})$', 'Interpreter', 'latex', 'FontSize', 20);
 grid on;
 
 %% Density of modes
-file_name_high = "in/2D_N5000_P0.1_Width5_Seed1.mat"; % regular packing
-file_name_med = "in/2D_N5000_P0.01_Width5_Seed1.mat"; % regular packing
-file_name_low = "in/2D_N5000_P0.001_Width5_Seed1.mat"; % regular packing
-file_name_list = [file_name_low, file_name_med, file_name_high]; % concatenate as string array
+file_name1 = "in/2D_N5000_P0.1_Width5_Seed1.mat"; % packing
+file_name2 = "in/2D_N5000_P0.046416_Width5_Seed1.mat"; % regular packing
+file_name3 = "in/2D_N5000_P0.021544_Width5_Seed1.mat"; % regular packing
+file_name4 = "in/2D_N5000_P0.01_Width5_Seed1.mat"; % regular packing
+file_name5 = "in/2D_N5000_P0.0046416_Width5_Seed1.mat"; % regular packing
+file_name6 = "in/2D_N5000_P0.0021544_Width5_Seed1.mat"; % regular packing
+file_name7 = "in/2D_N5000_P0.001_Width5_Seed1.mat"; % regular packing
+file_name_list = [file_name1, file_name2, file_name3, file_name4, file_name5, file_name6, file_name7]; % concatenate as string array
     % just get the presssure for normalziation 
 pressure_list = zeros(size(file_name_list));
 for i = 1:length(file_name_list)
@@ -72,13 +76,12 @@ for i= 1:length(file_name_list)
     [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
     Hessian = hess2d(positions, radii, K, Ly, Lx);
     [eigen_vectors, eigen_values ] =  eig(Hessian);
-    [edges, normalized_counts] = modeDensity(eigen_values)
-    plot(edges, normalized_counts, "-o"); grid on; hold on
+    [edges, normalized_counts] = modeDensity(eigen_values);
+    [~, marker_color] = normVarColor(pressure_list, P, 1);
+    plot(edges, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'DisplayName', sprintf('$ P = %.3f $', P)); 
+    xlabel('eigen_frequencies (edges)', 'Interpreter', 'latex', 'FontSize', 20)
+    ylabel('counts', 'Interpreter', 'latex', 'FontSize', 20)
+    legend('show', 'Interpreter', 'latex');
+    grid on; 
+    hold on;
 end
-
-
-
-[counts, edges] = hist(sorted_sqrt_eigen_values./10, 200)
-norm = sum(counts)*(edges(2)-edges(1))
-figure; plot(edges, counts./norm, "-o"); grid on
-% Next step is to do these plots for different presusres all normalized.
