@@ -57,7 +57,7 @@ file_name_med = "in/2D_N5000_P0.01_Width5_Seed1.mat"; % regular packing
 file_name_low = "in/2D_N5000_P0.001_Width5_Seed1.mat"; % regular packing
 file_name_list = [file_name_low, file_name_med, file_name_high]; % concatenate as string array
     % just get the presssure for normalziation 
-pressure_list = zeros(size(file_name_list))
+pressure_list = zeros(size(file_name_list));
 for i = 1:length(file_name_list)
     file_name = file_name_list(i);
     load(file_name);
