@@ -1,8 +1,8 @@
 % This is a script not a function.
 
 file_name = sprintf('in/2D_N5000_P0.01_Width5_Seed1.mat'); % regular packing
-file_name = sprintf('in/2D_N5000_P0.1_Width5_Seed1.mat'); % regular packing
-file_name = sprintf('in/2D_N5000_P0.046416_Width5_Seed2.mat')
+% file_name = sprintf('in/2D_N5000_P0.1_Width5_Seed1.mat'); % regular packing
+% file_name = sprintf('in/2D_N5000_P0.046416_Width5_Seed2.mat')
 
 load(file_name)
 positions = [x',y'];
@@ -52,6 +52,23 @@ ylabel('$\log(\sqrt{\lambda})$', 'Interpreter', 'latex', 'FontSize', 20);
 grid on;
 
 %% Density of modes
+file_name = sprintf('in/2D_N5000_P0.1_Width5_Seed1.mat'); % regular packing
+file_name = sprintf('in/2D_N5000_P0.01_Width5_Seed1.mat'); % regular packing
+file_name = sprintf('in/2D_N5000_P0.001_Width5_Seed1.mat'); % regular packing
+for i= 1:length(pressure_list)
+    pressure = pressure_list(i);
+    load(file_name)
+    positions = [x',y'];
+    radii = Dn./2;
+    [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
+    % [Hessian, Zn] = hess2d(positions, Dn/2, K, Ly, Lx);
+    Hessian = TESTME(positions, radii, K, Ly, Lx);
+    [eigen_vectors, eigen_values ] =  eig(Hessian);
+    [edges, normalized_counts] = modeDensity(eigen_values)
+    plot(edges, normalized_counts, "-o"); grid on; hold on
+end
+
+
 
 [counts, edges] = hist(sorted_sqrt_eigen_values./10, 200)
 norm = sum(counts)*(edges(2)-edges(1))
