@@ -78,8 +78,8 @@ for i= 1:length(file_name_list)
     [eigen_vectors, eigen_values ] =  eig(Hessian);
     [edges, normalized_counts] = modeDensity(eigen_values);
     [~, marker_color] = normVarColor(pressure_list, P, 1);
-    plot(edges, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'DisplayName', sprintf('$ P = %.3f $', P)); 
-    xlabel('eigen_frequencies (edges)', 'Interpreter', 'latex', 'FontSize', 20)
+    plot(edges, normalized_counts, '-o', 'MarkerFaceColor', marker_color,'MarkerEdgeColor', marker_color,'Color', marker_color,'DisplayName', sprintf('$ P = %.3f $', P));
+    xlabel('eigen frequencies (edges)', 'Interpreter', 'latex', 'FontSize', 20)
     ylabel('counts', 'Interpreter', 'latex', 'FontSize', 20)
     legend('show', 'Interpreter', 'latex');
     grid on; 
