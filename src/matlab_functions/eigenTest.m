@@ -60,6 +60,12 @@ file_name5 = "in/2D_N5000_P0.0046416_Width5_Seed1.mat"; % regular packing
 file_name6 = "in/2D_N5000_P0.0021544_Width5_Seed1.mat"; % regular packing
 file_name7 = "in/2D_N5000_P0.001_Width5_Seed1.mat"; % regular packing
 file_name_list = [file_name1, file_name2, file_name3, file_name4, file_name5, file_name6, file_name7]; % concatenate as string array
+
+% Wider packings
+file_name1 = "in/2D_N1000_P0.001_Width10_Seed1.mat"
+file_name2 = "in/2D_N1000_P0.01_Width10_Seed1.mat"
+file_name3 = "in/2D_N1000_P0.001_Width10_Seed1.mat"
+file_name_list = [file_name1, file_name2, file_name3]; % concatenate as string array
     % just get the presssure for normalziation 
 pressure_list = zeros(size(file_name_list));
 for i = 1:length(file_name_list)
