@@ -397,4 +397,5 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
     
     disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
     Lx = Lx * N_repeated; 
+    Ly = Ly * N_repeated; 
     save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N');
