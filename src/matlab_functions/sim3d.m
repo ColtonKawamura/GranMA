@@ -1,5 +1,5 @@
-function sim3d(K, M, Bv, w_D, Nt, N, P, W, seed)
-%% sim3d(100, 1, 1, 1.28, 5000, 5000, 0.05, 5, 5)
+function sim3d(K, M, Bv, w_D, N, P, W, seed)
+%% sim3d(100, 1, 1, 1, 100, 0.1, 3, 1)
 
 % Set up initial conditions and visualization
 % Add random initial velocities
@@ -27,18 +27,18 @@ function sim3d(K, M, Bv, w_D, Nt, N, P, W, seed)
 plotdebug = 1;
 % close all
 K_in = K;
-packing_name = ['N' num2str(N) '_P' num2str(P) '_Width' num2str(W) '_Seed' num2str(seed)];
+% packing_name = ['N' num2str(N) '_P' num2str(P) '_Width' num2str(W) '_Seed' num2str(seed)];
 
-Filename = strcat('Packings3D/', packing_name, '_K', num2str(K), '_Bv', num2str(Bv), '_wD', num2str(w_D), '_M', num2str(M), '.dat');
+% packing_name = ['3D_N' num2str(N) '_P' num2str(P) '_Width' num2str(W) '_Seed' num2str(seed) '.mat'];
+packing_name = sprintf('3D_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
+filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
 
-if exist(Filename)
+if exist(filename_output)
     fprintf('*** Alert: Output for this already exists. ***\n')
     return
 end
 
-load(['inputs/' packing_name '.mat']);
-filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
-
+load(['in/' packing_name '.mat']);
 
 K = K_in;
 % N = length(Dn);
@@ -49,10 +49,12 @@ Lz = W*D;
 
 B=0;
 
-
+    
+dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
+c_0 = min(Dn).*sqrt(K/M);
+Nt = round(.9.*(Lx ./ c_0)./(dt))
 
 A = P_target/100;
-
 
 dt = pi*sqrt(M/K)*0.05;
 ax_old = 0*x;
@@ -246,7 +248,7 @@ end
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Add the path to the "functions" directory
-addpath('../Functions')
+addpath('./src/matlab_functions')
 
 % Convert simulation variables to meet function convention
 time_vector = (1:Nt)*dt;
@@ -346,7 +348,7 @@ wavenumber_y_dimensionless = wavenumber_y*diameter_average;
 driving_angular_frequency_dimensionless = w_D*sqrt(mass_particle_average/K);
 gamma_dimensionless = Bv/sqrt(K*mass_particle_average);
 % Save the file
-save(['outputs/' filename_output], 'gamma_dimensionless','time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
+save(['out/simulation_3d/initial_test/' filename_output], 'gamma_dimensionless','time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
     'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
      'wavespeed_y', 'wavespeed_z', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
      'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft','initial_distance_from_oscillation_output_z_fft', ...
