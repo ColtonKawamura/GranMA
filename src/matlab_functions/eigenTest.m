@@ -64,7 +64,7 @@ file_name_list = [file_name1, file_name2, file_name3, file_name4, file_name5, fi
 % Wider packings
 file_name1 = "in/2D_N1000_P0.001_Width10_Seed1.mat"
 file_name2 = "in/2D_N1000_P0.01_Width10_Seed1.mat"
-file_name3 = "in/2D_N1000_P0.001_Width10_Seed1.mat"
+file_name3 = "in/2D_N1000_P0.1_Width10_Seed1.mat"
 file_name_list = [file_name1, file_name2, file_name3]; % concatenate as string array
     % just get the presssure for normalziation 
 pressure_list = zeros(size(file_name_list));
@@ -77,6 +77,7 @@ end
 for i= 1:length(file_name_list)
     file_name = file_name_list(i);
     load(file_name)
+    % Ly=Ly*10;
     positions = [x',y'];
     radii = Dn./2;
     [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
