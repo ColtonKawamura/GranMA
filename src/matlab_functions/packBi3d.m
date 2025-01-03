@@ -7,12 +7,14 @@ function packBi3d(N, K, D, G, M, P_target, W_factor, seed, plotit)
 % M, mass of particles
 % P_thres, targeted threshold pressure
 % W_factor, Factor of the width vs number of particles
+% packBi3d(100, 100, 1, 1.4, 1, .1, 3, 1, 1)
 
 %% Set up section
 rng(seed)
 
-filename = ['Packings3D/N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
+filename = ['in/3D_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
 if exist(filename)
+    display("Output Already in Folder, Stopping.")
     return
 end
 
@@ -94,7 +96,7 @@ if plotit
     end
     axis('equal');
     axis([0 Lx 0 Ly]);
-    pause
+    % pause
 
     figure(2), clf;
 %     figure(3), clf;
@@ -138,7 +140,7 @@ for nt = 1:Nt
         figure(3), plot3(x,y,z,'k.')
         axis equal
         drawnow
-        pause
+        % pause
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%% First step in Verlet integration %%%%%
