@@ -22,7 +22,7 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
     rng(seed)
 
     N_new = N * 10;
-    
+     
     filename = ['in/2D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
     if exist(filename)
         display("file already exsists!")
