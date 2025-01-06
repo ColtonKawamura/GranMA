@@ -12,7 +12,8 @@ export
     saveGausData,
     loadGausData,
     crunchNSaveGaus,
-    filterDataGaus
+    filterDataGaus,
+    crunch3d
 
 function filterDataGaus(data::Vector{gaus_data}, args...)
     # Initialize the filtered data to be the full simulation_data
@@ -505,5 +506,133 @@ function paraSimpleCrunch(datapath::String)
 
     # Combine results from all threads
     simulation_data = vcat(thread_data...)
+    return simulation_data
+end
+
+
+function crunch3d(datapath::String)
+    # directory = "out/simulation_3d/initial_test/"
+    mat_files = glob("*.mat", datapath)
+    simulation_data = file_data[]
+    
+    for file_name in mat_files
+        iloop_file_data = matread(file_name)
+
+        # Extract data fields
+        input_pressure = iloop_file_data["input_pressure"]
+        omega = iloop_file_data["driving_angular_frequency_dimensionless"]
+        gamma = iloop_file_data["gamma_dimensionless"]
+        pressure_actual = iloop_file_data["pressure_dimensionless"]
+        attenuation_x = iloop_file_data["attenuation_x_dimensionless"]
+        attenuation_y = iloop_file_data["attenuation_y_dimensionless"]
+        attenuation_z = iloop_file_data["attenuation_z_dimensionless"]
+        wavespeed_x = iloop_file_data["wavespeed_x"]
+        wavenumber_x = iloop_file_data["wavenumber_x_dimensionless"]
+        wavenumber_y = iloop_file_data["wavenumber_y_dimensionless"]
+        wavenumber_z = iloop_file_data["wavenumber_z_dimensionless"]
+
+        # Check for NaN values
+        if isnan(mean_rotation_angles) || isnan(mean_aspect_ratio) || 
+           isnan(wavenumber_x) || isnan(wavenumber_y) ||
+           isnan(wavespeed_x) || isnan(input_pressure) || 
+           isnan(omega) || isnan(gamma) || isnan(pressure_actual) || 
+           isnan(attenuation_x) || isnan(attenuation_y)
+            println("Skipping file due to NaN values: $file_name")
+            continue
+        end
+
+        # Extract amplitude and unwrapped phase vectors with checks
+        amplitude_vector_x = isa(iloop_file_data["amplitude_vector_x"], Array) ? 
+                             vec(iloop_file_data["amplitude_vector_x"]) : 
+                             [iloop_file_data["amplitude_vector_x"]]
+
+        amplitude_vector_y = isa(iloop_file_data["amplitude_vector_y"], Array) ? 
+                             vec(iloop_file_data["amplitude_vector_y"]) : 
+                             [iloop_file_data["amplitude_vector_y"]]
+
+        amplitude_vector_z = isa(iloop_file_data["amplitude_vector_z"], Array) ? 
+                             vec(iloop_file_data["amplitude_vector_z"]) : 
+                             [iloop_file_data["amplitude_vector_z"]]
+
+        unwrapped_phase_vector_x = haskey(iloop_file_data, "unwrapped_phase_vector_x") ? 
+                                   (isa(iloop_file_data["unwrapped_phase_vector_x"], Array) ? 
+                                       vec(iloop_file_data["unwrapped_phase_vector_x"]) : 
+                                       [iloop_file_data["unwrapped_phase_vector_x"]]) : 
+                                   Float64[]
+
+        unwrapped_phase_vector_y = haskey(iloop_file_data, "unwrapped_phase_vector_y") ? 
+                                   (isa(iloop_file_data["unwrapped_phase_vector_y"], Array) ? 
+                                       vec(iloop_file_data["unwrapped_phase_vector_y"]) : 
+                                       [iloop_file_data["unwrapped_phase_vector_y"]]) : 
+                                   Float64[]
+
+        unwrapped_phase_vector_z = haskey(iloop_file_data, "unwrapped_phase_vector_z") ? 
+                                   (isa(iloop_file_data["unwrapped_phase_vector_z"], Array) ? 
+                                       vec(iloop_file_data["unwrapped_phase_vector_z"]) : 
+                                       [iloop_file_data["unwrapped_phase_vector_z"]]) : 
+                                   Float64[]
+
+        initial_distance_from_oscillation_output_x_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_x_fft") ? 
+                                                        (isa(iloop_file_data["initial_distance_from_oscillation_output_x_fft"], Array) ? 
+                                                            vec(iloop_file_data["initial_distance_from_oscillation_output_x_fft"]) : 
+                                                            [iloop_file_data["initial_distance_from_oscillation_output_x_fft"]]) : 
+                                                        Float64[]
+
+        initial_distance_from_oscillation_output_y_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_y_fft") ? 
+                                                        (isa(iloop_file_data["initial_distance_from_oscillation_output_y_fft"], Array) ? 
+                                                            vec(iloop_file_data["initial_distance_from_oscillation_output_y_fft"]) : 
+                                                            [iloop_file_data["initial_distance_from_oscillation_output_y_fft"]]) : 
+                                                        Float64[]
+
+        initial_distance_from_oscillation_output_z_fft = haskey(iloop_file_data, "initial_distance_from_oscillation_output_z_fft") ? 
+                                                        (isa(iloop_file_data["initial_distance_from_oscillation_output_z_fft"], Array) ? 
+                                                            vec(iloop_file_data["initial_distance_from_oscillation_output_z_fft"]) : 
+                                                            [iloop_file_data["initial_distance_from_oscillation_output_z_fft"]]) : 
+                                                        Float64[]
+        
+
+        # Handle potentially empty arrays for fft limits
+        fft_x = get(iloop_file_data, "initial_distance_from_oscillation_output_x_fft", [])
+        fft_y = get(iloop_file_data, "initial_distance_from_oscillation_output_y_fft", [])
+        fft_z = get(iloop_file_data, "initial_distance_from_oscillation_output_z_fft", [])
+        fft_limit_x = isempty(fft_x) ? NaN : maximum(fft_x)
+        fft_limit_y = isempty(fft_y) ? NaN : maximum(fft_y)
+        fft_limit_z = isempty(fft_z) ? NaN : maximum(fft_z)
+
+        data_entry = file_data(
+            input_pressure,
+            omega,
+            gamma,
+            asp_rat_counts,
+            asp_rat_bins,
+            rot_ang_counts,
+            rot_ang_bins,
+            omega * gamma,
+            iloop_file_data["seed"],
+            pressure_actual,
+            -attenuation_x,
+            -attenuation_y,
+            -wavespeed_x,
+            -wavenumber_x,
+            mean_aspect_ratio,
+            mean_rotation_angles,
+            fft_limit_x,
+            iloop_file_data["ellipse_stats_nonzero"],
+            fft_limit_y,
+            wavenumber_y,
+            -attenuation_x / omega,
+            -attenuation_y / omega,
+            amplitude_vector_x,
+            amplitude_vector_y,
+            unwrapped_phase_vector_x,
+            unwrapped_phase_vector_y,
+            initial_distance_from_oscillation_output_x_fft,
+            initial_distance_from_oscillation_output_y_fft,
+            initial_distance_from_oscillation_output_z_fft
+       )
+
+        push!(simulation_data, data_entry)
+    end
+
     return simulation_data
 end
