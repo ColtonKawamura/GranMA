@@ -1,5 +1,5 @@
 function [positions, radii] = cleanRats(positions, radii, K, Ly, Lx)
-
+% Cleans rattlers from a packing
     % Number of particles
     N = size(positions, 1);
     
