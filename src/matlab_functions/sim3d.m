@@ -1,5 +1,5 @@
 function sim3d(K, M, Bv, w_D, N, P, W, seed)
-%% sim3d(100, 1, 1, 1, 100, 0.1, 3, 1)
+%% sim3d(100, 1, 1, 5, 1000, 0.1, 3, 1)
 
 % Set up initial conditions and visualization
 % Add random initial velocities
