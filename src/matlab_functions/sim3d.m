@@ -343,13 +343,15 @@ diameter_average = 1; % This is only here until all the old packings are updated
 mass_particle_average = 1;
 attenuation_x_dimensionless = attenuation_x*diameter_average;
 attenuation_y_dimensionless = attenuation_y*diameter_average;
+attenuation_z_dimensionless = attenuation_z*diameter_average;
 wavenumber_x_dimensionless = wavenumber_x*diameter_average;
 wavenumber_y_dimensionless = wavenumber_y*diameter_average;
+wavenumber_z_dimensionless = wavenumber_z*diameter_average;
 driving_angular_frequency_dimensionless = w_D*sqrt(mass_particle_average/K);
 gamma_dimensionless = Bv/sqrt(K*mass_particle_average);
 % Save the file
 save(['out/simulation_3d/initial_test/' filename_output], 'gamma_dimensionless','time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
-    'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
+    'attenuation_y_dimensionless', 'attenuation_z_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavenumber_z_dimensionless', 'wavespeed_x', ...
      'wavespeed_y', 'wavespeed_z', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
      'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft','initial_distance_from_oscillation_output_z_fft', ...
-     'amplitude_vector_x', 'amplitude_vector_y', 'amplitude_vector_z');
+     'amplitude_vector_x', 'amplitude_vector_y', 'amplitude_vector_z', 'y0_yfft', 'y0_xfft', "pressure_dimensioness", "seed", 'index_particles', 'input_pressure', 'unwrapped_phase_vector_x', 'unwrapped_phase_vector_y', 'unwrapped_phase_vector_z' );
