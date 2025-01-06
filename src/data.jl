@@ -599,7 +599,7 @@ function crunch3d(datapath::String)
         fft_limit_y = isempty(fft_y) ? NaN : maximum(fft_y)
         fft_limit_z = isempty(fft_z) ? NaN : maximum(fft_z)
 
-        data_entry = file_data(
+        data_entry = data3d(
             input_pressure,
             omega,
             gamma,
