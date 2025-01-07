@@ -32,7 +32,7 @@ K_in = K;
 % packing_name = ['3D_N' num2str(N) '_P' num2str(P) '_Width' num2str(W) '_Seed' num2str(seed) '.mat'];
 packing_name = sprintf('3D_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
 filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
-
+input_pressure = P;
 if exist(filename_output)
     fprintf('*** Alert: Output for this already exists. ***\n')
     return
@@ -260,15 +260,25 @@ position_particles = x_all;
 initial_distance_from_oscillation = x0;
 
 % Perform fft fitting
-[fitted_attenuation, wavenumber, wavespeed, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector] = ...
-process_gm_fft( driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
+[fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = ...
+    process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
 
+% Don't waste time if we didn't get enough data
+if isempty(cleaned_particle_index)
+
+    fprintf('Simulation P=%d, Omega=%d, Gamma=%d, Seed=%d did not detect attenuation\n', P, w_D, Bv, seed);
+
+    % error('Execution stopped: No attenuation detected.');
+    return
+end
 attenuation_x = fitted_attenuation;
 attenuation_fit_line_x = attenuation_fit_line;
 wavenumber_x = wavenumber;
-wavespeed_x = wavespeed;
+unwrapped_phase_vector_x = unwrapped_phase_vector;
+wavespeed_x = driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
 initial_distance_from_oscillation_output_x_fft = initial_distance_from_oscillation_output;
 amplitude_vector_x = amplitude_vector;
+cleaned_particle_index_x = cleaned_particle_index;
 
 % process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,9 +359,10 @@ wavenumber_y_dimensionless = wavenumber_y*diameter_average;
 wavenumber_z_dimensionless = wavenumber_z*diameter_average;
 driving_angular_frequency_dimensionless = w_D*sqrt(mass_particle_average/K);
 gamma_dimensionless = Bv/sqrt(K*mass_particle_average);
+pressure_dimensionless = P;
 % Save the file
 save(['out/simulation_3d/initial_test/' filename_output], 'gamma_dimensionless','time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
     'attenuation_y_dimensionless', 'attenuation_z_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavenumber_z_dimensionless', 'wavespeed_x', ...
      'wavespeed_y', 'wavespeed_z', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
      'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft','initial_distance_from_oscillation_output_z_fft', ...
-     'amplitude_vector_x', 'amplitude_vector_y', 'amplitude_vector_z', 'y0_yfft', 'y0_xfft', "pressure_dimensioness", "seed", 'index_particles', 'input_pressure', 'unwrapped_phase_vector_x', 'unwrapped_phase_vector_y', 'unwrapped_phase_vector_z' );
+     'amplitude_vector_x', 'amplitude_vector_y', 'amplitude_vector_z', "pressure_dimensionless", "seed", 'index_particles', 'input_pressure', 'unwrapped_phase_vector_x', 'unwrapped_phase_vector_y', 'unwrapped_phase_vector_z' );
