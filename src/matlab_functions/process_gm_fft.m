@@ -75,7 +75,15 @@ for nn = index_particles(1:iskip:end) % go through all th eparticles
                         % Isolate the driving frequency component
                         isolated_fft_data = zeros(size(normalized_fft_data));
                         isolated_fft_data(idx_driving_freq) = normalized_fft_data(idx_driving_freq);
-                        isolated_fft_data(end-idx_driving_freq+2) = normalized_fft_data(end-idx_driving_freq+2); % Mirror component for real signal
+                        
+                        % Added this to handle edge cases where the driving frequency is much lower than the possible frequencies calculated by freq_vector
+                        % Not going to lie, this probably have some downsteam effects on the data. But I have more confidence in my ability to clean the data than fix this...
+                        if idx_driving_freq == 1
+                            isolated_fft_data(end) = normalized_fft_data(end);
+                        else
+                            isolated_fft_data(end-idx_driving_freq+2) = normalized_fft_data(end-idx_driving_freq+2); % Mirror component for real signal
+                        end
+                        
 
                         % Inverse FFT to get the time-domain signal for the isolated component
                         isolated_time_data = ifft(isolated_fft_data * number_elements_time);
