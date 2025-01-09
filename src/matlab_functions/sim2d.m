@@ -390,6 +390,23 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     % save(['out/simulation_2d/K100_everything_smaller_dt/' filename_output], 'gamma_dimensionless', 'time_vector', 'index_particles', 'attenuation_x_dimensionless','attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x','wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', 'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', 'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y")
     save_path = fullfile(out_path, filename_output);
 
-    save(save_path, 'gamma_dimensionless', 'time_vector', 'index_particles', 'attenuation_x_dimensionless','attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x','wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', 'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', 'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y")
-
+    % save(save_path, 'gamma_dimensionless', 'time_vector', 'index_particles', 'attenuation_x_dimensionless','attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x','wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', 'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', 'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y")
+    
+    % Not doing ellispse stats, so save as zeros
+    ellipse_stats_nonzero = zeros(1, 6);
+    asp_rat_bins = zeros(1, 6);
+    asp_rat_counts = zeros(1, 6);
+    rot_ang_bins = zeros(1, 6);
+    rot_ang_counts = zeros(1, 6);
+    mean_aspect_ratio = 0;
+    mean_rotation_angles = 0;
+    y0_yfft = 0;
+    y0_xfft = 0;
+    
+    save( save_path,'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
+        'rot_ang_bins', 'rot_ang_counts', 'time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
+        'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
+         'wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
+            'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', ...
+             'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y", "y0_yfft", "y0_xfft")
     % save(['out/simulation_2d/K100_everything3/' filename_output])
