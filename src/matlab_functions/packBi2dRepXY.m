@@ -1,4 +1,4 @@
-function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
+function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, y_mult, calc_eig, save_path)
     %Function to create 2D packing with following input parameters:
     % N, Number of Particles that will be repreated 10 times
     % K, spring constant
@@ -7,7 +7,7 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
     % M, mass of particles
     % P_thres, targeted threshold pressure
     % W_factor, Factor of the width vs number of particles d
-    
+    % calc_eig, boolean wheter or not you want to caculate and save eigen stuff 
     % N = 22;
     % K = 100;
     % D = 1;
@@ -21,12 +21,14 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
     %% Set up section
     rng(seed)
 
-    N_new = N * 100;
-    W_new = W_factor * 10; 
-    filename = ['in/2D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_new) '_Seed' num2str(seed) '.mat'];
+    N_new = N * x_mult*y_mult; % number of times x repeated times y repeated
+    W_new = W_factor * y_mult; % just number of times y is repeated
+    % filename = ['in/2D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_new) '_Seed' num2str(seed) '.mat']
+    filename = [save_path, '2D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_new) '_Seed' num2str(seed) '.mat'];
+
     if exist(filename)
         display("file already exsists!")
-        return
+        % return
     end
     
     Lx = N*D/W_factor; % box width
@@ -334,7 +336,7 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
     
     end
     
-    N_repeated = 10;
+    N_repeated = x_mult;
     x_repeated = [];
     y_repeated = [];
     Dn_repeated = [];
@@ -353,7 +355,7 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
     Dn = Dn_repeated; % Set Dn to the repeated diameters
     
     % Time for y
-    N_repeated = 10;
+    N_repeated = y_mult;
     x_repeated = [];
     y_repeated = [];
     Dn_repeated = [];
@@ -382,7 +384,7 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
     figure;
     hold on;
     axis equal;
-    axis([0, N_repeated * Lx, 0, Ly*N_repeated]);
+    axis([0, x_mult * Lx, 0, Ly*y_mult]);
     
     % Loop through each particle and plot its rectangle
     for np = 1:N
@@ -396,6 +398,18 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit)
     hold off;
     
     disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
-    Lx = Lx * N_repeated; 
-    Ly = Ly * N_repeated; 
-    save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N');
+    Lx = Lx * x_mult; 
+    Ly = Ly * y_mult;
+    
+    if calc_eig == true
+        positions = [x',y'];
+        radii = Dn./2;
+        [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
+        Hessian = hess2d(positions, radii, K, Ly, Lx);
+        [eigen_vectors, eigen_values ] =  eig(Hessian);
+        save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N', 'eigen_vectors', 'eigen_values');
+    else
+        save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N');
+    end
+    
+
