@@ -311,7 +311,8 @@ function simulation_2d(K, M, Bv, w_D, N, P, W, seed)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     data = position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:));
     fps = 1 / mean(diff(time_vector));
-    plotfft(data, fps)
+    marker_color = 'r';
+    plotfft(data, fps, marker_color)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
