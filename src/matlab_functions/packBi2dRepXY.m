@@ -28,7 +28,7 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, 
 
     if exist(filename)
         display("file already exsists!")
-        % return
+        return
     end
     
     Lx = N*D/W_factor; % box width

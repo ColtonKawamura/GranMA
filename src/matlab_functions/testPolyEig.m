@@ -16,8 +16,12 @@ end
 D = beta * (eye(N) + 0.1 * (rand(N) - 0.5)); % adding some off-diagnal terms; creates eye matrix, then adds a small randome number to each element. Thens hifts them down by 0.5 to make sure they are positive
 M = m * eye(N);  % Mass matrix
 
+D = beta * eye(N); 
+for i = 1:N-1
+    D(i, i+1) = -beta;
+    D(i+1, i) = -beta;
+end
 
-D = (D + D') / 2;  % Make D symmetric
 % System matrix (K + i*omega*beta*D - omega^2*M) 
 % system_matrix = K + 1i * beta * D - M;  %
 

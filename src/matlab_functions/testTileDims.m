@@ -17,15 +17,22 @@ packBi2dRepXY(800,100,1,1.4, 1, .001, 20, 1, false, 25, 1, false, save_path)
 
 % 100 x 20
 save_path = 'in/2d_tile_test/100by20/'
-packBi2dRepXY(2000,100,1,1.4, 1, .1, 20, 1, false, 10, 1, false, save_path)
+packBi2dReXY(2000,100,1,1.4, 1, .1, 20, 1, false, 10, 1, false, save_path)
 packBi2dRepXY(2000,100,1,1.4, 1, .01, 20, 1, false, 10, 1, false, save_path)
 packBi2dRepXY(2000,100,1,1.4, 1, .001, 20, 1, false, 10, 1, false, save_path)
+
+save_path = 'in/2d_tiled_2000by40/'
+seed = [1,2,3,4,5]
+pressure = [.1, .05, .01, .005, .001, .0005, .0001]
+packBi2dRepXY(2000,100,1,1.4, 1, pressure, 20, seed, false, 20, 2, false, save_path)
+packBi2dRepXY(2000,100,1,1.4, 1, .01, 20, 1, false, 20, 2, false, save_path)
+packBi2dRepXY(2000,100,1,1.4, 1, .001, 20, 1, false, 20, 2, false, save_path)
 
 
 % simulations
 % 20x 20
 in_path = "in/2d_tile_test/20by20/";
-out_path = "out/simulation_2d/tile_test/20by20"
+out_path = "out/simulation_2d/tile_test/20by20/"
 K = 100;
 M = 1;
 Bv_list = [.001, .01, .1, 1, 10, 100];
@@ -49,3 +56,13 @@ for i = 1:length(Bv_list)
         end
     end
 end
+
+% Debugging
+N = 5000
+Bv = .01
+w_D = 10
+K = 100
+M = 1
+P = .1
+W = 5
+seed = 1
