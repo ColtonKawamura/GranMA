@@ -329,12 +329,111 @@ for nt = 1:Nt
 
 end
 
-% if nt == Nt
-%     'hello, world!!!'
-% end
-% 
-disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
+    
+N_repeated = x_mult;
+x_repeated = [];
+y_repeated = [];
+z_repeated = [];
+Dn_repeated = [];
 
-diameter_average = mean(Dn);
-mass_particle_average = 1;
-save(filename, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'Lz', 'K', 'P_target', 'P', 'diameter_average', 'mass_particle_average');
+for i = 0:N_repeated-1
+    x_shifted = x + i * Lx;
+    y_shifted = y + i * Ly;
+    z_shifted = z + i * Lz;
+    x_repeated = [x_repeated, x_shifted];
+    y_repeated = [y_repeated, y];
+    y_repeated = [z_repeated, z];
+    Dn_repeated = [Dn_repeated, Dn]; % Append Dn for each repetition
+end
+
+N = N * N_repeated;
+x = x_repeated;
+y = y_repeated;
+z = z_repeated;
+Dn = Dn_repeated; % Set Dn to the repeated diameters
+
+% Time for y
+N_repeated = y_mult;
+x_repeated = [];
+y_repeated = [];
+z_repeated = [];
+Dn_repeated = [];
+
+for i = 0:N_repeated-1
+    y_shifted = y + i * Ly;
+    x_repeated = [x_repeated, x];
+    y_repeated = [y_repeated, y_shifted];
+    z_repeated = [z_repeated, z];
+    Dn_repeated = [Dn_repeated, Dn]; % Append Dn for each repetition
+end
+
+N = N * N_repeated;
+x = x_repeated;
+y = y_repeated;
+z = z_repeated;
+Dn = Dn_repeated; % Set Dn to the repeated diameters
+W_factor = W_factor * N_repeated;
+
+% Time for z
+N_repeated = z_mult;
+x_repeated = [];
+y_repeated = [];
+z_repeated = [];
+Dn_repeated = [];
+
+for i = 0:N_repeated-1
+    z_shifted = z + i * Lz;
+    x_repeated = [x_repeated, x];
+    y_repeated = [y_repeated, z];
+    z_repeated = [z_repeated, z_shifted];
+    Dn_repeated = [Dn_repeated, Dn]; % Append Dn for each repetition
+end
+
+N = N * N_repeated;
+x = x_repeated;
+y = y_repeated;
+z = z_repeated;
+Dn = Dn_repeated; % Set Dn to the repeated diameters
+W_factor = W_factor * N_repeated;
+
+% figure;
+% hold on;
+% axis equal;
+% for np = 1:N
+%     rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], 'Curvature', [1, 1], 'EdgeColor', 'b');
+% end
+% axis([0, N_repeated * Lx, 0, Ly]);
+% hold off;
+% pause
+figure;
+hold on;
+axis equal;
+axis([0, x_mult * Lx, 0, Ly*y_mult]);
+
+% Loop through each particle and plot its rectangle
+for np = 1:N
+    % Compute the position for the rectangle using the center coordinates (x, y)
+    % and the diameter Dn (width and height).
+    rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], ...
+        'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); % Optional LineWidth for better visibility
+end
+% Update the figure display
+drawnow;
+hold off;
+
+disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
+Lx = Lx * x_mult; 
+Ly = Ly * y_mult;
+Lz = Lz * z_mult;
+
+if calc_eig == true
+    positions = [x',y'];
+    radii = Dn./2;
+    [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
+    Hessian = hess2d(positions, radii, K, Ly, Lx);
+    [eigen_vectors, eigen_values ] =  eig(Hessian);
+    save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N', 'eigen_vectors', 'eigen_values');
+else
+    save(filename, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N');
+end
+
