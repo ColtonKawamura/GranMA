@@ -1,4 +1,4 @@
-function packBi3dRepXYZ(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, y_mult, z_mult, save_path)
+function packBi3dRepXYZ(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, y_mult, z_mult, calc_eig, save_path)
 %Function to create 3D packing with following input parameters:
 % N, Number of Particles
 % K, spring constant

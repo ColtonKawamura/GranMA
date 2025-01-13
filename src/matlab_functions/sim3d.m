@@ -1,4 +1,4 @@
-function sim3d(K, M, Bv, w_D, N, P, W, seed)
+function sim3d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
 %% sim3d(100, 1, 1, 5, 1000, 0.1, 3, 1)
 
 % Set up initial conditions and visualization
@@ -27,11 +27,21 @@ function sim3d(K, M, Bv, w_D, N, P, W, seed)
 plotdebug = 1;
 % close all
 K_in = K;
-% packing_name = ['N' num2str(N) '_P' num2str(P) '_Width' num2str(W) '_Seed' num2str(seed)];
+% Create the packing name with the exact number format for P
+packing_name = string(sprintf("3D_N%d_P%s_Width%d_Seed%d", N, num2str(P), W, seed));
 
-% packing_name = ['3D_N' num2str(N) '_P' num2str(P) '_Width' num2str(W) '_Seed' num2str(seed) '.mat'];
-packing_name = sprintf('3D_N%d_P%s_Width%d_Seed%d', N, num2str(P), W, seed);
-filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
+% Create the filename
+% filename_output = sprintf('%s_K%d_Bv%d_wD%d_M%d.mat', packing_name, K, Bv, w_D, M);
+filename_output = string(sprintf("%s_K%d_Bv%d_wD%.2f_M%d.mat", packing_name, K, Bv, w_D, M));
+
+% if exist(char("out/simulation_2d/K100_everything_smaller_dt/" + filename_output), 'file')
+%     return
+% end
+input_pressure = P;
+filename = in_path + packing_name + ".mat";  % Concatenate path and filename
+
+load(filename);
+
 input_pressure = P;
 if exist(filename_output)
     fprintf('*** Alert: Output for this already exists. ***\n')
