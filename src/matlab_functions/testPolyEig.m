@@ -2,10 +2,10 @@
 m = 1;  % Mass matrix (m = 1 for simplicity)
 k = 10;  % Spring constant (stiffness matrix)
 beta = 0.05;  % Damping 
-N = 3; % number of particles
+N = 10; % number of particles
 
 % Define the matrices K, D, and M
-K = k * eye(N);  % Stiffness matrix
+K = 2*k * eye(N);  % Stiffness matrix
 % make the off diagnal terms -k
 for i = 1:N-1
     K(i, i+1) = -k;
@@ -13,10 +13,10 @@ for i = 1:N-1
 end
 % K(1, end) = -k;
 % K(end, 1) = -k
-D = beta * (eye(N) + 0.1 * (rand(N) - 0.5)); % adding some off-diagnal terms; creates eye matrix, then adds a small randome number to each element. Thens hifts them down by 0.5 to make sure they are positive
+
 M = m * eye(N);  % Mass matrix
 
-D = beta * eye(N); 
+D = 2*beta * eye(N); 
 for i = 1:N-1
     D(i, i+1) = -beta;
     D(i+1, i) = -beta;
@@ -32,15 +32,15 @@ K
 D
 M
 
-% Try this way
-[eigenvectors, eigenvalues] = polyeig(K, D, -M)
+% % Try this way
+[eigenvectors, eigenvalues] = polyeig(K, 1i*D, -M)
 
-for ii = 1:length(eigenvalues)
-    figure;
-    plot(real(eigenvectors(:, ii)), '-o');
-    title(['Eigenmode ' num2str(ii)]);
-    xlabel('particle position');
-    ylabel('Mode displacement');
-    grid on;
-    % pause; 
-end
+% for ii = 1:length(eigenvalues)
+%     figure;
+%     plot(real(eigenvectors(:, ii)), '-o');
+%     title(['Eigenmode ' num2str(ii)]);
+%     xlabel('particle position');
+%     ylabel('Mode displacement');
+%     grid on;
+%     % pause; 
+% end
