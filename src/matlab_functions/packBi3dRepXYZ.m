@@ -395,7 +395,7 @@ x = x_repeated;
 y = y_repeated;
 z = z_repeated;
 Dn = Dn_repeated; % Set Dn to the repeated diameters
-W_factor = W_factor * N_repeated;
+% W_factor = W_factor * N_repeated; % !! Commented out because keeping the "width" a square
 
 % figure;
 % hold on;
