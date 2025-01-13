@@ -308,10 +308,11 @@ process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillatin
 attenuation_y = fitted_attenuation;
 attenuation_fit_line_y = attenuation_fit_line;
 wavenumber_y = wavenumber;
-wavespeed_y = wavespeed;
+unwrapped_phase_vector_y = unwrapped_phase_vector;
+wavespeed_y = driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
 initial_distance_from_oscillation_output_y_fft = initial_distance_from_oscillation_output;
 amplitude_vector_y = amplitude_vector;
-
+cleaned_particle_index_y = cleaned_particle_index;
 % process_gm_fft_freq_density(time_vector, index_particles, index_oscillating_wall, driving_amplitude, position_particles, initial_distance_from_oscillation)
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -368,7 +369,9 @@ driving_angular_frequency_dimensionless = w_D*sqrt(mass_particle_average/K);
 gamma_dimensionless = Bv/sqrt(K*mass_particle_average);
 pressure_dimensionless = P;
 % Save the file
-save(['out/simulation_3d/initial_test/' filename_output], 'gamma_dimensionless','time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
+save_path = fullfile(out_path, filename_output);
+
+save( save_path, 'gamma_dimensionless','time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
     'attenuation_y_dimensionless', 'attenuation_z_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavenumber_z_dimensionless', 'wavespeed_x', ...
      'wavespeed_y', 'wavespeed_z', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
      'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft','initial_distance_from_oscillation_output_z_fft', ...
