@@ -1,4 +1,4 @@
-function packBi3d(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, y_mult, z_mult, save_path)
+function packBi3dRepXYZ(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, y_mult, z_mult, save_path)
 %Function to create 3D packing with following input parameters:
 % N, Number of Particles
 % K, spring constant
@@ -26,6 +26,7 @@ end
 Lx = N*D/W_factor^2; % box width
 Ly = N*D/2; %starting box height
 Lz = W_factor*D;
+% Lz = N*D/2;
 Bv = 0.1; % dissipation factor
 B = 0.1; % absolute dissipation
 T = 1; % temperature factor
@@ -384,7 +385,7 @@ Dn_repeated = [];
 for i = 0:N_repeated-1
     z_shifted = z + i * Lz;
     x_repeated = [x_repeated, x];
-    y_repeated = [y_repeated, z];
+    y_repeated = [y_repeated, y];
     z_repeated = [z_repeated, z_shifted];
     Dn_repeated = [Dn_repeated, Dn]; % Append Dn for each repetition
 end
@@ -406,6 +407,7 @@ W_factor = W_factor * N_repeated;
 % hold off;
 % pause
 figure;
+
 hold on;
 axis equal;
 axis([0, x_mult * Lx, 0, Ly*y_mult]);
