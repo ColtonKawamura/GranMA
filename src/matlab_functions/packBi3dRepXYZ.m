@@ -343,7 +343,7 @@ for i = 0:N_repeated-1
     z_shifted = z + i * Lz;
     x_repeated = [x_repeated, x_shifted];
     y_repeated = [y_repeated, y];
-    y_repeated = [z_repeated, z];
+    z_repeated = [z_repeated, z];
     Dn_repeated = [Dn_repeated, Dn]; % Append Dn for each repetition
 end
 
