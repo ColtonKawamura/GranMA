@@ -324,8 +324,7 @@ addpath('./src/matlab_functions')
 
 % Convert simulation variables to meet function convention
 time_vector = (1:Nt)*dt;
- saf
- [~,index_particles] = sort(z0);
+[~,index_particles] = sort(z0);
 index_oscillating_wall = left_wall_list;
 driving_frequency = w_D/6.2832;
 driving_amplitude=A;
