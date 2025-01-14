@@ -324,12 +324,13 @@ addpath('./src/matlab_functions')
 
 % Convert simulation variables to meet function convention
 time_vector = (1:Nt)*dt;
-[~,index_particles] = sort(z0);
+ saf
+ [~,index_particles] = sort(z0);
 index_oscillating_wall = left_wall_list;
 driving_frequency = w_D/6.2832;
 driving_amplitude=A;
 position_particles = z_all;
-initial_distance_from_oscillation = z0;
+initial_distance_from_oscillation = x0;
 
 % Perform fft fitting
 [fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = ...
