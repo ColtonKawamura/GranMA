@@ -1,4 +1,4 @@
-function Hessian = hess2(positions, radii, k, L_y, Lx)
+function Hessian = hess2d(positions, radii, k, L_y, Lx)
     % Computes the Hessian matrix for a 2D granular packing with Hooke's force law.
     %
     % positions: Nx2 matrix, where each row is [x, y] for a particle
@@ -36,10 +36,15 @@ function Hessian = hess2(positions, radii, k, L_y, Lx)
                 Zn(j) = Zn(j)+1;
 
                 % Compute elements of the Hessian for this pair
-                Kxx = k * (1 - (dx^2 / r^2));
-                Kyy = k * (1 - (dy^2 / r^2));
+                Kxx = k * ((dx^2 / r^2));
+                Kyy = k * ((dy^2 / r^2));
                 Kxy = k * (-dx * dy / r^2);
                 
+                % Damping Matrix
+                Dxx = 1;
+                Dyy = 1;
+                Dxy = -1;
+
                 % Indices in the global Hessian matrix
                 idx_i = 2 * i - 1;  % x-index for particle i
                 idy_i = 2 * i;      % y-index for particle i
@@ -67,6 +72,7 @@ function Hessian = hess2(positions, radii, k, L_y, Lx)
                 Hessian(idy_j, idy_i) = Hessian(idy_j, idy_i) - Kyy; % sub-matrix ji, position [2,1]
                 Hessian(idx_j, idy_i) = Hessian(idx_j, idy_i) - Kxy; % sub-matrix ji, position [1,2]
                 Hessian(idy_j, idx_i) = Hessian(idy_j, idx_i) - Kxy; % sub-matrix ji, position [2,2]
+
             end
         end
     end
