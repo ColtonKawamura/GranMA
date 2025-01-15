@@ -8,15 +8,7 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, 
     % P_thres, targeted threshold pressure
     % W_factor, Factor of the width vs number of particles d
     % calc_eig, boolean wheter or not you want to caculate and save eigen stuff 
-    % N = 22;
-    % K = 100;
-    % D = 1;
-    % G = 1.4; 
-    % M = 1;
-    % P_target = .1;
-    % W_factor = 2;
-    % seed = 1;
-    % plotit = 1;
+    % packBi2dRepXY(26,100, 1, 1.5, 1, .1, 5, 1, true, 1, 1, false, "in/damped_eig_test/")
     
     %% Set up section
     rng(seed)
