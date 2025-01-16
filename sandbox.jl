@@ -101,6 +101,22 @@ function paperPlots()
 
 end
 
+function width_effect_tile_test()
+    # Smaller tiles (20 by 20)
+    simulation_data = load_data("out/processed/2d_K100_tileTest_20by20.jld2")
+    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+
+    # Medium tiles (40 by 20)
+    simulation_data = load_data("out/processed/2d_K100_tileTest_40by20.jld2")
+    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+
+    # Larger tiles (100 by 20)
+    simulation_data = load_data("out/processed/2d_K100_tileTest_100by20.jld2")
+    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+end
+
+
+
 # Ellipse
 
 function plot_ellipse_width_effect(ω_value, γ_value, pressure_value)
