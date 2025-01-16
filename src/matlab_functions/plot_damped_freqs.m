@@ -1,15 +1,13 @@
 % This script is prototyping used during the JAN2025 trip to NPS to plot the effects of changing damping and pressure on the eigenvvalues/modes.
 
+load("eigen_results.mat")
 
-figure
+pressures = [0.1];
+damping_constants = [1, .1, 0.01];
+
+figure(1001); clf
 hold on
-
-% pressures = ["0.1", "0.01", "0.001"];
-pressures = ["0.001"];
-damping_constants = [1, 0.01];
-% titles = {'High Damping', 'Medium Damping', 'Low Damping'};
-
-figure
+figure(1002) ; clf 
 hold on
 
 for i = 1:length(damping_constants)
@@ -18,19 +16,15 @@ for i = 1:length(damping_constants)
     for j = 1:length(pressures)
         pressure = pressures(j);
         
-        % filename = sprintf("in/damped_eig_test/2D_N100_P%s_Width10_Seed1.mat", pressure);
-        filename = sprintf("in/2d_eigen_mode_test/2D_N400_P%s_Width10_Seed1.mat", pressure);
-        load(filename)
-        positions = [x', y'];
-        radii = Dn ./ 2;
-        [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
-        mass = 1;
-        [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, damping_constant, mass);
-        [eigen_vectors, eigen_values] = polyeig(matSpring, matDamp, matMass);
-        
-        % scatter(abs(imag(eigen_values)), -real(eigen_values), damping_constant*100, 'DisplayName', sprintf('P=%.3f, %s', pressure, titles{i})) % different sizes for different damping
-        plot(abs(imag(eigen_values)), -real(eigen_values)./damping_constant, ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
+        eigen_values = findInStruct(results, {'pressure', 'damping'}, {pressure, damping_constant}, 'eigen_values'); 
+        eigen_values = eigen_values{1};
+        eigen_vectors = findInStruct(results, {'pressure', 'damping'}, {pressure, damping_constant}, 'eigen_vectors');
+        eigen_vectors = eigen_vectors{1};
 
+        figure(1001)
+        plot(abs(imag(eigen_values)), -real(eigen_values)./damping_constant, ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
+        figure(1002)
+        plot(damping_constant.*.1.*abs(imag(eigen_values)), -real(eigen_values)./(.1.*abs(imag(eigen_values))), ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
     end
 end
 
@@ -41,6 +35,60 @@ legend
 hold off
 set(gca, "xscale", "log")
 set(gca, "yscale", "log")
+
+figure(1001)
+xlabel('Frequency')
+ylabel('Damping')
+grid on
+legend
+hold off
+set(gca, "xscale", "log")
+set(gca, "yscale", "log")
+
+% Script that caculates the  eigent stuff straight from the packings   ------------------------------------------------
+% figure
+% hold on
+
+% % pressures = ["0.1", "0.01", "0.001"];
+% pressures = ["0.001"];
+% damping_constants = [1, .1, 0.01];
+% % titles = {'High Damping', 'Medium Damping', 'Low Damping'};
+
+% figure(3); clf
+% hold on
+% figure(4) ; clf 
+% hold on
+% for i = 1:length(damping_constants)
+%     damping_constant = damping_constants(i);
+%     [normalized_variable, marker_color] = normVarColor(damping_constants, damping_constant, true);
+%     for j = 1:length(pressures)
+%         pressure = pressures(j);
+        
+%         % filename = sprintf("in/damped_eig_test/2D_N100_P%s_Width10_Seed1.mat", pressure);
+%         filename = sprintf("in/2d_eigen_mode_test/2D_N400_P%s_Width10_Seed1.mat", pressure);
+%         load(filename)
+%         positions = [x', y'];
+%         radii = Dn ./ 2;
+%         [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
+%         mass = 1;
+%         [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, damping_constant, mass);
+%         [eigen_vectors, eigen_values] = polyeig(matSpring, matDamp, matMass);
+        
+%         % scatter(abs(imag(eigen_values)), -real(eigen_values), damping_constant*100, 'DisplayName', sprintf('P=%.3f, %s', pressure, titles{i})) % different sizes for different damping
+%         figure(3)
+%         plot(abs(imag(eigen_values)), -real(eigen_values)./damping_constant, ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
+%         figure(4)
+%         plot(damping_constant.*.1.*abs(imag(eigen_values)), -real(eigen_values)./(.1.*abs(imag(eigen_values))), ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
+%     end
+% end
+
+% xlabel('Frequency')
+% ylabel('Damping')
+% grid on
+% legend
+% hold off
+% set(gca, "xscale", "log")
+% set(gca, "yscale", "log")
 
 
 
