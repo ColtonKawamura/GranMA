@@ -1,36 +1,52 @@
-function output_data = findInStruct(your_struct, searched_fieldname, searched_values, output_fieldname)
-    % findInStruct - This function searches for values in a specified field of a structure 
-    % and retrieves the corresponding data from another field.
+function output_data = findInStruct(your_struct, searched_fieldnames, searched_values, varargin)
+    % findInStruct - This function searches for values in multiple specified fields of a structure 
+    % and retrieves the corresponding data from one or more output fields.
     %
     % Inputs:
     %   your_struct - A structure array containing data.
-    %   searched_fieldname - The name of the field to search in each element of the structure.
-    %   searched_values - A vector or array of values to search for in searched_fieldname.
-    %   output_fieldname - The name of the field from which to retrieve data when a match is found.
+    %   searched_fieldnames - A cell array of field names to search in each element of the structure.
+    %   searched_values - A cell array of values to search for in each corresponding searched_fieldname.
+    %   varargin - A variable number of output field names to retrieve from the structure.
     %
     % Output:
-    %   output_data - The data found in the output_fieldname for the matched elements.
+    %   output_data - A cell array containing the data found in the output fields for the matched elements.
+    %
     % Example:
-    % findInStruct(test_struct, "combo", [.2, .02], "data")
+    %   output_data = findInStruct(results, {'field2', 'field3'}, {0.2, 0.3}, 'field1')
     
-    % Initialize an empty array to store the matching data
-    output_data = [];
+    % Initialize output_data as a cell array to store data from multiple output fields
+    output_data = cell(1, length(varargin));  
     
-    % Loop through the structure array
+    % Loop through the structure array to find matching entries
     for idx = 1:length(your_struct)
-        % Get the current value in the searched field
-        current_value = your_struct(idx).(searched_fieldname);
+        % Initialize a flag to track if all search conditions are met
+        match_found = true;
         
-        % Check if current_value matches the searched_values
-        % Here we assume searched_values is a vector or array
-        if isequal(current_value, searched_values)
-            % If a match is found, retrieve the corresponding data from the output_fieldname
-            if isfield(your_struct(idx), output_fieldname)
-                % Store the data from the output_fieldname
-                output_data = [output_data; your_struct(idx).(output_fieldname)];
-            else
-                % If the output_fieldname does not exist in the current struct, print a warning
-                warning('Field "%s" not found in structure at index %d', output_fieldname, idx);
+        % Check each input field and its corresponding value
+        for i = 1:length(searched_fieldnames)
+            current_field = searched_fieldnames{i};
+            expected_value = searched_values{i};
+            
+            % Check if the current field matches the expected value
+            if ~isequal(your_struct(idx).(current_field), expected_value)
+                match_found = false;
+                break;  % No need to check further fields, as one mismatch is enough
+            end
+        end
+        
+        % If all conditions are met, retrieve the corresponding data from the output fields
+        if match_found
+            for i = 1:length(varargin)
+                output_fieldname = varargin{i};
+                
+                % Check if the field exists
+                if isfield(your_struct(idx), output_fieldname)
+                    % Store the data from the output field
+                    output_data{i} = your_struct(idx).(output_fieldname);
+                else
+                    % If the output field is not found, give a warning
+                    warning('Field "%s" not found in structure at index %d', output_fieldname, idx);
+                end
             end
         end
     end
