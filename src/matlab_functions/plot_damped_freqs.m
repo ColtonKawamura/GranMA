@@ -3,7 +3,7 @@
 load("eigen_results.mat")
 
 pressures = [0.001];
-damping_constants = [1, .1, 0.01];
+damping_constants = [1, .1, 0.01, 0.001];
 
 % figure(1001); clf
 % hold on
@@ -22,28 +22,28 @@ for i = 1:length(damping_constants)
         eigen_vectors = eigen_vectors{1};
 
         % figure(1001)
-        % plot(abs(imag(eigen_values)), -real(eigen_values)./damping_constant, ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
         figure(1002)
-        plot(damping_constant.*.1.*abs(imag(eigen_values)), -real(eigen_values)./(.1.*abs(imag(eigen_values))), ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
+        plot(abs(imag(eigen_values)), -real(eigen_values), ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
+        % plot(damping_constant.*.1.*abs(imag(eigen_values)), -real(eigen_values)./(.1.*abs(imag(eigen_values))), ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
     end
 end
 
-xlabel('$\hat{\omega} \hat{\gamma}$', 'Interpreter', 'latex')
-ylabel('Damping')
+xlabel('$\hat{\omega} \hat{\gamma}$', 'Interpreter', 'latex', "FontSize", 25)
+ylabel('$\hat{\gamma}/ \hat{\omega}$', 'Interpreter', 'latex', "FontSize", 25)
 grid on
 legend
 hold off
 set(gca, "xscale", "log")
 set(gca, "yscale", "log")
 
-figure(1001)
-xlabel('Frequency')
-ylabel('Damping')
-grid on
-legend
-hold off
-set(gca, "xscale", "log")
-set(gca, "yscale", "log")
+% figure(1001)
+% xlabel('Frequency')
+% ylabel('Damping')
+% grid on
+% legend
+% hold off
+% set(gca, "xscale", "log")
+% set(gca, "yscale", "log")
 
 % Script that caculates the  eigent stuff straight from the packings   ------------------------------------------------
 % figure
