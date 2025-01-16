@@ -2,11 +2,11 @@
 
 load("eigen_results.mat")
 
-pressures = [0.1];
+pressures = [0.001];
 damping_constants = [1, .1, 0.01];
 
-figure(1001); clf
-hold on
+% figure(1001); clf
+% hold on
 figure(1002) ; clf 
 hold on
 
@@ -21,14 +21,14 @@ for i = 1:length(damping_constants)
         eigen_vectors = findInStruct(results, {'pressure', 'damping'}, {pressure, damping_constant}, 'eigen_vectors');
         eigen_vectors = eigen_vectors{1};
 
-        figure(1001)
-        plot(abs(imag(eigen_values)), -real(eigen_values)./damping_constant, ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
+        % figure(1001)
+        % plot(abs(imag(eigen_values)), -real(eigen_values)./damping_constant, ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
         figure(1002)
         plot(damping_constant.*.1.*abs(imag(eigen_values)), -real(eigen_values)./(.1.*abs(imag(eigen_values))), ".",'Color', marker_color, 'DisplayName', sprintf('P=%.3f, damping= %.4f', pressure, damping_constant./10)) % different colors for different damping
     end
 end
 
-xlabel('Frequency')
+xlabel('$\hat{\omega} \hat{\gamma}$', 'Interpreter', 'latex')
 ylabel('Damping')
 grid on
 legend
