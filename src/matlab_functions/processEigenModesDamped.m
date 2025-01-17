@@ -3,7 +3,7 @@ function processEigenModesDamped(in_path, out_path, damping_constants)
 % pressures = ["0.001", "0.01", "0.1"];
 % out_path = "out/"
 % damping_constants = [1, 0.1, 0.01, 0.001];
-% processEigenModesDamped("in/damped_eig_test/", "in/damped_eig_test/", [1, 0.1, 0.01, 0.001]);
+% processEigenModesDamped("in/2d_eigen_mode_test", "out/2d_damped_eigenStuff", [1, 0.1, 0.01, 0.001]);
 
 results = struct();
 loop_counter = 0;
@@ -26,9 +26,7 @@ for i = 1:length(filename_list)
         [eigen_vectors, eigen_values] = polyeig(matSpring, matDamp, matMass);
         
         results(loop_counter).pressure = P;
-        results(loop_counter).pressure
         results(loop_counter).damping = damping_constant;
-        results(loop_counter).damping
         results(loop_counter).eigen_vectors = eigen_vectors;
         results(loop_counter).eigen_values = eigen_values;
     end
