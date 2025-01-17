@@ -312,6 +312,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % FFT of a single partcile 
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    position_particles = x_all; 
     data = position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:));
     fps = 1 / mean(diff(time_vector));
     marker_color = 'b';
