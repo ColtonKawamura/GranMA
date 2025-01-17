@@ -13,14 +13,6 @@ function plotDampedModeDensityPDF(struct_file, pressure_list, damping_list)
 load(struct_file)
 % damping_constant = damping_list(1); % This is temporary unless we need a reason to plot multiple damping on one plot
 
-% choose which to normalize
-if length(pressure_list) > 1
-    marker_color_pressure = true
-else
-    marker_color_pressure = false
-end
-
-
 figure
 for i = 1:length(pressure_list)
     pressure = pressure_list(i);
@@ -39,7 +31,7 @@ for i = 1:length(pressure_list)
         else
             [~, marker_color] = normVarColor(pressure_list, pressure, 1);
         end
-        
+
         % plot(edges, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', sprintf('$ P = %.3f $', pressure));
         plot(edges, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color);
         xlabel('eigen frequencies (edges)', 'Interpreter', 'latex', 'FontSize', 20)
