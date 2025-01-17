@@ -12,8 +12,7 @@ fft_out=2*smooth(abs(Y(1:NFFT/2+1)),deltaf);
 % figure, plot(data)
 % figure(100), plot(f, fft_out, strcat('-o', marker_color)), hold on
 figure(100), stem(f, fft_out), hold on
-xlabel("$ \omega ", "Interpreter", "latex", "FontSize", 20);
-ylabel("$ A $", "Interpreter", "latex", "FontSize", 20);
-
+xlabel("$ \omega $", "Interpreter", "latex", "FontSize", 20);
+ylabel("$ A $", "Interpreter", "latex", "FontSize", 20, "Rotation", 0);
 grid on
 end
