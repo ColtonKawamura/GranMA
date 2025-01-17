@@ -8,6 +8,8 @@ function plotModeDensityPDF(file_name_list, process_data)
 % ];
 % 
 % If the packings have not been pre-processed, set process_data = true
+% Example: plotModeDensityPDF(file_name_list, false)
+
 
 pressure_list = zeros(size(file_name_list));
 for i = 1:length(file_name_list)
