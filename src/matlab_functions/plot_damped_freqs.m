@@ -2,7 +2,7 @@
 
 load("eigen_results.mat")
 
-pressures = [0.001];
+pressures = [0.01];
 damping_constants = [1, .1, 0.01, 0.001];
 
 % figure(1001); clf
