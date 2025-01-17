@@ -1,7 +1,7 @@
 file_name_list1 = [
-    "in/2D_N1600_P0.1_Width40_Seed1.mat", 
-    "in/2D_N1600_P0.01_Width40_Seed1.mat", 
-    "in/2D_N1600_P0.001_Width40_Seed1.mat"
+    "in/packings_processed_eig_PDF/2D_N1600_P0.1_Width40_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N1600_P0.01_Width40_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N1600_P0.001_Width40_Seed1.mat"
 ];
 
 file_name_list2 = [
@@ -117,27 +117,27 @@ end
 
 %---------------------------------------------------------
 file_name_list1 = [
-    "in/2D_N6400_P0.1_Width40_Seed1.mat", 
-    "in/2D_N6400_P0.01_Width40_Seed1.mat", 
-    "in/2D_N6400_P0.001_Width40_Seed1.mat"
+    "in/packings_processed_eig_PDF/2D_N6400_P0.1_Width40_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N6400_P0.01_Width40_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N6400_P0.001_Width40_Seed1.mat"
 ];
 
 file_name_list2 = [
-    "in/2D_N3600_P0.1_Width20_Seed1.mat", 
-    "in/2D_N3600_P0.01_Width20_Seed1.mat", 
-    "in/2D_N3600_P0.001_Width20_Seed1.mat"
+    "in/packings_processed_eig_PDF/2D_N3600_P0.1_Width20_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N3600_P0.01_Width20_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N3600_P0.001_Width20_Seed1.mat"
 ];
 
 file_name_list3 = [
-    "in/2D_N6400_P0.1_Width80_Seed1.mat", 
-    "in/2D_N6400_P0.01_Width80_Seed1.mat", 
-    "in/2D_N6400_P0.001_Width80_Seed1.mat"
+    "in/packings_processed_eig_PDF/2D_N6400_P0.1_Width80_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N6400_P0.01_Width80_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N6400_P0.001_Width80_Seed1.mat"
 ];
 
 file_name_list4= [
-    "in/2D_N3600_P0.1_Width10_Seed1.mat", 
-    "in/2D_N3600_P0.01_Width10_Seed1.mat", 
-    "in/2D_N3600_P0.001_Width10_Seed1.mat"
+    "in/packings_processed_eig_PDF/2D_N3600_P0.1_Width10_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N3600_P0.01_Width10_Seed1.mat", 
+    "in/packings_processed_eig_PDF/2D_N3600_P0.001_Width10_Seed1.mat"
 ];
 
 file_name_list = file_name_list1
