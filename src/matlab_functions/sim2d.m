@@ -61,7 +61,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     
     dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
-    Nt = round(.9.*(Lx ./ c_0)./(dt))
+    Nt = round(.9.*(Lx ./ c_0)./(dt));
     ax_old = 0*x;
     ay_old = 0*y;
     vx = 0*x;
@@ -314,7 +314,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     data = position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:));
     fps = 1 / mean(diff(time_vector));
-    marker_color = 'r';
+    marker_color = 'b';
     plotfft(data, fps, marker_color)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
