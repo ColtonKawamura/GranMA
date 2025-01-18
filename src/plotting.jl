@@ -32,7 +32,7 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
     ax_energy = figure;
     %xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
     xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ \\frac{2\\hat{c}^2 \\left( 1 - \\cos\\overline{\\sigma}_{\\Delta \\phi_{ij}} \\right)}{\\hat{d^2\\omega}^2}\\left(\\overline{\\frac{A_{\\perp}}{A_{\\parallel}}}\\right)^2 \$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('\$ \\hat{\\gamma} \\frac{2\\hat{c}^2 \\left( 1 - \\cos\\overline{\\sigma}_{\\Delta \\phi_{ij}} \\right)}{\\hat{d^2\\omega}^2}\\left(\\overline{\\frac{A_{\\perp}}{A_{\\parallel}}}\\right)^2 \$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
     set(gca, 'YScale', 'log');
     grid on;
