@@ -1,5 +1,5 @@
 function sim3d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-    % sim3d(100, 1, 1, 5, 1008, 0.1, 10, 1, 'in/3D/', 'out/simulation_3d/initial_test/')
+    % sim3d(100, 1, 1, 10, 5040, 0.1, 10, 1, 'in/3D/', 'out/simulation_3d/initial_test/')
 % Set up initial conditions and visualization
 % Add random initial velocities
 % Replace periodic boundaries with fixed walls
