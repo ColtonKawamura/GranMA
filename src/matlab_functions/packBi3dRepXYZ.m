@@ -428,6 +428,9 @@ hold off;
 Lx = Lx * x_mult; 
 Ly = Ly * y_mult;
 Lz = Lz * z_mult;
+W_factor = W_factor * y_mult; % could be either z or y, but keeping them the same for now
+mass = M;
+diamter_average = mean(Dn);
 
 if calc_eig == true
     positions = [x',y'];
@@ -437,6 +440,6 @@ if calc_eig == true
     [eigen_vectors, eigen_values ] =  eig(Hessian);
     save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly','Lz', 'K', 'P_target', 'P', 'N', 'eigen_vectors', 'eigen_values');
 else
-    save(filename, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'Lz', 'K', 'P_target', 'P', 'N');
+    save(filename, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'Lz', 'K', 'P_target', 'P', 'N', 'W_factor', 'mass', "diamter_average");
 end
 
