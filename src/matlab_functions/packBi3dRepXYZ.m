@@ -7,7 +7,7 @@ function packBi3dRepXYZ(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult,
 % M, mass of particles
 % P_thres, targeted threshold pressure
 % W_factor, Factor of the width vs number of particles. !! Assumes a squre widith for now
-% packBi3dRepXYZ(126, 100, 1, 1.4, 1, .1, 5, 1, false, 100, 10, 10, false, 'in/3d/')
+% packBi3dRepXYZ(126, 100, 1, 1.4, 1, .1, 5, 1, false, 100, 10, 10, false, 'in/3d/') % this is a 5x5x5 tile
 
 %% Set up section
 rng(seed)
@@ -423,7 +423,8 @@ end
 drawnow;
 hold off;
 
-disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
+% disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
+
 Lx = Lx * x_mult; 
 Ly = Ly * y_mult;
 Lz = Lz * z_mult;
@@ -434,8 +435,8 @@ if calc_eig == true
     [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
     Hessian = hess2d(positions, radii, K, Ly, Lx);
     [eigen_vectors, eigen_values ] =  eig(Hessian);
-    save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N', 'eigen_vectors', 'eigen_values');
+    save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly','Lz', 'K', 'P_target', 'P', 'N', 'eigen_vectors', 'eigen_values');
 else
-    save(filename, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'K', 'P_target', 'P', 'N');
+    save(filename, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'Lz', 'K', 'P_target', 'P', 'N');
 end
 
