@@ -13,6 +13,8 @@ function output_data = findInStruct(your_struct, searched_fieldnames, searched_v
     %
     % Example:
     %   output_data = findInStruct(results, {'field2', 'field3'}, {0.2, 0.3}, 'field1')
+    %  For plotEigenmode.m: eigen_vectors = findInStruct(results, {'pressure', 'damping'}, {.1, .1}, 'eigen_vectors')
+    % eigen_values = findInStruct(results, {'pressure', 'damping'}, {.1, .1}, 'eigen_values')
 
     % Initialize output_data as a cell array to store data from multiple output fields
     output_data = cell(1, length(varargin));  
