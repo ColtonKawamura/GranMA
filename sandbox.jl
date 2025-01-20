@@ -75,12 +75,11 @@ function paperPlots()
     # ellipse Plots
     sim2d(100, 1, 5, 1, 5000, .1 ,5,  1) # high pressure, 
     sim2d(100, 1, 5, 1, 5000, .001 ,5,  1)
-
     plotEllipseAttenuation2d(simulation_data, .5)
     
     # Derek's Mean field theory for single sim
-    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed) # low pressure
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
     plotAmp(data) # amplitude plot for low pressure, low gamma
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
@@ -90,7 +89,7 @@ function paperPlots()
     mat"addpath('src/matlab_functions'); combinePlots('fig1.fig', 'fig3.fig')"
     mat"addpath('src/matlab_functions'); combinePlots('fig2.fig', 'fig4.fig')"
 
-    # Stiched Equation Plots
+    # Stiched Equation Plots (testing the theory at begining of paper)
     gamma_values = [ .05, .1, .5, 1]
     plotStitchPhaseScatter(simulation_data, gamma_values) 
     plotStitchAmpRatio(simulation_data, gamma_values)
