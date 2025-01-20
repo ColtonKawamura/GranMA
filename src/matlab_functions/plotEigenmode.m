@@ -1,22 +1,11 @@
-function plotEigenmode(x0, y0, eigen_vectors, mode_to_plot, damped)
-    % if system is damped, set damped = true. Otherwise, set damped = false.
-
-    % clunky matlab way to set default values
-    if nargin < 5
-        damped = false;
-    end
-
+function plotEigenmode(x0, y0, eigen_vectors, mode_to_plot)
     if mode_to_plot > size(eigen_vectors, 2) || mode_to_plot < 1
         error('Invalid mode_to_plot. It must be a valid column index in eigen_vectors.');
     end
      
     N = length(x0);
 
-    if damped == true
-        mode_positions = abs(eigen_vectors(:, mode_to_plot)); 
-    else
-        mode_positions = eigen_vectors(:, mode_to_plot); % grab the mode (column of positions)
-    end
+    mode_positions = eigen_vectors(:, mode_to_plot); % grab the mode (column of positions)
     
     dx = zeros(N, 1);
     dy = zeros(N, 1);
