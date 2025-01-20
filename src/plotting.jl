@@ -874,7 +874,7 @@ function plotAmpRatio(simulation_data, γ_value)
         % Plot Aspect Ratio
         loglog( omega_gamma, loop_mean_E_list, 'o-', 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
         ylim([.01, .6])
-        xlim([min(oemga_gamma), 1])
+        xlim([min(omega_gamma), 1])
         """
     end
 
