@@ -1,7 +1,7 @@
 function plotEigenmodeDamped(x0, y0, eigen_vectors, mode_to_plot)
     % need to have the packing loaded in adddition to this so you can feed it the inital coordinates
     %  They are currently in in/2d_eigen_mode_test
-    %  Pick the matchign pressure you picked in eigen_values = findInStruct(results, {'pressure', 'damping'}, {.1, .1}, 'eigen_values')
+    %  Pick the matchign pressure you picked in eigen_vectors = findInStruct(results, {'pressure', 'damping'}, {.1, .1}, 'eigen_vectors')
 
     if mode_to_plot > size(eigen_vectors, 2) || mode_to_plot < 1
         error('Invalid mode_to_plot. It must be a valid column index in eigen_vectors.');
