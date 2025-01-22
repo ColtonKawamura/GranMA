@@ -110,6 +110,7 @@ function crunch(datapath::String)
         attenuation_x = iloop_file_data["attenuation_x_dimensionless"]
         attenuation_y = iloop_file_data["attenuation_y_dimensionless"]
         wavespeed_x = iloop_file_data["wavespeed_x"]
+        wavespeed_y = iloop_file_data["wavespeed_y"]
         wavenumber_x = iloop_file_data["wavenumber_x_dimensionless"]
         mean_aspect_ratio = iloop_file_data["mean_aspect_ratio"]
         mean_rotation_angles = iloop_file_data["mean_rotation_angles"]
@@ -221,6 +222,7 @@ function crunch(datapath::String)
             -attenuation_x,
             -attenuation_y,
             -wavespeed_x,
+            -wavespeed_y,
             -wavenumber_x,
             mean_aspect_ratio,
             mean_rotation_angles,
