@@ -77,10 +77,20 @@ function paperPlots()
     sim2d(100, 1, 5, 1, 5000, .001 ,5,  1)
     plotEllipseAttenuation2d(simulation_data, .5)
     
-    # Derek's Mean field theory for single sim
-    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed) # low pressure
+    # Derek's Mean field theory for single sim ---------------------------------------
+    # These two below are have phase aligned and are used int the paper. Don't mess with them.
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed) # low pressure,
+    mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
+
     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
+    mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
+
+    # Mean field but for shear
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
+    mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true)
+
     plotAmp(data) # amplitude plot for low pressure, low gamma
+
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
     # mean field over all simulations
@@ -88,6 +98,7 @@ function paperPlots()
     plotPhaseRatioMeanField(simulation_data, .1) # save this one too as fig4.fig
     mat"addpath('src/matlab_functions'); combinePlots('fig1.fig', 'fig3.fig')"
     mat"addpath('src/matlab_functions'); combinePlots('fig2.fig', 'fig4.fig')"
+    # ----------------------------------------------------------------------------------
 
     # Stiched Equation Plots (testing the theory at begining of paper)
     gamma_values = [ .05, .1, .5, 1]

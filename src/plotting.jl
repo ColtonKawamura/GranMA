@@ -891,7 +891,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
     if shear == true
         amplitude_vector = filtered_data[1].amplitude_vector_y
         attenuation = filtered_data[1].alphaoveromega_y
-        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
         omega = filtered_data[1].omega # but this is dimensionelss
     else
         amplitude_vector = filtered_data[1].amplitude_vector_x
@@ -910,14 +910,16 @@ function getMeanField(filtered_data; plot = true, shear = false)
     # coefficents = polyfit(distance_from_wall, log_amplitude, 1)
     if shear == true
         y = filtered_data[1].amplitude_vector_y
+        x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft 
+        prime_field_amp = abs.(y - mean_field_amp)
     else
         y = filtered_data[1].amplitude_vector_x
+        x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft 
+        prime_field_amp = abs.(y - mean_field_amp)
     end
     # old version of above 
-    x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft 
     # y = filtered_data[1].amplitude_vector_x    
     # prime_field_amp = abs.(y - mean_field_amp)
-    
 
     if plot==true
         mat"""
@@ -971,8 +973,14 @@ function getMeanField(filtered_data; plot = true, shear = false)
         """
     end
     
-    x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-    y = filtered_data[1].amplitude_vector_y
+    if shear ==true
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        y = filtered_data[1].amplitude_vector_x
+    else
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        y = filtered_data[1].amplitude_vector_y
+    end
+
     if plot == true
         mat"""
         scatter($(x_perp), $(y), "o", "DisplayName", "\$ A_\\perp \$")
@@ -985,13 +993,34 @@ function getMeanField(filtered_data; plot = true, shear = false)
     end
 
     # phase
-    phase = filtered_data[1].unwrapped_phase_vector_x # will need to figure out how to adapt this for y later
+    if shear == true
+        phase = filtered_data[1].unwrapped_phase_vector_y 
+    else
+        phase = filtered_data[1].unwrapped_phase_vector_x
+    end
+    # phase = filtered_data[1].unwrapped_phase_vector_x # will need to figure out how to adapt this for y later
     phase = mod.(phase, 2π)
-    distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-    wavespeed = filtered_data[1].wavespeed_x
+    if shear == true
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    else
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    end
+    # distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    if shear== true
+        wavespeed = filtered_data[1].wavespeed_y # output of sims, but not in crunch
+        # wavespeed = omega * 2 * pi * sqrt(1/100) /(filtered_data[1].wavenumber_y)# driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
+    else
+        wavespeed = filtered_data[1].wavespeed_x
+    end
+    # wavespeed = filtered_data[1].wavespeed_x
     omega = filtered_data[1].omega # but this is dimensionelss
     # wavespeed_x = driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
-    wavenumber = filtered_data[1].wavenumber_x
+    if shear == true
+        wavenumber = filtered_data[1].wavenumber_y
+    else
+        wavenumber = filtered_data[1].wavenumber_x
+    end
+    # wavenumber = filtered_data[1].wavenumber_x
     # mean_field = (wavenumber).*distance_from_wall
     mean_field_phase = -(omega/wavespeed).*distance_from_wall
     mean_field_phase = mod.(mean_field_phase, 2π)
@@ -1041,9 +1070,20 @@ function getMeanField(filtered_data; plot = true, shear = false)
         legend("show", "interpreter", "latex")
         """
     end
-    
-    x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-    y = filtered_data[1].unwrapped_phase_vector_y
+   if shear == true
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        y = filtered_data[1].unwrapped_phase_vector_x
+    else
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        y = filtered_data[1].unwrapped_phase_vector_y
+    end 
+    # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    if shear == true
+        y = filtered_data[1].unwrapped_phase_vector_x
+    else
+        y = filtered_data[1].unwrapped_phase_vector_y
+    end
+    # y = filtered_data[1].unwrapped_phase_vector_y
     y = mod.(y, 2π)
     
     transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
