@@ -85,7 +85,7 @@ function paperPlots()
     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
-    # Mean field but for shear
+    # Mean field but for shear  simulation_data = load_data("out/processed/2d_K100_shear_1000by5.jld2")
     data = FilterData(simulation_data, .1, :pressure, .001, :omega, .5, :gamma, 1, :seed) # high pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true)
 
