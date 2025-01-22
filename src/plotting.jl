@@ -887,18 +887,36 @@ function plotAmpRatio(simulation_data, γ_value)
 end
 
 
-function getMeanField(filtered_data; plot = true)
-    attenuation = filtered_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
-    distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-    omega = filtered_data[1].omega # but this is dimensionelss
+function getMeanField(filtered_data; plot = true, shear = false)
+    if shear == true
+        amplitude_vector = filtered_data[1].amplitude_vector_y
+        attenuation = filtered_data[1].alphaoveromega_y
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        omega = filtered_data[1].omega # but this is dimensionelss
+    else
+        amplitude_vector = filtered_data[1].amplitude_vector_x
+        attenuation = filtered_data[1].alphaoveromega_x
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        omega = filtered_data[1].omega # but this is dimensionelss
+    end
+    # this was the old version before adding shear
+    # attenuation = filtered_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
+    # distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    # omega = filtered_data[1].omega # but this is dimensionelss
 
     A = filtered_data[1].pressure/100
     mean_field_amp = A*exp.(-attenuation*omega*distance_from_wall)
     # log_amplitude = log.(abs(amplitude_vector_x))
     # coefficents = polyfit(distance_from_wall, log_amplitude, 1)
-    x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-    y = filtered_data[1].amplitude_vector_x    
-    prime_field_amp = abs.(y - mean_field_amp)
+    if shear == true
+        y = filtered_data[1].amplitude_vector_y
+    else
+        y = filtered_data[1].amplitude_vector_x
+    end
+    # old version of above 
+    x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft 
+    # y = filtered_data[1].amplitude_vector_x    
+    # prime_field_amp = abs.(y - mean_field_amp)
     
 
     if plot==true
