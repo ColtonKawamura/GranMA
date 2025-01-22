@@ -1007,8 +1007,9 @@ function getMeanField(filtered_data; plot = true, shear = false)
     end
     # distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
     if shear== true
-        wavespeed = filtered_data[1].wavespeed_y # output of sims, but not in crunch
-        # wavespeed = omega * 2 * pi * sqrt(1/100) /(filtered_data[1].wavenumber_y)# driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
+        # wavespeed = filtered_data[1].wavespeed_y # output of sims, but not in crunch
+        wavespeed = -omega * .03  /(filtered_data[1].wavenumber_y)# using c = omega_hat * sqrt(K/M) / wavenumber; driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
+        #  the .03 is a fit factor for the phase
     else
         wavespeed = filtered_data[1].wavespeed_x
     end
@@ -1028,6 +1029,10 @@ function getMeanField(filtered_data; plot = true, shear = false)
     prime_field_phase = mod.(prime_field_phase, 2π)
     prime_field_amp_new = prime_field_phase.- mean(prime_field_phase);
     
+    if shear == true
+        prime_field_amp_new = abs.(prime_field_amp_new) # Did this because it was negative
+        # prime_field_amp_new = prime_field_phase
+    end
     if plot==true
         mat"""
         figure

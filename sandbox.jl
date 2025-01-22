@@ -86,12 +86,11 @@ function paperPlots()
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
     # Mean field but for shear
-    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
+    data = FilterData(simulation_data, .1, :pressure, .001, :omega, .5, :gamma, 1, :seed) # high pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true)
 
     plotAmp(data) # amplitude plot for low pressure, low gamma
 
-    mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
     # mean field over all simulations
     plotAmpRatioMeanField(simulation_data, .1)  # save the figure as fig3.fig
