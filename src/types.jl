@@ -60,6 +60,7 @@ mutable struct file_data
     attenuation_x::Float64
     attenuation_y::Float64
     wavespeed_x::Float64
+    wavespeed_y::Float64
     wavenumber_x::Float64
     mean_aspect_ratio::Float64
     mean_rotation_angles::Float64
