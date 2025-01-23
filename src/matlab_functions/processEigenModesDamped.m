@@ -4,6 +4,7 @@ function processEigenModesDamped(in_path, out_path, damping_constants)
 % out_path = "out/"
 % damping_constants = [1, 0.1, 0.01, 0.001];
 % processEigenModesDamped("in/2d_eigen_mode_test", "out/2d_damped_eigenStuff", [1, 0.1, 0.01, 0.001]);
+% processEigenModesDamped("in/2d_damped_eigen_small", "out/junkyard", [1, 0.1, 0.01, 0.001]);
 
 results = struct();
 loop_counter = 0;
