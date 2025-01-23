@@ -460,8 +460,8 @@ function plotStitchPhaseScatter(simulation_data, gamma_values)
             plot_gamma = $(plot_gamma);
             marker_color = $(marker_color);
             pressure_label = $(pressure_label);
-            marker_shape = $(marker_shape)
-            marker_size = exp(plot_gamma/$(max_gamma))*3
+            marker_shape = $(marker_shape);
+            marker_size = exp(plot_gamma/$(max_gamma))*3;
 
             plot( omega_gamma/$(gamma_val), loop_mean_E_list, "-o", 'MarkerSize', marker_size, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
