@@ -107,7 +107,7 @@ function paperPlots()
 
     gamma_values = [.08, .1,.3, .5, .6, .8, 1]
     plotStitchAttenuation(simulation_data, gamma_values, 1.2)
-    plotStitchAttenuation(simulation_data, gamma_values, 1.2; shave=true)
+    plotStitchAttenuation(simulation_data, gamma_values, 1.2)
 
 end
 
