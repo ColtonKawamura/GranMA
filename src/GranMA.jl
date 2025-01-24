@@ -14,6 +14,8 @@ using JLD2
 using IterTools
 using Distributed
 using StaticArrays
+using DSP
+using Polynomials
 
 include("jobs.jl")
 include("data.jl")

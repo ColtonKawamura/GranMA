@@ -1023,7 +1023,18 @@ function getMeanField(filtered_data; plot = true, shear = false)
     end
     # wavenumber = filtered_data[1].wavenumber_x
     # mean_field = (wavenumber).*distance_from_wall
-    mean_field_phase = -(omega/wavespeed).*distance_from_wall
+    
+    # _-----------------------------
+    distance_from_wall_sorted, unwrapped_phase_sorted = unwrapScattered(distance_from_wall, phase)
+    # create a fit line to distance distance_from_wall_sorted and unwrapped_phase_sorted that are y values that correspond to distance_from_wall_sorted
+    fitline = Polynomials.fit(distance_from_wall_sorted, unwrapped_phase_sorted, 1)
+    # get the phase of the fit line
+    mean_field_phase = fitline.(distance_from_wall_sorted)
+    # _-----------------------------
+
+
+
+    # mean_field_phase = -(omega/wavespeed).*distance_from_wall
     mean_field_phase = mod.(mean_field_phase, 2π)
     prime_field_phase = phase .- mean_field_phase
     prime_field_phase = mod.(prime_field_phase, 2π)

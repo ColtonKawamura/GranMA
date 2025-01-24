@@ -5,9 +5,30 @@ export
     wrappedDistance,
     meanDeltaYNeighbor,
     meanPhaseDev,
-    getMeanField
+    getMeanField,
+    unwrapScattered
+    getWavespeed
 
 
+function getWavespeed(distance_from_wall ,unwrapped_phase_vector, frequency)
+    phase = mod.(unwrapped_phase_vector, 2π)
+    distance_from_wall_sorted, unwrapped_phase_sorted = unwrapScattered(distance_from_wall, phase)
+    fitline = Polynomials.fit(distance_from_wall_sorted, unwrapped_phase_sorted, 1)
+
+    # Extract the slope (wavenumber k)
+    k = coeffs(fitline)[2]  # Coefficient of x (slope)
+    wavespeed = (2 * π * frequency) / k
+    return wavespeed
+end
+
+function unwrapScattered(x, y)
+    sorted_indices = sortperm(x)
+    x_sorted = x[sorted_indices]
+    y_sorted = y[sorted_indices]
+    y_unwrapped = DSP.unwrap(y_sorted)
+    return x_sorted, y_unwrapped  # Ensure this returns a tuple
+end
+    
 
 function fitLogLine(x, y)
     X = hcat(ones(length(x)), x)  # Create matrix for linear regression [1 x]
