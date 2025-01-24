@@ -6,7 +6,7 @@ export
     meanDeltaYNeighbor,
     meanPhaseDev,
     getMeanField,
-    unwrapScattered
+    unwrapScattered,
     getWavespeed
 
 
