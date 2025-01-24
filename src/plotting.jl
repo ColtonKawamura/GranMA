@@ -1030,13 +1030,14 @@ function getMeanField(filtered_data; plot = true, shear = false)
     fitline = Polynomials.fit(distance_from_wall_sorted, unwrapped_phase_sorted, 1)
     # get the phase of the fit line
     mean_field_phase = fitline.(distance_from_wall_sorted)
+    prime_field_phase = unwrapped_phase_sorted .- mean_field_phase
     # _-----------------------------
 
 
 
     # mean_field_phase = -(omega/wavespeed).*distance_from_wall
     mean_field_phase = mod.(mean_field_phase, 2π)
-    prime_field_phase = phase .- mean_field_phase
+    # prime_field_phase = phase .- mean_field_phase
     prime_field_phase = mod.(prime_field_phase, 2π)
     prime_field_amp_new = prime_field_phase.- mean(prime_field_phase);
     
@@ -1047,7 +1048,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
     if plot==true
         mat"""
         figure
-        scatter($(distance_from_wall), $(prime_field_amp_new), "*", "DisplayName", "\$ \\phi_{||}' \$")
+        scatter($(distance_from_wall), $(prime_field_amp), "*", "DisplayName", "\$ \\phi_{||}' \$")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -1076,7 +1077,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
     
     if plot==true
         mat"""
-        scatter($(distance_from_wall), $(mean_field_phase), "v","DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
+        scatter($(distance_from_wall_sorted), $(mean_field_phase), "v","DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
         ylabel("\$ \\phi(x) \$", "Interpreter", 'latex', "FontSize", 15)
