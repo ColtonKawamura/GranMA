@@ -84,14 +84,27 @@ Ek = zeros(1,Nt);
 Ep = zeros(1,Nt);
 
 %% Verlet cell parameters
-cell_width = 2*G*D;
+% cell_width = 2*G*D; % old bad Abe made this
+% cell_widith = Lx/num_cells
+% jj_max = ceil(Lx/cell_width);
+
+% cell_num = ceil(x/cell_width);
+% for jj = 1:jj_max
+%     cell_list{jj} = find(cell_num == jj);
+% end
+
+
+%  new one
+raw_cell_width = 2*G*D;
+num_cells = (Lx/raw_cell_width)
+num_cells = round(num_cells)
+cell_width = Lx/num_cells
 jj_max = ceil(Lx/cell_width);
 
 cell_num = ceil(x/cell_width);
 for jj = 1:jj_max
     cell_list{jj} = find(cell_num == jj);
 end
-
 %% Setup Plotting
 if plotit
     figure(1), clf;
