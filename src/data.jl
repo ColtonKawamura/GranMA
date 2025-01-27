@@ -13,7 +13,31 @@ export
     loadGausData,
     crunchNSaveGaus,
     filterDataGaus,
-    crunch3d
+    crunch3d,
+    saveData3d,
+    crunchNSave3d
+
+function saveData3d(simulation_data::Vector{data3d}, filepath::String)
+    # filepath = "out/processed/name_without_extension
+    @save filepath simulation_data
+    println("Data saved to $filepath")
+end
+
+function loadData3d(filepath::String)::Vector{data3d}
+    # filename = "out/processed/name_without_extension
+    filepath
+    @load filepath simulation_data
+    return simulation_data
+end
+
+function crunchNSave3d(datapath::String, filepath::String)
+    simulation_data = crunch3d(datapath)
+    saveData3d(simulation_data, filepath)
+    
+    # Load the data back to verify
+    reloaded_data = loadData3d(filepath)
+    println("Data reloaded successfully. Number of entries: ", length(reloaded_data))
+end
 
 function filterDataGaus(data::Vector{gaus_data}, args...)
     # Initialize the filtered data to be the full simulation_data
@@ -513,7 +537,7 @@ end
 function crunch3d(datapath::String)
     # directory = "out/simulation_3d/initial_test/"
     mat_files = glob("*.mat", datapath)
-    simulation_data = file_data[]
+    simulation_data = data3d[]
     
     for file_name in mat_files
         iloop_file_data = matread(file_name)
