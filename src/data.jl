@@ -556,8 +556,7 @@ function crunch3d(datapath::String)
         wavenumber_z = iloop_file_data["wavenumber_z_dimensionless"]
 
         # Check for NaN values
-        if isnan(mean_rotation_angles) || isnan(mean_aspect_ratio) || 
-           isnan(wavenumber_x) || isnan(wavenumber_y) ||
+        if isnan(wavenumber_x) || isnan(wavenumber_y) ||
            isnan(wavespeed_x) || isnan(input_pressure) || 
            isnan(omega) || isnan(gamma) || isnan(pressure_actual) || 
            isnan(attenuation_x) || isnan(attenuation_y)
