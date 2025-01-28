@@ -25,15 +25,23 @@ data_gaus = filter(x -> x.pressure >= .001, data_gaus)
 function shearPaperPlots()
     # high omega
     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-    plotAmp(data, shear=true) # amplitude plot for high pressure, low gamma
-    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-    plotAmp(data, shear=true) # amplitude plot for low pressure, low gamma
-
-    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data, shear=true)
     plotPhase(data, shear=true) # phase plot for high pressure, low gamma
     data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-    plotPhase(data, shear=true) # phase plot for high pressure, low gamma
+    plotPhase(data, shear=true) # phase plot for low pressure, low gamma
 
+    # low omega
+    data = FilterData(simulation_data, .1, :pressure, .001, :omega, .5, :gamma, 1, :seed)
+    plotPhase(data, shear=true) # phase plot for high pressure, low gamma
+    data = FilterData(simulation_data, .001, :pressure, .001, :omega, .5, :gamma, 1, :seed)
+    plotPhase(data, shear=true) # phase plot for low pressure, low gamma
+    
+
+    # Theory Plots
+    gamma_values = [ .05, .1, .5, 1]
+    plotStitchPhaseScatter(simulation_data, gamma_values, shear=true) 
+    plotStitchAmpRatio(simulation_data, gamma_values, shear=true)
+    # plotStitchAmpPhase(simulation_data, gamma_values)
 end
 
 function paperPlots()
@@ -49,7 +57,7 @@ function paperPlots()
     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
     plotPhase(data) # phase plot for high pressure, low gamma
     data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-    plotPhase(data) # phase plot for high pressure, low gamma
+    plotPhase(data) # phase plot for low pressure, low gamma
 
     # low omega
     data = FilterData(simulation_data, .1, :pressure, .01, :omega, .5, :gamma, 1, :seed)

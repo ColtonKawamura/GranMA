@@ -150,7 +150,7 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
     text(.003, .01, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
     """ 
 end
-function plotStitchAmpRatio(simulation_data, gamma_values) 
+function plotStitchAmpRatio(simulation_data, gamma_values; shear=false) 
     mat"""
     ax_energy = figure;
     xlabel('\$  \\hat{\\omega} \$', "FontSize", 20, "Interpreter", "latex");
@@ -220,7 +220,7 @@ function plotStitchAmpRatio(simulation_data, gamma_values)
                         println("Empty y-phase vector for: Pressure $(pressure_value) OmegaGamma $(omega_gamma_value) seed $(k_seed)")
                         continue
                     end
-                    mean_distance = plotAmp(k_seed_data; plot=false)
+                    mean_distance = plotAmp(k_seed_data; plot=false, shear=shear)
                     push!(E_ratio_list, mean_distance)
                 end
 
@@ -2327,13 +2327,22 @@ end
 
 # Single Simulaiton plots
 
-function plotAmp(filtered_data; plot=true)
+function plotAmp(filtered_data; plot=true, shear=false)
     x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft
     y = filtered_data[1].amplitude_vector_x
     coeffs = fitLogLine(x_parra,y)
     yIntercept_amp_x = coeffs[1]
     slope_amp_x = coeffs[2]
     y_x = y
+
+    if shear==true
+       x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+       y = filtered_data[1].amplitude_vector_y
+       coeffs = fitLogLine(x_parra,y)
+       yIntercept_amp_x = coeffs[1]
+       slope_amp_x = coeffs[2]
+        y_x = y
+    end
     if plot==true
         display_name = @sprintf("\$ A_{||}(x) \$")
         mat"""
@@ -2355,6 +2364,13 @@ function plotAmp(filtered_data; plot=true)
     coeffs = fitLogLine(x_perp,y)
     yIntercept_amp_y = coeffs[1]
     slope_amp_y = coeffs[2]
+    if shear == true
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        y = filtered_data[1].amplitude_vector_x
+        coeffs = fitLogLine(x_perp,y)
+        yIntercept_amp_y = coeffs[1]
+        slope_amp_y = coeffs[2]
+    end
     if plot == true
         display_name = @sprintf("\$ A_\\perp(x) \$")
         mat"""
