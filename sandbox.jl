@@ -22,6 +22,20 @@ data_gaus = loadGausData("out/processed/2d_gaus_withDamping.jld2")
 data_gaus = filter(x -> x.omega > .02, data_gaus) # This is for the wavespeed plot
 data_gaus = filter(x -> x.pressure >= .001, data_gaus) 
 
+function shearPaperPlots()
+    # high omega
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data, shear=true) # amplitude plot for high pressure, low gamma
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data, shear=true) # amplitude plot for low pressure, low gamma
+
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotPhase(data, shear=true) # phase plot for high pressure, low gamma
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotPhase(data, shear=true) # phase plot for high pressure, low gamma
+
+end
+
 function paperPlots()
     sim2d(100, 1, 5, 1, 5000, .1, 5, 1)  # Single particle oscilaltion
 
