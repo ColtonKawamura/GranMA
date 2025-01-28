@@ -426,11 +426,11 @@ function plotStitchPhaseScatter(simulation_data, gamma_values; shear=false)
 
                 for k_seed in seed_list
                     k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
-                    k_seed_omega = k_seed_data[1].omega
-                    phase_vector_y = k_seed_data[1].unwrapped_phase_vector_y
+                    # k_seed_omega = k_seed_data[1].omega
+                    # phase_vector_y = k_seed_data[1].unwrapped_phase_vector_y
                     # Wrap the phase vector around 2π
-                    wrapped_phase = mod.(phase_vector_y, 2π)
-                    distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
+                    # wrapped_phase = mod.(phase_vector_y, 2π)
+                    # distance_from_wall = k_seed_data[1].initial_distance_from_oscillation_output_y_fft
                     # mean_distance = meanDistNeighbor(distance_from_wall, wrapped_phase)
                     if isempty(k_seed_data[1].unwrapped_phase_vector_y)
                         println("Empty y-phase vector for: Pressure $(pressure_value) OmegaGamma $(omega_gamma_value) seed $(k_seed)")
