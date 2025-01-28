@@ -436,9 +436,9 @@ function plotStitchPhaseScatter(simulation_data, gamma_values; shear=false)
                         println("Empty y-phase vector for: Pressure $(pressure_value) OmegaGamma $(omega_gamma_value) seed $(k_seed)")
                         continue
                     end
-                    mean_distance = plotPhase(k_seed_data; plot=false, shear=shear)
-                    mean_distance = isinf(mean_distance) ? NaN : mean_distance # saftey for infinite values
-                    push!(E_ratio_list, 1-cos(mean_distance))
+                    mean_scatter = plotPhase(k_seed_data; plot=false, shear=shear)
+                    mean_scatter = isinf(mean_scatter) ? NaN : mean_scatter # saftey for infinite values
+                    push!(E_ratio_list, 1-cos(mean_scatter))
                     # push!(E_ratio_list, mean_distance)
                 end
 
