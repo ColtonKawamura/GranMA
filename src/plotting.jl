@@ -2385,6 +2385,13 @@ function plotPhase(filtered_data; plot=true, shear=false)
         temp = scatter_x
         scatter_x = scatter_y
         scatter_y = temp
+        temp2 = distance_x
+        distance_x = distance_y
+        distance_y = temp2
+        temp3 = phase_x
+        phase_x = phase_y
+        phase_y = temp3
+
     end
     if plot==true
         mat"""
