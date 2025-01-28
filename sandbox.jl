@@ -13,7 +13,8 @@ using Polynomials
 using LinearAlgebra
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
-simulation_data = load_data("out/processed/2d_K100_shear_1000by5.jld2")
+simulation_data = load_data("out/processed/2d_K100_80kby40.jld2") # large packing with low freqs
+simulation_data = load_data("out/processed/2d_K100_shear_1000by5_all.jld2")
 
 # data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
 data_gaus = loadGausData("out/processed/2d_gaus_withDamping.jld2")
