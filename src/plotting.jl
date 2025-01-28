@@ -269,7 +269,7 @@ function plotStitchAmpRatio(simulation_data, gamma_values)
     """ 
 end
 
-function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter; shave=false) 
+function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter; shear=false) 
     # Define the plot limits to match the 1D theory plot curves
     theory_x = collect(3E-4:1E-5:3)
     theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
@@ -367,7 +367,7 @@ function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter; sha
     title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
     """ 
 end
-function plotStitchPhaseScatter(simulation_data, gamma_values) 
+function plotStitchPhaseScatter(simulation_data, gamma_values; shear=false) 
     mat"""
     ax_energy = figure;
     xlabel('\$\\hat{\\omega}\$', "FontSize", 20, "Interpreter", "latex");
@@ -2370,18 +2370,22 @@ function plotAmp(filtered_data; plot=true)
     return exp(yIntercept_amp_y) / exp(yIntercept_amp_x) # Can't do  mean(y ./ y_x), because not same length
 end
 
-function plotPhase(filtered_data; plot=true)
+function plotPhase(filtered_data; plot=true, shear=false)
     distance_y = filtered_data[1].initial_distance_from_oscillation_output_y_fft
     distance_x = filtered_data[1].initial_distance_from_oscillation_output_x_fft
     phase_y = filtered_data[1].unwrapped_phase_vector_y
     phase_x = filtered_data[1].unwrapped_phase_vector_x
     phase_y = mod.(phase_y, 2π)
     phase_x = mod.(phase_x, 2π)
-    # scatter_x = meanDistNeighbor(distance_x, phase_x)
-    # scatter_y = meanDistNeighbor(distance_y, phase_y)
     scatter_x = meanPhaseDev(distance_x, phase_x, 1)
     scatter_y = meanPhaseDev(distance_y, phase_y, 1)
 
+    if shear==true
+        # switch the vaalues of scatter_x and scatter_y
+        temp = scatter_x
+        scatter_x = scatter_y
+        scatter_y = temp
+    end
     if plot==true
         mat"""
         figure
