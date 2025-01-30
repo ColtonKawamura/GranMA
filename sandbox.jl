@@ -22,12 +22,19 @@ data_gaus = loadGausData("out/processed/2d_gaus_withDamping.jld2")
 data_gaus = filter(x -> x.omega > .02, data_gaus) # This is for the wavespeed plot
 data_gaus = filter(x -> x.pressure >= .001, data_gaus) 
 
+function 3dPaperPlots()
+    simulation_data = loadData3d("out/processed/3d_K100_40Kby7_V1.jld2")
+    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+
+end
+
 function shearPaperPlots()
     # high omega
     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
     plotAmp(data, shear=true)
     plotPhase(data, shear=true) # phase plot for high pressure, low gamma
     data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    plotAmp(data, shear=true)
     plotPhase(data, shear=true) # phase plot for low pressure, low gamma
 
     # low omega
@@ -39,6 +46,7 @@ function shearPaperPlots()
 
     # Theory Plots
     gamma_values = [ .05, .1, .5, 1]
+    gamma_values = [ .001, .05, .1]
     plotStitchPhaseScatter(simulation_data, gamma_values, shear=true) 
     plotStitchAmpRatio(simulation_data, gamma_values, shear=true)
     # plotStitchAmpPhase(simulation_data, gamma_values)
