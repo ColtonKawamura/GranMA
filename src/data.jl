@@ -14,6 +14,7 @@ export
     crunchNSaveGaus,
     filterDataGaus,
     crunch3d,
+    loadData3d,
     saveData3d,
     crunchNSave3d
 

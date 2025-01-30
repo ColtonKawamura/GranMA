@@ -11,7 +11,6 @@ function plotDampedModeDensityPDF(struct_file, pressure_list, damping_list)
 % More note: this assumes that the eigen_values = damping + i frequency
 % plotDampedModeDensityPDF("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N400_K100_M1.mat", [.2, .01, .001], [.1])
 load(struct_file)
-% damping_constant = damping_list(1); % This is temporary unless we need a reason to plot multiple damping on one plot
 
 figure
 for i = 1:length(pressure_list)
