@@ -36,7 +36,7 @@ filename_output = string(sprintf("%s_K%d_Bv%d_wD%.2f_M%d.mat", packing_name, K, 
 % if exist(char("out/simulation_2d/K100_everything_smaller_dt/" + filename_output), 'file')
 %     return
 % end
-input_pressure = P;
+input_pressure = P_target;
 filename = in_path + packing_name + ".mat";  % Concatenate path and filename
 
 load(filename);
