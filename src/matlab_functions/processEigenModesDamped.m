@@ -37,6 +37,7 @@ end
 % save('eigen_results.mat', 'results');
 filename_output = string(sprintf("2D_damped_eigenstuff_N%d_%d_by_%d_K%d_M%d.mat", N, Lx, round(Ly), K, mass));
 save_path = fullfile(out_path, filename_output);
-save(save_path, 'results');
+% save(save_path, 'results');
+save(save_path, 'results', '-v7.3'); % need this for file sizes larger than 2G's
 
 end
