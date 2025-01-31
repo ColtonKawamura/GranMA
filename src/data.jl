@@ -16,7 +16,28 @@ export
     crunch3d,
     loadData3d,
     saveData3d,
-    crunchNSave3d
+    crunchNSave3d,
+    FilterData3d
+
+function FilterData3d(data::Vector{data3d}, args...)
+    # Initialize the filtered data to be the full simulation_data
+    filtered_data = data
+
+    # Iterate over the provided arguments in pairs
+    for i in 1:2:length(args)
+        value = args[i]
+        field_name = args[i+1]
+
+        # Determine the closest match for the given field
+        closest_index = argmin(abs.([getfield(idx, field_name) for idx in filtered_data] .- value))
+        closest_value = getfield(filtered_data[closest_index], field_name)
+
+        # Filter the data to match the closest value
+        filtered_data = filter(entry -> getfield(entry, field_name) == closest_value, filtered_data)
+    end
+
+    return filtered_data
+end
 
 function saveData3d(simulation_data::Vector{data3d}, filepath::String)
     # filepath = "out/processed/name_without_extension
