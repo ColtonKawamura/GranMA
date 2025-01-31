@@ -26,6 +26,14 @@ function 3dPaperPlots()
     simulation_data = loadData3d("out/processed/3d_K100_40Kby7_V1.jld2")
     plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
 
+    # Mean Field Plots
+    transverse_axis = "y"
+    filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    getMeanField3d(filtered_data, transverse_axis)
+
+    # Amplitude Plots
+    filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    
 end
 
 function shearPaperPlots()

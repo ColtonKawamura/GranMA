@@ -23,9 +23,292 @@ export
     plotStitchPhaseScatter,
     plotStitchAttenuation,
     plotStitchAmpRatio,
-    plotStitchAmpPhase
+    plotStitchAmpPhase,
+    getMeanField3d
 
 
+#----------------------------------------------3d specific plots------------------------------------------------------------
+function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = false)
+    @assert transverse_axis in ["y", "z"] "transverse_axis must be either 'y' or 'z'"
+    # this part picks out the "parallell" data
+    if shear == true
+        if transverse_axis == "y"
+            amplitude_vector = filtered_data[1].amplitude_vector_y
+            attenuation = filtered_data[1].alphaoveromega_y
+            distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+            omega = filtered_data[1].omega # but this is dimensionelss
+        else
+            amplitude_vector = filtered_data[1].amplitude_vector_z
+            attenuation = filtered_data[1].alphaoveromega_z
+            distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_z_fft
+            omega = filtered_data[1].omega # but this is dimensionelss
+        end
+    else
+        amplitude_vector = filtered_data[1].amplitude_vector_x
+        attenuation = filtered_data[1].alphaoveromega_x
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        omega = filtered_data[1].omega # but this is dimensionelss
+    end
+    # this was the old version before adding shear
+    # attenuation = filtered_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
+    # distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    # omega = filtered_data[1].omega # but this is dimensionelss
+
+    A = filtered_data[1].pressure/100
+    mean_field_amp = A*exp.(-attenuation*omega*distance_from_wall)
+    # log_amplitude = log.(abs(amplitude_vector_x))
+    
+    # coefficents = polyfit(distance_from_wall, log_amplitude, 1)
+
+    #  This paart picks out the "paralell" data
+    if shear == true
+        if transverse_axis == "y"
+            y = filtered_data[1].amplitude_vector_y
+            x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+            prime_field_amp = abs.(y - mean_field_amp)
+        else
+            y = filtered_data[1].amplitude_vector_z
+            x_parra = filtered_data[1].initial_distance_from_oscillation_output_z_fft
+            prime_field_amp = abs.(y - mean_field_amp)
+        end
+        # y = filtered_data[1].amplitude_vector_y
+        # x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft 
+        # prime_field_amp = abs.(y - mean_field_amp)
+    else
+        y = filtered_data[1].amplitude_vector_x
+        x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft 
+        prime_field_amp = abs.(y - mean_field_amp)
+    end
+    # old version of above 
+    # y = filtered_data[1].amplitude_vector_x    
+    # prime_field_amp = abs.(y - mean_field_amp)
+
+    if plot==true
+        mat"""
+        coefficients = polyfit($(distance_from_wall), log(abs($(y))), 1);
+        fitted_attenuation = coefficients(1);
+        intercept_attenuation = coefficients(2);
+        mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
+        prime_field_amp_new = abs($(y)-mean_field_new);
+        figure
+        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", " \$ A_{||}' \$")
+        hold on
+        set(gca, 'YScale', 'log')
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show", "Interpreter", "latex")
+        """
+    end
+
+
+    if plot==true
+        mat"""
+        scatter($(x_parra), $(y), "o", "DisplayName", "\$ A_{||} \$")
+        hold on
+        set(gca, 'YScale', 'log')
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show")
+        """
+    end
+    
+    if plot==true
+        mat"""
+        scatter($(x_parra), mean_field_new, "v","DisplayName", "\$ \\overline{A}_{||} \$")
+        hold on
+        set(gca, 'YScale', 'log')
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show")
+        """
+    end
+    # grab the perpidicular data
+    if shear ==true
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        y = filtered_data[1].amplitude_vector_x
+    else
+        if transverse_axis == "y"
+            x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+            y = filtered_data[1].amplitude_vector_y
+        else
+            x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
+            y = filtered_data[1].amplitude_vector_z
+        end
+        # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        # y = filtered_data[1].amplitude_vector_y
+    end
+
+    if plot == true
+        mat"""
+        scatter($(x_perp), $(y), "o", "DisplayName", "\$ A_\\perp \$")
+        set(gca, 'YScale', 'log')
+        grid on
+        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+        set(gca, 'FontSize', 15);
+        legend('FontSize', 15)
+        """
+    end
+
+    # phase
+    
+
+    # ----------  phase in the x-direction ----------------------
+    if shear == true
+        phase = filtered_data[1].unwrapped_phase_vector_y 
+    else
+        phase = filtered_data[1].unwrapped_phase_vector_x
+    end
+    phase = mod.(phase, 2π)
+
+    if shear == true
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    else
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    end
+
+    if shear== true
+        # wavespeed = filtered_data[1].wavespeed_y # output of sims, but not in crunch
+        wavespeed = -omega * .034  /(filtered_data[1].wavenumber_y)# using c = omega_hat * sqrt(K/M) / wavenumber; driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
+        #  the .03 is a fit factor for the phase
+    else
+        wavespeed = filtered_data[1].wavespeed_x
+    end
+    # wavespeed = filtered_data[1].wavespeed_x
+    omega = filtered_data[1].omega # but this is dimensionelss
+    # wavespeed_x = driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
+
+    if shear == true
+        wavenumber = filtered_data[1].wavenumber_y
+    else
+        wavenumber = filtered_data[1].wavenumber_x
+    end
+    # wavenumber = filtered_data[1].wavenumber_x
+    # mean_field = (wavenumber).*distance_from_wall
+    
+    # _----------------------------- new wrapped feature
+    distance_from_wall_sorted, unwrapped_phase_sorted = unwrapScattered(distance_from_wall, phase)
+    # create a fit line to distance distance_from_wall_sorted and unwrapped_phase_sorted that are y values that correspond to distance_from_wall_sorted
+    fitline = Polynomials.fit(distance_from_wall_sorted, unwrapped_phase_sorted, 1)
+    # get the phase of the fit line
+    mean_field_phase = fitline.(distance_from_wall_sorted)
+    prime_field_phase = unwrapped_phase_sorted .- mean_field_phase
+    # -----------------------------
+
+    
+
+    # mean_field_phase = -(omega/wavespeed).*distance_from_wall
+    mean_field_phase = mod.(mean_field_phase, 2π)
+    # prime_field_phase = phase .- mean_field_phase
+    prime_field_phase = mod.(prime_field_phase, 2π)
+    prime_field_amp_new = prime_field_phase.- mean(prime_field_phase);
+    
+    if shear == true
+        prime_field_amp_new = abs.(prime_field_amp_new) # Did this because it was negative
+        # prime_field_amp_new = prime_field_phase
+    end
+    if plot==true
+        mat"""
+        figure
+        scatter($(distance_from_wall), $(prime_field_amp), "*", "DisplayName", "\$ \\phi_{||}' \$")
+        hold on
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$ \\phi(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show")
+        """
+    end
+
+
+    if plot==true
+        mat"""
+        scatter($(distance_from_wall), $(phase), "o", "DisplayName", "\$ \\phi_{||} \$")
+        hold on
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$\\phi(x \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show", "interpreter", "latex")
+        """
+    end
+    
+    if plot==true
+        mat"""
+        scatter($(distance_from_wall_sorted), $(mean_field_phase), "v","DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$ \\phi(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        legend("show", "interpreter", "latex")
+        """
+    end
+   if shear == true
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        y = filtered_data[1].unwrapped_phase_vector_x
+    else
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        y = filtered_data[1].unwrapped_phase_vector_y
+    end 
+    # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    if shear == true
+        y = filtered_data[1].unwrapped_phase_vector_x
+    else
+        y = filtered_data[1].unwrapped_phase_vector_y
+    end
+    # y = filtered_data[1].unwrapped_phase_vector_y
+    y = mod.(y, 2π)
+    
+    transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    # transverse_fitline = 1/7 .* x_perp # for the higher pressure     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+
+    transverse_fitline = mod.(transverse_fitline, 2π)
+    z = abs.(transverse_fitline .- y)
+
+    
+    if plot == true
+        mat"""
+        scatter($(x_perp), $(y), "o", "DisplayName", " \$ \\phi_\\perp \$ ")
+        grid on
+        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+        set(gca, 'FontSize', 15)
+        % plot($(x_perp),$(transverse_fitline), "o", "DisplayName", "Transverse Fit")
+        % plot($(x_perp), $(z), "o", "DisplayName", "Transverse Fit-Data")
+        legend('FontSize', 15, "interpreter", "latex")
+        """
+    end
+
+    # new_y =  y + filtered_data[1].wavenumber_x.*x_perp
+    # new_y = mod.(new_y, 2π)
+    # if plot == true
+    #     mat"""
+    #     scatter($(x_perp), $(new_y), "o", "DisplayName", "raw -  mean-phase")
+    #     grid on
+    #     legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+    #     set(gca, 'FontSize', 15)
+    #     legend('FontSize', 15)
+    #     """
+    # end
+
+    return mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase
+end
 #-----------------------------------------------Stitched PLots------------------------------------------------------------
 function plotStitchAmpPhase(simulation_data, gamma_values) 
     mat"""
