@@ -30,7 +30,7 @@ export
 #----------------------------------------------3d specific plots------------------------------------------------------------
 function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = false)
     @assert transverse_axis in ["y", "z"] "transverse_axis must be either 'y' or 'z'"
-    # this part picks out the "parallell" data
+    # fit the prime of the parralell direction data
     if shear == true
         if transverse_axis == "y"
             amplitude_vector = filtered_data[1].amplitude_vector_y
@@ -44,23 +44,17 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
             omega = filtered_data[1].omega # but this is dimensionelss
         end
     else
+        # for compressional waves
         amplitude_vector = filtered_data[1].amplitude_vector_x
         attenuation = filtered_data[1].alphaoveromega_x
         distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
         omega = filtered_data[1].omega # but this is dimensionelss
     end
-    # this was the old version before adding shear
-    # attenuation = filtered_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
-    # distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-    # omega = filtered_data[1].omega # but this is dimensionelss
 
     A = filtered_data[1].pressure/100
     mean_field_amp = A*exp.(-attenuation*omega*distance_from_wall)
-    # log_amplitude = log.(abs(amplitude_vector_x))
-    
-    # coefficents = polyfit(distance_from_wall, log_amplitude, 1)
 
-    #  This paart picks out the "paralell" data
+    #  This part picks out the "paralell" data
     if shear == true
         if transverse_axis == "y"
             y = filtered_data[1].amplitude_vector_y
@@ -71,17 +65,11 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
             x_parra = filtered_data[1].initial_distance_from_oscillation_output_z_fft
             prime_field_amp = abs.(y - mean_field_amp)
         end
-        # y = filtered_data[1].amplitude_vector_y
-        # x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft 
-        # prime_field_amp = abs.(y - mean_field_amp)
     else
         y = filtered_data[1].amplitude_vector_x
         x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft 
         prime_field_amp = abs.(y - mean_field_amp)
     end
-    # old version of above 
-    # y = filtered_data[1].amplitude_vector_x    
-    # prime_field_amp = abs.(y - mean_field_amp)
 
     if plot==true
         mat"""
@@ -103,7 +91,6 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         legend("show", "Interpreter", "latex")
         """
     end
-
 
     if plot==true
         mat"""
@@ -134,7 +121,8 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         legend("show")
         """
     end
-    # grab the perpidicular data
+
+    # perpidicular data
     if shear ==true
         x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
         y = filtered_data[1].amplitude_vector_x
@@ -142,6 +130,8 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         if transverse_axis == "y"
             x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
             y = filtered_data[1].amplitude_vector_y
+            println("x_perp: ", x_perp)
+            println("y: ", y)
         else
             x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
             y = filtered_data[1].amplitude_vector_z
@@ -260,28 +250,30 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         legend("show", "interpreter", "latex")
         """
     end
+   
+
+
+# ---------------------------------- this is all for the transverse data--------------------------------
    if shear == true
         x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
         y = filtered_data[1].unwrapped_phase_vector_x
     else
-        x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-        y = filtered_data[1].unwrapped_phase_vector_y
+        if transverse_axis == "y"
+            # !!! Problem, these are differen lengths !!!
+            x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+            y = filtered_data[1].unwrapped_phase_vector_y 
+            # println("length of x_perp: ", length(x_perp))
+            # println("length of y:", length(y))
+        else
+            x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
+            y = filtered_data[1].unwrapped_phase_vector_z
+            # println("length of x_perp: ", length(x_perp))
+            # println("length of y:", length(y))
+        end
     end 
-    # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-    if shear == true
-        y = filtered_data[1].unwrapped_phase_vector_x
-    else
-        y = filtered_data[1].unwrapped_phase_vector_y
-    end
-    # y = filtered_data[1].unwrapped_phase_vector_y
+
     y = mod.(y, 2π)
     
-    transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-    # transverse_fitline = 1/7 .* x_perp # for the higher pressure     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
-
-    transverse_fitline = mod.(transverse_fitline, 2π)
-    z = abs.(transverse_fitline .- y)
-
     
     if plot == true
         mat"""
@@ -289,8 +281,6 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15)
-        % plot($(x_perp),$(transverse_fitline), "o", "DisplayName", "Transverse Fit")
-        % plot($(x_perp), $(z), "o", "DisplayName", "Transverse Fit-Data")
         legend('FontSize', 15, "interpreter", "latex")
         """
     end
