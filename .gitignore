@@ -27,3 +27,4 @@ eigen_results.mat
 in/packings_processed_eig_PDF/
 out/2d_damped_eigenStuff/
 out/simulation_3d/36900by7_initial/
+out/2d_eigenModes/40by40/
