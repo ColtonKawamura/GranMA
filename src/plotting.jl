@@ -128,13 +128,16 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         y = filtered_data[1].amplitude_vector_x
     else
         if transverse_axis == "y"
+            # !! these are the same length but negative
             x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
             y = filtered_data[1].amplitude_vector_y
-            println("x_perp: ", x_perp)
-            println("y: ", y)
+            println("x_perp max Amp: ", maximum(x_perp))
+            println("y max Amp: ", maximum(y))
         else
             x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
             y = filtered_data[1].amplitude_vector_z
+            println("x_perp max Amp: ", maximum(x_perp))
+            println("y max Amp: ", maximum(y))
         end
         # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
         # y = filtered_data[1].amplitude_vector_y
@@ -262,13 +265,13 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
             # !!! Problem, these are differen lengths !!!
             x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
             y = filtered_data[1].unwrapped_phase_vector_y 
-            # println("length of x_perp: ", length(x_perp))
-            # println("length of y:", length(y))
+            println("length of x_perp: ", length(x_perp))
+            println("length of y:", length(y))
         else
             x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
             y = filtered_data[1].unwrapped_phase_vector_z
-            # println("length of x_perp: ", length(x_perp))
-            # println("length of y:", length(y))
+            println("length of x_perp: ", length(x_perp))
+            println("length of y:", length(y))
         end
     end 
 
