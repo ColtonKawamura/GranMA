@@ -26,14 +26,16 @@ function combinePlots(f1, f2)
     ax = axes(figFinal);
     h1 = copyobj(fig1axChildren, ax);
 
-
     % Copy items from fig 2
     h2 = copyobj(fig2axChildren, ax);
     set(gca, 'YScale', 'log')
     set(gca, 'XScale', 'log')
     grid on
 
+    % change the maker shapes
 
+    set(h1, 'Marker', 'o', 'MarkerFaceColor', 'none');
+    set(h2, 'Marker', '^', 'MarkerFaceColor', 'none');
     % % Add legend to same location as the legend in fig2 
     % % but only include objects with a defined DisplayName
     h = [h2;h1];
@@ -45,6 +47,7 @@ function combinePlots(f1, f2)
     xlabel(ax, fig2ax.XLabel.String, 'Interpreter', 'Latex', 'FontSize', 20)
     ylabel(ax, fig2ax.YLabel.String, 'Interpreter', 'Latex', 'FontSize', 20)
     set(get(gca, 'ylabel'), 'rotation', 0);
+    box on;
 
     % Legend from a single simulation (pulls from figure_2 only)
     % fig_handle = get(fig2, 'Children');
