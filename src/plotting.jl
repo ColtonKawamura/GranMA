@@ -2610,6 +2610,7 @@ function plotAmp(filtered_data; plot=true, shear=false)
     yIntercept_amp_x = coeffs[1]
     slope_amp_x = coeffs[2]
     y_x = y
+    para_color = 'b'
 
     if shear==true
        x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft
@@ -2617,13 +2618,14 @@ function plotAmp(filtered_data; plot=true, shear=false)
        coeffs = fitLogLine(x_parra,y)
        yIntercept_amp_x = coeffs[1]
        slope_amp_x = coeffs[2]
-        y_x = y
+       y_x = y
+       para_color = 'r'
     end
     if plot==true
         display_name = @sprintf("\$ A_{||}(x) \$")
         mat"""
         figure
-        scatter($(x_parra), $(y), "DisplayName", $(display_name))
+        scatter($(x_parra), $(y), 'Color', $(para_color), "DisplayName", $(display_name))
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -2640,17 +2642,19 @@ function plotAmp(filtered_data; plot=true, shear=false)
     coeffs = fitLogLine(x_perp,y)
     yIntercept_amp_y = coeffs[1]
     slope_amp_y = coeffs[2]
+    perp_color = 'r'
     if shear == true
         x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
         y = filtered_data[1].amplitude_vector_x
         coeffs = fitLogLine(x_perp,y)
         yIntercept_amp_y = coeffs[1]
         slope_amp_y = coeffs[2]
+        perp_color = 'b'
     end
     if plot == true
         display_name = @sprintf("\$ A_\\perp(x) \$")
         mat"""
-        scatter($(x_perp), $(y), "DisplayName", $(display_name))
+        scatter($(x_perp), $(y), 'Color', $(perp_color), "DisplayName", $(display_name))
         plot($(x_perp), exp($(yIntercept_amp_y) + $(slope_amp_y) .* $(x_perp)), 'HandleVisibility', 'off')
         plot($(x_parra), exp($(yIntercept_amp_x) + $(slope_amp_x) .* $(x_parra)), 'HandleVisibility', 'off')
         set(gca, 'YScale', 'log')
@@ -2671,6 +2675,8 @@ function plotPhase(filtered_data; plot=true, shear=false)
     phase_x = mod.(phase_x, 2π)
     scatter_x = meanPhaseDev(distance_x, phase_x, 1)
     scatter_y = meanPhaseDev(distance_y, phase_y, 1)
+    para_color = "b"
+    perp_color = "r"
 
     if shear==true
         # switch the vaalues of scatter_x and scatter_y
@@ -2683,14 +2689,16 @@ function plotPhase(filtered_data; plot=true, shear=false)
         temp3 = phase_x
         phase_x = phase_y
         phase_y = temp3
-
+        para_color = "r"
+        perp_color = "b"
     end
+
     if plot==true
         mat"""
         figure
-        scatter($(distance_x), $(phase_x), "DisplayName", "\$ \\phi_{||} \$")
+        scatter($(distance_x), $(phase_x), 'Color', $(para_color), "DisplayName", "\$ \\phi_{||} \$")
         hold on
-        scatter($(distance_y), $(phase_y), "DisplayName", "\$ \\phi_{\\perp} \$")
+        scatter($(distance_y), $(phase_y), 'Color', $(para_color), "DisplayName", "\$ \\phi_{\\perp} \$")
         grid on
         box on
         set(gca,'YTick', [0, pi, 2*pi], 'YTickLabel', {'0', ' \$ \\pi \$', '\$ 2\\pi \$'}, 'TickLabelInterpreter', 'latex');
