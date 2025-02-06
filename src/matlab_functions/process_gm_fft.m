@@ -22,7 +22,7 @@ threshold_frequency = 0.05 * driving_frequency; % Disregards frequencies less th
 ignore_below_threshold = false; % Set to false to disable filtering
 
 % Define minimum peak amplitude / prominence to count as "good"
-min_peak_amplitude = driving_amplitude * 1E-2;
+min_peak_amplitude = driving_amplitude * 1E-4;
 
 % Minimum time span for at least 5 periods of the driving frequency
 min_time_span = 5 / driving_frequency;
