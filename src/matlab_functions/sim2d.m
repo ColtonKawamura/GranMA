@@ -314,7 +314,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     fps = 1 / mean(diff(time_vector));
     marker_color = 'b';
     plotfft(data, fps, marker_color)
-    gird on
+    grid on
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
