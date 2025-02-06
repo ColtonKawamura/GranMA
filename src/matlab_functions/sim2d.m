@@ -1,6 +1,6 @@
 function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     %% with no ellipse
-    % Example command: simulation_2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1)
+    % Example command: sim2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1, "in/", "out/junk_yard")
     
     % Set up initial conditions and visualization
     % Add random initial velocities
@@ -32,7 +32,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     % N = 12;
     % P = 0.01; % 0.021544 0.046416
     % W = 3;
-    % seed = 1;    
+    % seed = 1;   
     
     % Create the packing name with the exact number format for P
     packing_name = string(sprintf("2D_N%d_P%s_Width%d_Seed%d", N, num2str(P), W, seed));
@@ -299,15 +299,12 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     position_particles = y_all;
     plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
     
-    % Title and axis labels in LaTeX format
     % title('Particle Position Over Time', 'Interpreter', 'latex')
-    xlabel('Time (s)', 'Interpreter', 'latex')
-    ylabel('$ A(x)$', 'Interpreter', 'latex', "Rotation", 0)
-    legend('$A_{||}$', '$A_{\perp}$' ,'Interpreter', 'latex')
-    
-    % Adding legend
+    xlabel('Time (s)', 'Interpreter', 'latex', 'FontSize', 15)
+    ylabel('$ A(x)$', 'Interpreter', 'latex', "Rotation", 0, 'FontSize', 15)
+    legend('$A_{||}$', '$A_{\perp}$' ,'Interpreter', 'latex', 'FontSize', 15)
     legend show
-    
+    grid on
     hold off
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % FFT of a single partcile 
@@ -317,6 +314,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     fps = 1 / mean(diff(time_vector));
     marker_color = 'b';
     plotfft(data, fps, marker_color)
+    gird on
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -410,5 +408,5 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
         'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
          'wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
             'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', ...
-             'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y", "y0_yfft", "y0_xfft")
+             'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y", "y0_yfft", "y0_xfft");
     % save(['out/simulation_2d/K100_everything3/' filename_output])
