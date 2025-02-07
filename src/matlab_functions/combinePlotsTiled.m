@@ -34,15 +34,15 @@ function combinePlotsTiled(f1, f2)
     % First tile - general plot 1
     figure_1 = nexttile;
     copyobj(fig1axChildren, figure_1);
-    set(figure_1, 'YScale', 'log', 'XScale', 'log');
+    % set(figure_1, 'YScale', 'log', 'XScale', 'log');
     grid(figure_1, 'on');
     box(figure_1, 'on'); % Turn on the box for the first tile
     ylabel(figure_1, fig1ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig1
     set(get(figure_1, 'ylabel'), 'rotation', 0);
     set(figure_1, 'XTickLabel', ''); % Hide x-tick labels but keep tick marks visible
     % xlim(figure_1, [.013, 3]) %
-    xlim(figure_1, [.001, 1.1]) % for gamma = .01
-    ylim(figure_1, [.01, 1.5]);
+    % xlim(figure_1, [.001, 1.1]) % for gamma = .01
+    % ylim(figure_1, [.01, 1.5]);
         % Apply global x and y limits to the first plot
     % xlim(figure_1, [xMin, xMax]);
     % ylim(figure_1, [yMin, yMax]);
@@ -53,16 +53,16 @@ function combinePlotsTiled(f1, f2)
     copyobj(fig2axChildren, figure_2);
     grid(figure_2, 'on');
     box(figure_2, 'on'); % Turn on the box for the second tile
-    set(figure_2, 'YScale', 'log', 'XScale', 'log'); % Both y and x log
-    set(figure_2, 'XScale', 'log'); % just x asix
+    % set(figure_2, 'YScale', 'log', 'XScale', 'log'); % Both y and x log
+    % set(figure_2, 'XScale', 'log'); % just x asix
     ylabel(figure_2, fig2ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig2
     xlabel(figure_2, fig2ax.XLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original x-label for fig2
     % set(get(figure_2, 'ylabel'), 'rotation', 0);
     % Apply global x and y limits to the second plot
     % xlim(figure_2, [xMin, xMax]);
-    xlim(figure_2, [.001, 1.1]) % for gamma = .01
-    % ylim(figure_2, [yMin, yMax]);
-    ylim(figure_2, [.01, 1.5]);
+    % xlim(figure_2, [.001, 1.1]) % for gamma = .01
+    % % ylim(figure_2, [yMin, yMax]);
+    % ylim(figure_2, [.01, 1.5]);
 
     % Match x-limits
     % ylim(figure_1, [.03, .7])
