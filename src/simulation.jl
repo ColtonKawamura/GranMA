@@ -49,7 +49,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed)
     P = double($(P))
     W = double($(W))
     seed = double($(seed))
-    simulation_2d(K, M, Bv, w_D, N, P, W, seed)
+    sim2d(K, M, Bv, w_D, N, P, W, seed)
     """
 end
 
