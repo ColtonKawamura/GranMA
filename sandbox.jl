@@ -128,7 +128,7 @@ function paperPlots()
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
     # Mean field plots combined
-    mat"""addpath('src/matlab_functions'); combinePlotsTiled("f1.fig", "f2.fig")"""
+    mat"""addpath('src/matlab_functions'); combinePlotsTiled("f1.fig", "f2.fig", [0,200], [1E-5, 1])""" # Need to normalize the mean field
 
 
     # Mean field but for shear  simulation_data = load_data("out/processed/2d_K100_shear_1000by5.jld2")
