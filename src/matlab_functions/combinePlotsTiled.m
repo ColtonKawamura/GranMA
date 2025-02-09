@@ -13,7 +13,6 @@ function combinePlotsTiled(f1, f2, x_limits, y_limits)
     if nargin < 4 || isempty(y_limits)
         y_limits = [];  % Default: No limits set
     end
-
     
     % Load figures
     fig1 = openfig(f1, 'invisible');
@@ -50,7 +49,12 @@ function combinePlotsTiled(f1, f2, x_limits, y_limits)
     ylabel(figure_1, fig1ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig1
     set(get(figure_1, 'ylabel'), 'rotation', 0);
     set(figure_1, 'XTickLabel', ''); % Hide x-tick labels but keep tick marks visible
-    % xlim(figure_1, [.013, 3]) %
+    if ~isempty(x_limits)
+        xlim(figure_1, x_limits) %
+    end
+    % if ~isempty(y_limits)
+    %     xlim(figure_1, y_limits) %
+    % end
     % xlim(figure_1, [.001, 1.1]) % for gamma = .01
     % ylim(figure_1, [.01, 1.5]);
         % Apply global x and y limits to the first plot
@@ -76,9 +80,12 @@ function combinePlotsTiled(f1, f2, x_limits, y_limits)
 
     % Match x-limits
     % ylim(figure_1, [.03, .7])
-    % xLimits = xlim(figure_1);  % Get x-limits from the first plot
-    % xlim(figure_2, xLimits);   % Apply the same x-limits to the second plot
-
+    xLimits = xlim(figure_1);  % Get x-limits from the first plot
+    xlim(figure_2, xLimits);   % Apply the same x-limits to the second plot
+    if ~isempty(y_limits)
+        ylim(figure_2, y_limits)
+    end
+    
     % Legend from a single simulation (pulls from figure_2 only)
     fig_handle = get(figure_2, 'Children');
     hasDisplayName = ~cellfun('isempty', get(fig_handle, 'DisplayName'));
