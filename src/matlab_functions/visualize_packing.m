@@ -1,7 +1,11 @@
-load("in/damped_eig_test/2D_N14_P0.1_Width3_Seed1.mat")
+load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
 x_mult = 3;
 y_mult = 3;
 N_original = N;
+Dn_original = Dn;
+x_original = x;
+y_original = y;
+
 N_repeated = x_mult;
 x_repeated = [];
 y_repeated = [];
@@ -66,3 +70,35 @@ end
 % Update the figure display
 drawnow;
 hold off;
+figure
+hold on
+
+% Loop through each particle and plot its rectangle
+for np = 1:N_original
+    rectangle('Position', [x_original(np) - Dn_original(np)/2, y_original(np) - Dn_original(np)/2, Dn_original(np), Dn_original(np)], ...
+        'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); 
+end
+
+box on
+grid on
+
+% Get the start and end points for the arrow
+x_start = x_original(3);
+y_start = y_original(3);
+x_end = x_start + Dn_original(3); % Arrow points in x-direction
+y_end = y_start; % Keep y the same
+
+% Convert data coordinates to normalized figure coordinates
+ax = gca;
+x_lim = ax.XLim; % X-axis limits
+y_lim = ax.YLim; % Y-axis limits
+
+% Normalize to figure coordinates
+x_start_n = (x_start - x_lim(1)) / (x_lim(2) - x_lim(1));
+y_start_n = (y_start - y_lim(1)) / (y_lim(2) - y_lim(1));
+x_end_n = (x_end - x_lim(1)) / (x_lim(2) - x_lim(1));
+y_end_n = (y_end - y_lim(1)) / (y_lim(2) - y_lim(1));
+
+% Draw annotation arrow
+annotation('textarrow', [x_start_n x_end_n], [y_start_n y_end_n], ...
+    'String', '$A_x$', 'Interpreter', 'Latex', 'FontSize', 12);
