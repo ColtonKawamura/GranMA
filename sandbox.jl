@@ -14,7 +14,10 @@ using LinearAlgebra
 
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 simulation_data = load_data("out/processed/2d_K100_80kby40.jld2") # large packing with low freqs
+
+# Shear plots
 simulation_data = load_data("out/processed/2d_K100_shear_1000by5_all.jld2")
+simulation_data = load_data("out/processed/2d_shear_80kby40.jld2")
 
 # data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
 data_gaus = loadGausData("out/processed/2d_gaus_withDamping.jld2")
@@ -38,10 +41,10 @@ end
 
 function shearPaperPlots()
     # high omega
-    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .05, :gamma, 1, :seed)
     plotAmp(data, shear=true)
     plotPhase(data, shear=true) # phase plot for high pressure, low gamma
-    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    data = FilterData(simulation_data, .001, :pressure, .02, :omega, .02, :gamma, 1, :seed)
     plotAmp(data, shear=true)
     plotPhase(data, shear=true) # phase plot for low pressure, low gamma
 
@@ -124,6 +127,10 @@ function paperPlots()
     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
+    # Mean field plots combined
+    mat"""addpath('src/matlab_functions'); combinePlotsTiled("f1.fig", "f2.fig")"""
+
+
     # Mean field but for shear  simulation_data = load_data("out/processed/2d_K100_shear_1000by5.jld2")
     data = FilterData(simulation_data, .1, :pressure, .001, :omega, .5, :gamma, 1, :seed) # high pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true)
@@ -148,20 +155,22 @@ function paperPlots()
     plotStitchAttenuation(simulation_data, gamma_values, 1.2)
     plotStitchAttenuation(simulation_data, gamma_values, 1.2)
 
+
 end
 
 function width_effect_tile_test()
     # Smaller tiles (20 by 20)
+    gamma_value = .6
     simulation_data = load_data("out/processed/2d_K100_tileTest_20by20.jld2")
-    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+    plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)
 
     # Medium tiles (40 by 20)
     simulation_data = load_data("out/processed/2d_K100_tileTest_40by20.jld2")
-    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+    plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)
 
     # Larger tiles (100 by 20)
     simulation_data = load_data("out/processed/2d_K100_tileTest_100by20.jld2")
-    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+    plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)
 end
 
 
