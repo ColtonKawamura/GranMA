@@ -1,10 +1,20 @@
-function combinePlotsTiled(f1, f2)
+function combinePlotsTiled(f1, f2, x_limits, y_limits)
     % combinePlotsTiled Combines two .fig files in a tiled layout with a single legend.
     % 
     % Parameters:
     % f1 - Filename of the first .fig file in "string" format
     % f2 - Filename of the second .fig file
+    % xlim = [lower, uppper]
+    % ylim = [lower, uppper]
 
+    if nargin < 3 || isempty(x_limits)
+        x_limits = [];  % Default: No limits set
+    end
+    if nargin < 4 || isempty(y_limits)
+        y_limits = [];  % Default: No limits set
+    end
+
+    
     % Load figures
     fig1 = openfig(f1, 'invisible');
     fig2 = openfig(f2, 'invisible');
@@ -54,7 +64,7 @@ function combinePlotsTiled(f1, f2)
     grid(figure_2, 'on');
     box(figure_2, 'on'); % Turn on the box for the second tile
     % set(figure_2, 'YScale', 'log', 'XScale', 'log'); % Both y and x log
-    % set(figure_2, 'XScale', 'log'); % just x asix
+    set(figure_2, 'YScale', 'log'); % just x asix
     ylabel(figure_2, fig2ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig2
     xlabel(figure_2, fig2ax.XLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original x-label for fig2
     % set(get(figure_2, 'ylabel'), 'rotation', 0);
