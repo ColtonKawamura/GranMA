@@ -1239,7 +1239,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
     if plot==true
         mat"""
         % scatter($(x_parra), mean_field_new , "v","DisplayName", "\$ \\overline{A}_{||} \$")
-        plot($(x_parra), mean_field_new, ":", 'LineWidth', 3 ,"DisplayName", "\$ \\overline{A}_{||} \$")
+        plot($(x_parra), mean_field_new / $(driving_amp), ":", 'LineWidth', 3 ,"DisplayName", "\$ \\overline{A}_{||} \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
