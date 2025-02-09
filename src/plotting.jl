@@ -1197,6 +1197,8 @@ function getMeanField(filtered_data; plot = true, shear = false)
     # y = filtered_data[1].amplitude_vector_x    
     # prime_field_amp = abs.(y - mean_field_amp)
 
+    driving_amp = filtered_data[1].pressure / 100
+
     if plot==true
         mat"""
         coefficients = polyfit($(distance_from_wall), log(abs($(y))), 1);
@@ -1205,7 +1207,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
         prime_field_amp_new = abs($(y)-mean_field_new);
         figure
-        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", " \$ A_{||}' \$")
+        scatter($(x_parra), prime_field_amp_new / $(driving_amp), "*", "DisplayName", " \$ A_{||}' \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -1221,7 +1223,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
 
     if plot==true
         mat"""
-        scatter($(x_parra), $(y), "o", "DisplayName", "\$ A_{||} \$")
+        scatter($(x_parra), $(y) / $(driving_amp), "o", "DisplayName", "\$ A_{||} \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
@@ -1236,7 +1238,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
     
     if plot==true
         mat"""
-        % scatter($(x_parra), mean_field_new, "v","DisplayName", "\$ \\overline{A}_{||} \$")
+        % scatter($(x_parra), mean_field_new , "v","DisplayName", "\$ \\overline{A}_{||} \$")
         plot($(x_parra), mean_field_new, ":", 'LineWidth', 3 ,"DisplayName", "\$ \\overline{A}_{||} \$")
         hold on
         set(gca, 'YScale', 'log')
@@ -1260,7 +1262,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
 
     if plot == true
         mat"""
-        scatter($(x_perp), $(y), "o", "DisplayName", "\$ A_\\perp \$")
+        scatter($(x_perp), $(y)/ $(driving_amp), "o", "DisplayName", "\$ A_\\perp \$")
         set(gca, 'YScale', 'log')
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
