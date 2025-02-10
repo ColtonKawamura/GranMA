@@ -81,24 +81,36 @@ end
 
 box on
 grid on
+% xlim([1, 4])
+% ylim([1,3])
 
-% Get the start and end points for the arrow
+% Get the start and end points for the arrows
 x_start = x_original(3);
 y_start = y_original(3);
-x_end = x_start + Dn_original(3); % Arrow points in x-direction
-y_end = y_start; % Keep y the same
-
-% Convert data coordinates to normalized figure coordinates
+% annotate only takes normalized values relative to figure limits. so need to convert data coordinates to normalized figure coordinates
 ax = gca;
-x_lim = ax.XLim; % X-axis limits
-y_lim = ax.YLim; % Y-axis limits
+x_lim = ax.XLim; % X-axis limits [xmin, xmax]
+y_lim = ax.YLim; 
 
-% Normalize to figure coordinates
-x_start_n = (x_start - x_lim(1)) / (x_lim(2) - x_lim(1));
-y_start_n = (y_start - y_lim(1)) / (y_lim(2) - y_lim(1));
-x_end_n = (x_end - x_lim(1)) / (x_lim(2) - x_lim(1));
-y_end_n = (y_end - y_lim(1)) / (y_lim(2) - y_lim(1));
+
+% ====== X-direction arrow (Blue, pointing right) ======
+x_end_x = x_start + Dn_original(3); % Arrow points in x-direction
+y_end_x = y_start; 
+x_start_x = (x_start - x_lim(1)) / (x_lim(2) - x_lim(1)); % Normalize the x-direction arrow
+y_start_x = (y_start - y_lim(1)) / (y_lim(2) - y_lim(1));
+x_end_x = (x_end_x - x_lim(1)) / (x_lim(2) - x_lim(1));
+y_end_x = (y_end_x - y_lim(1)) / (y_lim(2) - y_lim(1));
 
 % Draw annotation arrow
-annotation('textarrow', [x_start_n x_end_n], [y_start_n y_end_n], ...
-    'String', '$A_x$', 'Interpreter', 'Latex', 'FontSize', 12);
+annotation('textarrow', [x_start_x x_end_x], [y_start_x y_end_x], 'Color', 'blue', 'Interpreter', 'Latex', 'FontSize', 12, 'LineWidth', 3);
+
+% ====== y-direction arrow (red, pointing up) ======
+x_end_y = x_start ;
+y_end_y = y_start+ Dn_original(3); % Arrow points in y-direction 
+x_start_y = (x_start - x_lim(1)) / (x_lim(2) - x_lim(1)); % Normalize the x-direction arrow
+y_start_y = (y_start - y_lim(1)) / (y_lim(2) - y_lim(1));
+x_end_y = (x_end_y - x_lim(1)) / (x_lim(2) - x_lim(1));
+y_end_y = (y_end_y - y_lim(1)) / (y_lim(2) - y_lim(1));
+
+% Draw annotation arrow
+annotation('textarrow', [x_start_y x_end_y], [y_start_y y_end_y], 'Color', 'red', 'Interpreter', 'Latex', 'FontSize', 12, 'LineWidth', 3);
