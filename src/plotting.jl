@@ -1262,7 +1262,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
 
     if plot == true
         mat"""
-        scatter($(x_perp), $(y)/ $(driving_amp), "o", "DisplayName", "\$ A_\\perp \$")
+        scatter($(x_perp), $(y)/ $(driving_amp), "+", "DisplayName", "\$ A_\\perp \$")
         set(gca, 'YScale', 'log')
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
@@ -1393,7 +1393,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
     
     if plot == true
         mat"""
-        scatter($(x_perp), $(y), "o", "DisplayName", " \$ \\phi_\\perp \$ ")
+        scatter($(x_perp), $(y), "+", "DisplayName", " \$ \\phi_\\perp \$ ")
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15)
