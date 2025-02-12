@@ -103,7 +103,8 @@ y_end_x = (y_end_x - y_lim(1)) / (y_lim(2) - y_lim(1));
 
 % Draw annotation arrow
 annotation('textarrow', [x_start_x x_end_x], [y_start_x y_end_x], 'Color', 'blue', 'Interpreter', 'Latex', 'FontSize', 12, 'LineWidth', 3);
-
+% text(3, 2.3, '$A_x$', 'Interpreter', 'Latex', 'FontSize', 14, 'Color', 'blue');
+annotation('textbox', [x_end_x, y_end_x, 0.05, 0.05], 'String', '$A_x$', 'Interpreter', 'Latex', 'FontSize', 14, 'EdgeColor', 'none', 'Color', 'blue');
 % ====== y-direction arrow (red, pointing up) ======
 x_end_y = x_start ;
 y_end_y = y_start+ Dn_original(3); % Arrow points in y-direction 
@@ -114,3 +115,4 @@ y_end_y = (y_end_y - y_lim(1)) / (y_lim(2) - y_lim(1));
 
 % Draw annotation arrow
 annotation('textarrow', [x_start_y x_end_y], [y_start_y y_end_y], 'Color', 'red', 'Interpreter', 'Latex', 'FontSize', 12, 'LineWidth', 3);
+annotation('textbox', [x_end_y, y_end_y, 0.05, 0.05], 'String', '$A_y$', 'Interpreter', 'Latex', 'FontSize', 14, 'EdgeColor', 'none', 'Color', 'red');
