@@ -1238,7 +1238,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
     
     if plot==true
         mat"""
-        % scatter($(x_parra), mean_field_new , "v","DisplayName", "\$ \\overline{A}_{||} \$")
+        % scatter($(x_parra), mean_field_new , "v","DisplayName", 'Color', 'black', "\$ \\overline{A}_{||} \$")
         plot($(x_parra), mean_field_new / $(driving_amp), ":", 'LineWidth', 3 ,"DisplayName", "\$ \\overline{A}_{||} \$")
         hold on
         set(gca, 'YScale', 'log')
@@ -1357,7 +1357,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
 
     if plot==true
         mat"""
-        scatter($(distance_from_wall_sorted), $(mean_field_phase), "v","SizeData", 5, "DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
+        scatter($(distance_from_wall_sorted), $(mean_field_phase), "v","SizeData", 5, 'Color', 'k', "DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
         % plot($(distance_from_wall_sorted), $(mean_field_phase), ":", 'LineWidth', 2 ,"DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
