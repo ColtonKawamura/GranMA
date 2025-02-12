@@ -81,13 +81,7 @@ function combinePlotsTiledFour(f1, f2, f3, f4, x_limits, y_limits)
     % set(figure_2, 'YScale', 'log', 'XScale', 'log'); % Both y and x log
     set(figure_2, 'YScale', 'log'); % just x asix
     ylabel(figure_2, fig2ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig2
-    xlabel(figure_2, fig2ax.XLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original x-label for fig2
-    % set(get(figure_2, 'ylabel'), 'rotation', 0);
-    % Apply global x and y limits to the second plot
-    % xlim(figure_2, [xMin, xMax]);
-    % xlim(figure_2, [.001, 1.1]) % for gamma = .01
-    % % ylim(figure_2, [yMin, yMax]);
-    % ylim(figure_2, [.01, 1.5]);
+    set(figure_2, 'XTickLabel', ''); % Hide x-tick labels but keep tick marks visiblej
 
     % Match x-limits
     % ylim(figure_1, [.03, .7])
@@ -106,13 +100,7 @@ function combinePlotsTiledFour(f1, f2, f3, f4, x_limits, y_limits)
     % set(figure_2, 'YScale', 'log', 'XScale', 'log'); % Both y and x log
     % set(figure_3, 'YScale', 'log'); % just x asix
     ylabel(figure_3, fig3ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig2
-    xlabel(figure_3, fig3ax.XLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original x-label for fig2
-    % set(get(figure_2, 'ylabel'), 'rotation', 0);
-    % Apply global x and y limits to the second plot
-    % xlim(figure_2, [xMin, xMax]);
-    % xlim(figure_2, [.001, 1.1]) % for gamma = .01
-    % % ylim(figure_2, [yMin, yMax]);
-    % ylim(figure_2, [.01, 1.5]);
+    set(figure_3, 'XTickLabel', ''); % Hide x-tick labels but keep tick marks visible
 
     % Match x-limits
     % ylim(figure_1, [.03, .7])
