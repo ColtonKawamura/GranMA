@@ -1,13 +1,29 @@
 function packBi3dRepXYZ(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, y_mult, z_mult, calc_eig, save_path)
-%Function to create 3D packing with following input parameters:
-% N, Number of Particles
-% K, spring constant
-% D, Average Diameter
-% G, Ratio of large to small particles (typically 1.4)
-% M, mass of particles
-% P_thres, targeted threshold pressure
-% W_factor, Factor of the width vs number of particles. !! Assumes a squre widith for now
-% packBi3dRepXYZ(126, 100, 1, 1.4, 1, .1, 5, 1, false, 100, 10, 10, false, 'in/3d/') % this is a 5x5x5 tile
+% packBi3dRepXYZ - Generates a 3D particle packing arrangement.
+%
+% Syntax:
+%   packBi3dRepXYZ(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, y_mult, z_mult, calc_eig, save_path)
+%
+% Inputs:
+%   N        - Number of particles
+%   K        - Spring constant
+%   D        - Average particle diameter
+%   G        - Ratio of large to small particle diameters (typically 1.4)
+%   M        - Mass of particles
+%   P_target - Targeted threshold pressure
+%   W_factor - Factor controlling width relative to number of particles
+%              (Assumes a square width for now)
+%   seed     - Random seed for reproducibility
+%   plotit   - Boolean flag to visualize the packing (true/false)
+%   x_mult   - Scaling factor for x-dimension tiling
+%   y_mult   - Scaling factor for y-dimension tiling
+%   z_mult   - Scaling factor for z-dimension tiling
+%   calc_eig - Boolean flag to compute eigenvalues (true/false)
+%   save_path- Path to save output data
+%
+% Example:
+%   packBi3dRepXYZ(126, 100, 1, 1.4, 1, 0.1, 5, 1, false, 100, 10, 10, false, 'in/3d/')
+%   % Generates a 5x5x5 tiled packing structure
 
 %% Set up section
 rng(seed)
