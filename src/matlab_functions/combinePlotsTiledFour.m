@@ -58,7 +58,7 @@ function combinePlotsTiledFour(f1, f2, f3, f4, x_limits, y_limits)
     grid(figure_1, 'on');
     box(figure_1, 'on'); % Turn on the box for the first tile
     ylabel(figure_1, fig1ax.YLabel.String, 'Interpreter', 'latex', 'FontSize', 15); % Original y-label for fig1
-    set(get(figure_1, 'ylabel'), 'rotation', 0);
+    % set(get(figure_1, 'ylabel'), 'rotation', 0);
     set(figure_1, 'XTickLabel', ''); % Hide x-tick labels but keep tick marks visible
     if ~isempty(x_limits)
         xlim(figure_1, x_limits) %
@@ -138,7 +138,7 @@ function combinePlotsTiledFour(f1, f2, f3, f4, x_limits, y_limits)
     hasDisplayName = ~cellfun('isempty', get(fig_handle, 'DisplayName'));
     legend_entries = fig_handle(hasDisplayName);
     leg = legend(figure_2, legend_entries, 'Interpreter', 'latex', 'FontSize', 12, 'Location', 'northeastoutside', 'Orientation', 'vertical');
-    title(leg, "$ \hat{P}$ ")
+    % title(leg, "$ \hat{P}$ ")
     % Close original figures
     close(fig1);
     close(fig2);
