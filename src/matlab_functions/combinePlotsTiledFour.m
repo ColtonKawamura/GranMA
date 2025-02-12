@@ -63,15 +63,11 @@ function combinePlotsTiledFour(f1, f2, f3, f4, x_limits, y_limits)
     if ~isempty(x_limits)
         xlim(figure_1, x_limits) %
     end
-    % if ~isempty(y_limits)
-    %     xlim(figure_1, y_limits) %
-    % end
-    % xlim(figure_1, [.001, 1.1]) % for gamma = .01
-    % ylim(figure_1, [.01, 1.5]);
-        % Apply global x and y limits to the first plot
-    % xlim(figure_1, [xMin, xMax]);
-    % ylim(figure_1, [yMin, yMax]);
 
+    % Get rid fo the y-ticks at 0
+    y_ticks = yticks()
+    y_ticks(y_ticks == 0) = []
+    yticks(y_ticks)
 
     % Second tile - general plot 2
     figure_2 = nexttile;
@@ -90,7 +86,10 @@ function combinePlotsTiledFour(f1, f2, f3, f4, x_limits, y_limits)
     if ~isempty(y_limits)
         ylim(figure_2, y_limits)
     end
-   
+      % Get rid fo the y-ticks at 0
+      y_ticks = yticks()
+      y_ticks(y_ticks == 0) = []
+      yticks(y_ticks) 
     
     % Third tile - general plot 3
     figure_3 = nexttile;
@@ -109,6 +108,10 @@ function combinePlotsTiledFour(f1, f2, f3, f4, x_limits, y_limits)
     % if ~isempty(y_limits)
     %     ylim(figure_3, y_limits)
     % end
+    % Get rid fo the y-ticks at 0
+    y_ticks = yticks()
+    y_ticks(y_ticks == 0 | y_ticks == 6) = []
+    yticks(y_ticks)
 
     % Fourth tile - general plot 4
     figure_4 = nexttile;
