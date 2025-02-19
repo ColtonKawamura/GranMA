@@ -22,27 +22,27 @@ function packBi3dRepXYZ(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult,
 %   save_path- Path to save output data
 %
 % Example:
-%   packBi3dRepXYZ(126, 100, 1, 1.4, 1, 0.1, 5, 1, false, 100, 10, 10, false, 'in/3d/')
+%   packBi3dRepXYZ(126, 100, 1, 1.4, 1, 0.1, 5, 1, false, 100, 10, 10, false, 'in/3d/3d_junkyard')
 %   % Generates a 5x5x5 tiled packing structure
 
 %% Set up section
 rng(seed)
 
 N_new = N * x_mult * y_mult * z_mult;
-W_new = W_factor * y_mult; % !! Does this need to capture z_mult? For non-square width 
+W_new = W_factor * y_mult; % !! Currently, this only inclues square-width packings (y_mult = z_mult)
 
 % filename = ['in/3D_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
 filename = [save_path, '3D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_new) '_Seed' num2str(seed) '.mat'];
+filename_tile = [save_path, '3D_tile_N' num2str(N) '_P' num2str(P_target) '_Width' num2str(W_factor) '_Seed' num2str(seed) '.mat'];
 
 if exist(filename)
     display("Output Already in Folder, Stopping.")
     return
 end
 
-Lx = N*D/W_factor^2; % box width
+Lx = N*D/W_factor^2; % box depth - how many layer's of Ly*Lz's can fit
 Ly = N*D/2; %starting box height
 Lz = W_factor*D;
-% Lz = N*D/2;
 Bv = 0.1; % dissipation factor
 B = 0.1; % absolute dissipation
 T = 1; % temperature factor
@@ -67,8 +67,8 @@ P_fast_grow = P_target/50;
 r = P_target;
 r_fast = 0.01;
 flag = true;
-flag2 = true;
-fast_compress_flag = true;
+flag2 = true; % flag for re-assinging particles to cells
+fast_compress_flag = false; % !! was set to true for debugging
 
 %% Display Parameters
 % plotit = 1;  % plot ?
@@ -80,14 +80,14 @@ dt = pi*sqrt(M/K)*0.05;
 Nt = 1e8; % Number of steps
 
 %% Initial Conditions
-[x, y] = ndgrid(D/2:D:Lx-D/2,D/2:D:Ly-D/2);
-[~, ii] = sort(rand(1,numel(x)));
-x = x(ii(1:N));
-y = y(ii(1:N));
-z = Lz*rand(size(x));
+[x, y] = ndgrid(D/2:D:Lx-D/2,D/2:D:Ly-D/2); % make matrix of center-positions
+[~, ii] = sort(rand(1,numel(x))); % create random uniform numbers for each particle, then get indices !! not sure why not just use randperm(N,N)
+x = x(ii(1:N)); % shuffle the x-positions randomly
+y = y(ii(1:N)); 
+z = Lz*rand(size(x)); % z doesn't need to be a grid - make it uniform random
 
 vx = sqrt(T)*randn(1,N);
-vx = vx - mean(vx);
+vx = vx - mean(vx); % make the velocities random, but shift to conserve momentum (total v =0)
 vy = sqrt(T)*randn(1,N);
 vy = vy - mean(vy);
 vz = sqrt(T)*randn(1,N);
@@ -100,24 +100,14 @@ Ek = zeros(1,Nt);
 Ep = zeros(1,Nt);
 
 %% Verlet cell parameters
-% cell_width = 2*G*D; % old bad Abe made this
-% cell_widith = Lx/num_cells
-% jj_max = ceil(Lx/cell_width);
-
-% cell_num = ceil(x/cell_width);
-% for jj = 1:jj_max
-%     cell_list{jj} = find(cell_num == jj);
-% end
-
-
-%  new one
-raw_cell_width = 2*G*D;
-num_cells = (Lx/raw_cell_width)
-num_cells = round(num_cells)
-cell_width = Lx/num_cells
-jj_max = ceil(Lx/cell_width);
-
+raw_cell_width = 2*G*D; % make cell size at least twice size of largest interaction distance (largest particle is D*G)
+num_cells = (Lx/raw_cell_width);
+num_cells = round(num_cells);
+cell_width = Lx/num_cells;
+jj_max = ceil(Lx/cell_width); % the maximum number of cells
 cell_num = ceil(x/cell_width);
+
+% create array (cell_list) where each particle is binned into a cell
 for jj = 1:jj_max
     cell_list{jj} = find(cell_num == jj);
 end
@@ -181,10 +171,12 @@ for nt = 1:Nt
     %%%%% First step in Verlet integration %%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+    % move the particles according to last-loop's velocity and acceleration
     x  =  x+vx*dt+ax_old.*dt.^2/2;
     y  =  y+vy*dt+ay_old.*dt.^2/2;
     z  =  z+vz*dt+az_old.*dt.^2/2;
 
+    % wrap around periodic boundaries
     y = mod(y,Ly);
     z = mod(z,Lz);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -359,7 +351,11 @@ for nt = 1:Nt
 
 end
 
-    
+% save the tile
+mass = M;
+diameter_average = mean(Dn);
+save(filename_tile, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'Lz', 'K', 'P_target', 'P', 'N', 'W_factor', 'mass', "diameter_average");
+
 N_repeated = x_mult;
 x_repeated = [];
 y_repeated = [];
@@ -435,22 +431,22 @@ Dn = Dn_repeated; % Set Dn to the repeated diameters
 % axis([0, N_repeated * Lx, 0, Ly]);
 % hold off;
 % pause
-figure;
+% figure;
 
-hold on;
-axis equal;
-axis([0, x_mult * Lx, 0, Ly*y_mult]);
+% hold on;
+% axis equal;
+% axis([0, x_mult * Lx, 0, Ly*y_mult]);
 
-% Loop through each particle and plot its rectangle
-for np = 1:N
-    % Compute the position for the rectangle using the center coordinates (x, y)
-    % and the diameter Dn (width and height).
-    rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], ...
-        'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); % Optional LineWidth for better visibility
-end
-% Update the figure display
-drawnow;
-hold off;
+% % Loop through each particle and plot its rectangle
+% % for np = 1:N
+% %     % Compute the position for the rectangle using the center coordinates (x, y)
+% %     % and the diameter Dn (width and height).
+% %     rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], ...
+% %         'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); % Optional LineWidth for better visibility
+% % end
+% % Update the figure display
+% drawnow;
+% hold off;
 
 % disp(['number of excess contacts = ' num2str(sum(Zn)/2 + sum(LW_contacts) + sum(RW_contacts) - 2*N)])
 
@@ -459,7 +455,7 @@ Ly = Ly * y_mult;
 Lz = Lz * z_mult;
 W_factor = W_factor * y_mult; % could be either z or y, but keeping them the same for now
 mass = M;
-diamter_average = mean(Dn);
+diameter_average = mean(Dn);
 
 if calc_eig == true
     positions = [x',y'];
@@ -469,6 +465,6 @@ if calc_eig == true
     [eigen_vectors, eigen_values ] =  eig(Hessian);
     save(filename, 'x', 'y', 'Dn', 'Lx', 'Ly','Lz', 'K', 'P_target', 'P', 'N', 'eigen_vectors', 'eigen_values');
 else
-    save(filename, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'Lz', 'K', 'P_target', 'P', 'N', 'W_factor', 'mass', "diamter_average");
+    save(filename, 'x', 'y', 'z', 'Dn', 'Lx', 'Ly', 'Lz', 'K', 'P_target', 'P', 'N', 'W_factor', 'mass', "diameter_average");
 end
 
