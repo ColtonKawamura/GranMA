@@ -1,5 +1,5 @@
 function sim3d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-    % sim3d(100, 1, 1, 10, 5040, 0.1, 10, 1, 'in/3D/', 'out/simulation_3d/initial_test/')
+    % sim3d(100, 1, 1, 10, 1060, 0.1, 5, 1, 'in/3D/3d_junkyard', 'out/simulation_3d/initial_test/')
 % Set up initial conditions and visualization
 % Add random initial velocities
 % Replace periodic boundaries with fixed walls
@@ -36,12 +36,12 @@ filename_output = string(sprintf("%s_K%d_Bv%d_wD%.2f_M%d.mat", packing_name, K, 
 % if exist(char("out/simulation_2d/K100_everything_smaller_dt/" + filename_output), 'file')
 %     return
 % end
-input_pressure = P_target;
 filename = in_path + packing_name + ".mat";  % Concatenate path and filename
 
 load(filename);
 
-input_pressure = P;
+input_pressure = P_target;
+
 if exist(filename_output)
     fprintf('*** Alert: Output for this already exists. ***\n')
     return
@@ -302,8 +302,8 @@ initial_distance_from_oscillation = x0;
 driving_frequency = w_D/6.2832;
 
 % Perform fft fitting
-[fitted_attenuation, wavenumber, wavespeed, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector] = ...
-process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
+[fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = ...
+    process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
 
 attenuation_y = fitted_attenuation;
 attenuation_fit_line_y = attenuation_fit_line;
@@ -318,9 +318,6 @@ cleaned_particle_index_y = cleaned_particle_index;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Z Direction Post Processing
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Add the path to the "functions" directory
-addpath('./src/matlab_functions')
 
 % Convert simulation variables to meet function convention
 time_vector = (1:Nt)*dt;
