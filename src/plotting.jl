@@ -256,7 +256,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
    
 
 
-# ---------------------------------- this is all for the transverse data--------------------------------
+    # ---------------------------------- this is all for the transverse data--------------------------------
    if shear == true
         x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
         y = filtered_data[1].unwrapped_phase_vector_x
@@ -1199,6 +1199,25 @@ function getMeanField(filtered_data; plot = true, shear = false)
 
     driving_amp = filtered_data[1].pressure / 100
 
+    if shear ==true
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        y_perp = filtered_data[1].amplitude_vector_x
+    else
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        y_perp = filtered_data[1].amplitude_vector_y
+    end
+
+    if plot == true
+        mat"""
+        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", "\$ A_\\perp \$")
+        set(gca, 'YScale', 'log')
+        grid on
+        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+        set(gca, 'FontSize', 15);
+        legend('FontSize', 15)
+        """
+    end
+
     if plot==true
         mat"""
         coefficients = polyfit($(distance_from_wall), log(abs($(y))), 1);
@@ -1252,24 +1271,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
         """
     end
     
-    if shear ==true
-        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-        y = filtered_data[1].amplitude_vector_x
-    else
-        x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-        y = filtered_data[1].amplitude_vector_y
-    end
 
-    if plot == true
-        mat"""
-        scatter($(x_perp), $(y)/ $(driving_amp), "+", "DisplayName", "\$ A_\\perp \$")
-        set(gca, 'YScale', 'log')
-        grid on
-        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
-        set(gca, 'FontSize', 15);
-        legend('FontSize', 15)
-        """
-    end
 
     # phase
     if shear == true
