@@ -1,6 +1,6 @@
-function pack3dRepeatTile(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, y_mult, z_mult, calc_eig, save_path)
-
-packing_name = string(sprintf("3D_N%d_P%s_Width%d_Seed%d", N, num2str(P), W, seed));
+function pack3dRepeatTile(N, K, P_target, W_factor, seed, x_mult, y_mult, z_mult, calc_eig, in_path, save_path)
+% pack3dRepeatTile(306, 100, .1, 5, 2,2,2, false, 'in/3D/3d_junkyard/')
+packing_name = string(sprintf("3D_tile_N%d_P%s_Width%d_Seed%d", N, num2str(P_target), W_factor, seed));
 
 filename = in_path + packing_name + ".mat";  % Concatenate path and filename
 
@@ -15,6 +15,7 @@ x_repeated = [];
 y_repeated = [];
 z_repeated = [];
 Dn_repeated = [];
+filename = [save_path, '3D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_new) '_Seed' num2str(seed) '.mat'];
 
 for i = 0:N_repeated-1
     x_shifted = x + i * Lx;
@@ -80,7 +81,6 @@ Lx = Lx * x_mult;
 Ly = Ly * y_mult;
 Lz = Lz * z_mult;
 W_factor = W_factor * y_mult; % could be either z or y, but keeping them the same for now
-mass = M;
 diameter_average = mean(Dn);
 
 if calc_eig == true
