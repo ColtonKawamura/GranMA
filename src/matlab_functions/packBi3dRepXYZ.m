@@ -44,7 +44,7 @@ Lx = N*D/W_factor^2; % box depth - how many layer's of Ly*Lz's can fit
 Ly = N*D/2; %starting box height
 Lz = W_factor*D;
 Bv = 0.1; % dissipation factor
-B = 0.1; % absolute dissipation
+B = 0.5; % absolute dissipation
 T = 1; % temperature factor
 Nsmall = N/2; % Number of small
 Nbig = N/2; % Number of big
@@ -52,10 +52,10 @@ Nbig = N/2; % Number of big
 Dn=rand(1,N); %randomize diameter
 [~, i]=sort(Dn);
 for k=1:Nsmall
-    Dn(i(k))=D;
+    Dn(i(k))=D; %starting with the smallest diameter of Small particles, assign a diamter
 end
 for k=1:Nbig
-    Dn(i(k+Nsmall))=D*G;
+    Dn(i(k+Nsmall))=D*G; %starting with the smallest diameter of Big particles, assign a diamter
 end
 
 %% Physical Parameters
@@ -68,13 +68,13 @@ r = P_target;
 r_fast = 0.01;
 flag = true;
 flag2 = true; % flag for re-assinging particles to cells
-fast_compress_flag = false; % !! was set to true for debugging
+fast_compress_flag = true; % !! was set to true for debugging
 
 %% Display Parameters
 % plotit = 1;  % plot ?
 plot_KE = 0;
 Nplotskip = 200;  % number of timesteps to skip before plotting
-
+Ncellupdate = 1;
 %% Simulation Parmeters
 dt = pi*sqrt(M/K)*0.05;
 Nt = 1e8; % Number of steps
@@ -183,7 +183,7 @@ for nt = 1:Nt
     %%%%% Re-assign particles to cells %%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    if flag2 == true || mod(nt,10000) == 0
+    if flag2 == true || mod(nt, Ncellupdate) == 0
         flag2 = false;
         cell_num = ceil(x/cell_width);
         for jj = 1:jj_max
