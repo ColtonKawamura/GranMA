@@ -177,7 +177,7 @@ for nt = 1:Nt
     z  =  z+vz*dt+az_old.*dt.^2/2;
 
     % wrap around periodic boundaries
-    y = mod(y,Ly);
+    y = mod(y,Ly); % !! this is not present in the 2d code 
     z = mod(z,Lz);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%% Re-assign particles to cells %%%%%%%%%
@@ -203,9 +203,9 @@ for nt = 1:Nt
     for jj = 1:jj_max
 
         if jj == 1
-            mm_list = [cell_list{1} cell_list{2}];
+            mm_list = [cell_list{1} cell_list{2} cell_list{jj_max}];
         elseif jj == jj_max
-            mm_list = [cell_list{jj_max-1} cell_list{jj_max}];
+            mm_list = [cell_list{jj_max-1} cell_list{jj_max} cell_list{1}];
         else
             mm_list = [cell_list{jj-1} cell_list{jj} cell_list{jj+1}];
         end
