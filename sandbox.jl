@@ -26,17 +26,22 @@ data_gaus = filter(x -> x.omega > .02, data_gaus) # This is for the wavespeed pl
 data_gaus = filter(x -> x.pressure >= .001, data_gaus) 
 
 function 3dPaperPlots()
-    simulation_data = loadData3d("out/processed/3d_K100_40Kby7_V1.jld2")
+    simulation_data = loadData3d("out/processed/3d_36900by7_V2.jld2") # 5by7by7
+
     plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
 
     # Mean Field Plots
-    transverse_axis = "y"
+    transverse_axis = "z"
     filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
     getMeanField3d(filtered_data, transverse_axis)
 
-    # Amplitude Plots
-    filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+
+    filtered_data = FilterData3d(simulation_data, .1, :pressure, .001, :omega, .5, :gamma, 1, :seed)
     
+    # ----------------------- Final Equation Plots ------------------------
+    gamma_values = [ .001, .05, .1]
+    plotStitchPhaseScatter(simulation_data, gamma_values, shear=true) 
+    plotStitchAmpRatio(simulation_data, gamma_values, shear=true)
 end
 
 function shearPaperPlots()
@@ -54,6 +59,14 @@ function shearPaperPlots()
     data = FilterData(simulation_data, .001, :pressure, .001, :omega, .5, :gamma, 1, :seed)
     plotPhase(data, shear=true) # phase plot for low pressure, low gamma
     
+    # Mean field plots combined
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed) # low pressure
+    mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true) # save this as "f1.fig"
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
+    mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true) # save this as "f1.fig"
+ 
+    # mat"""addpath('src/matlab_functions'); combinePlotsTiled("f1.fig", "f2.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean field
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledFour("f1.fig", "f2.fig", "f3.fig", "f4.fig", [0,25], [1E-2, 1])""" # Need to normalize the mean field
 
     # Theory Plots
     gamma_values = [ .05, .1, .5, 1]
@@ -142,7 +155,6 @@ function paperPlots()
 
     plotAmp(data) # amplitude plot for low pressure, low gamma
 
-
     # mean field over all simulations
     plotAmpRatioMeanField(simulation_data, .1)  # save the figure as fig3.fig
     plotPhaseRatioMeanField(simulation_data, .1) # save this one too as fig4.fig
@@ -159,7 +171,6 @@ function paperPlots()
     gamma_values = [.08, .1,.3, .5, .6, .8, 1]
     plotStitchAttenuation(simulation_data, gamma_values, 1.2)
     plotStitchAttenuation(simulation_data, gamma_values, 1.2)
-
 
 end
 

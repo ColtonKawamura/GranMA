@@ -200,14 +200,14 @@ for nt = 1:Nt
     Fz = zeros(1,N);
     Zn = zeros(1,N);
 
-    for jj = 1:jj_max
+    for jj = 1:jj_max % for each cell
 
-        if jj == 1
-            mm_list = [cell_list{1} cell_list{2} cell_list{jj_max}];
+        if jj == 1 % if it's the first cell, 
+            mm_list = [cell_list{1} cell_list{2} cell_list{jj_max}]; % now the first cell includes interactions with the last cell
         elseif jj == jj_max
-            mm_list = [cell_list{jj_max-1} cell_list{jj_max} cell_list{1}];
+            mm_list = [cell_list{jj_max-1} cell_list{jj_max} cell_list{1}]; % last cell interacts with first cell
         else
-            mm_list = [cell_list{jj-1} cell_list{jj} cell_list{jj+1}];
+            mm_list = [cell_list{jj-1} cell_list{jj} cell_list{jj+1}]; % middle cells interact with cells next to them
         end
 
         for nn = cell_list{jj}
