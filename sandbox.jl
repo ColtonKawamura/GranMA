@@ -42,7 +42,7 @@ function 3dPaperPlots()
     plotAmp(filtered_data, transverse_axis="y")
     gamma_values = [ .001, .05, .1]
     plotStitchPhaseScatter(simulation_data, gamma_values, shear=true) 
-    plotStitchAmpRatio(simulation_data, gamma_values, shear=true)
+    plotStitchAmpRatio(simulation_data, gamma_values)
 end
 
 function shearPaperPlots()
