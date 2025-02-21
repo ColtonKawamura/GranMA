@@ -24,10 +24,82 @@ export
     plotStitchAttenuation,
     plotStitchAmpRatio,
     plotStitchAmpPhase,
-    getMeanField3d
+    getMeanField3d,
+    plotAmp3d
 
 
 #----------------------------------------------3d specific plots------------------------------------------------------------
+function plotAmp3d(filtered_data,  transverse_axis; plot=true, shear=false)
+    @assert transverse_axis in ["y", "z"] "transverse_axis must be either 'y' or 'z'"
+
+    x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+    y = filtered_data[1].amplitude_vector_x
+    coeffs = fitLogLine(x_parra,y)
+    yIntercept_amp_x = coeffs[1]
+    slope_amp_x = coeffs[2]
+    y_x = y
+
+    if shear==true
+       x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+       y = filtered_data[1].amplitude_vector_y
+       coeffs = fitLogLine(x_parra,y)
+       yIntercept_amp_x = coeffs[1]
+       slope_amp_x = coeffs[2]
+        y_x = y
+    end
+    if plot==true
+        display_name = @sprintf("\$ A_{||}(x) \$")
+        mat"""
+        figure
+        scatter($(x_parra), $(y), "DisplayName", $(display_name))
+        hold on
+        set(gca, 'YScale', 'log')
+        grid on
+        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$ A(x) \$", "Interpreter", 'latex', "FontSize", 15)
+        set(get(gca, 'ylabel'), 'rotation', 0);
+        box on
+        hold on 
+        """
+    end
+
+    if transverse_axis == "y"
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        y = filtered_data[1].amplitude_vector_y
+        coeffs = fitLogLine(x_perp,y)
+        yIntercept_amp_y = coeffs[1]
+        slope_amp_y = coeffs[2]
+    else
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
+        y = filtered_data[1].amplitude_vector_z
+        coeffs = fitLogLine(x_perp,y)
+        yIntercept_amp_y = coeffs[1]
+        slope_amp_y = coeffs[2] 
+    end
+
+    if shear == true
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        y = filtered_data[1].amplitude_vector_x
+        coeffs = fitLogLine(x_perp,y)
+        yIntercept_amp_y = coeffs[1]
+        slope_amp_y = coeffs[2]
+    end
+
+    if plot == true
+        display_name = @sprintf("\$ A_\\perp(x) \$")
+        mat"""
+        scatter($(x_perp), $(y), "DisplayName", $(display_name))
+        plot($(x_perp), exp($(yIntercept_amp_y) + $(slope_amp_y) .* $(x_perp)), 'HandleVisibility', 'off')
+        plot($(x_parra), exp($(yIntercept_amp_x) + $(slope_amp_x) .* $(x_parra)), 'HandleVisibility', 'off')
+        set(gca, 'YScale', 'log')
+        grid on
+        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+        """
+    end
+    
+    return exp(yIntercept_amp_y) / exp(yIntercept_amp_x) # Can't do  mean(y ./ y_x), because not same length
+end
+
 function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = false)
     @assert transverse_axis in ["y", "z"] "transverse_axis must be either 'y' or 'z'"
     # fit the prime of the parralell direction data

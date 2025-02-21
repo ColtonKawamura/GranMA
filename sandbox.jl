@@ -39,6 +39,8 @@ function 3dPaperPlots()
     filtered_data = FilterData3d(simulation_data, .1, :pressure, .001, :omega, .5, :gamma, 1, :seed)
     
     # ----------------------- Final Equation Plots ------------------------
+    transverse_axis = "z"
+    plotAmp3d(filtered_data, transverse_axis)
     gamma_values = [ .001, .05, .1]
     plotStitchPhaseScatter(simulation_data, gamma_values, shear=true) 
     plotStitchAmpRatio(simulation_data, gamma_values, shear=true)
