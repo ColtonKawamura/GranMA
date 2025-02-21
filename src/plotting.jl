@@ -328,8 +328,6 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
 
         # Get a list of unique input pressures
         pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
-        # closest_p_idx = argmin(abs.(pressure_list .- .05))
-        # pressure_list = [minimum(pressure_list), pressure_list[closest_p_idx], maximum(pressure_list)] # just get the limits
         pressure_list = [minimum(pressure_list), maximum(pressure_list)] # just get the limits
 
         # get a range for plotting color from 0 to 1
@@ -426,6 +424,7 @@ function plotStitchAmpPhase(simulation_data, gamma_values)
     text(.003, .01, '\$ -\\frac{2}{3} \$', 'Interpreter', 'latex', 'FontSize', 20);
     """ 
 end
+
 function plotStitchAmpRatio(simulation_data, gamma_values; shear=false) 
     mat"""
     ax_energy = figure;
