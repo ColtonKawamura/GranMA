@@ -89,7 +89,7 @@ function plotStitchAmpRatio3d(simulation_data, gamma_values, transverse_axis; sh
                 seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
 
                 for k_seed in seed_list
-                    k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
+                    k_seed_data = FilterData3d(matching_omega_gamma_data, k_seed, :seed)
                     k_seed_omega = k_seed_data[1].omega
 
                     # !! not sure if A+B or something more complitcated
