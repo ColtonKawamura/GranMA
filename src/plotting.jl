@@ -2681,7 +2681,7 @@ end
 
 # Single Simulaiton plots
 
-function plotAmp(filtered_data; plot=true, shear=false)
+function plotAmp(filtered_data; plot=true, shear=false, transverse_axis="y")
     x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft
     y = filtered_data[1].amplitude_vector_x
     coeffs = fitLogLine(x_parra,y)
@@ -2713,11 +2713,25 @@ function plotAmp(filtered_data; plot=true, shear=false)
         """
     end
 
-    x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-    y = filtered_data[1].amplitude_vector_y
-    coeffs = fitLogLine(x_perp,y)
-    yIntercept_amp_y = coeffs[1]
-    slope_amp_y = coeffs[2]
+    # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+    # y = filtered_data[1].amplitude_vector_y
+    # coeffs = fitLogLine(x_perp,y)
+    # yIntercept_amp_y = coeffs[1]
+    # slope_amp_y = coeffs[2]
+    if transverse_axis == "y"
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        y = filtered_data[1].amplitude_vector_y
+        coeffs = fitLogLine(x_perp,y)
+        yIntercept_amp_y = coeffs[1]
+        slope_amp_y = coeffs[2]
+    else
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
+        y = filtered_data[1].amplitude_vector_z
+        coeffs = fitLogLine(x_perp,y)
+        yIntercept_amp_y = coeffs[1]
+        slope_amp_y = coeffs[2] 
+    end
+    
     if shear == true
         x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
         y = filtered_data[1].amplitude_vector_x
