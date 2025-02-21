@@ -100,9 +100,7 @@ function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false)
                         continue
                     end
                     mean_scatter_y = plotPhase(k_seed_data; plot=false, shear=shear)
-                    mean_scatter_y = isinf(mean_scatter) ? NaN : mean_scatter # saftey for infinite values
                     mean_scatter_z = plotPhase(k_seed_data; plot=false, shear=shear, transverse_axis="z")
-                    mean_scatter_z = isinf(mean_scatter) ? NaN : mean_scatter # saftey for infinite values
                     mean_scatter_total = (1-cos(mean_scatter_y))+(1-cos(mean_scatter_z))
                     push!(E_ratio_list, 1-cos(mean_scatter_total))
                     # push!(E_ratio_list, mean_distance)
