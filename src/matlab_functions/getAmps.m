@@ -41,7 +41,9 @@ function [breakOut, outAmp, outXinit, nt_out] = getAmps(nt, x, x0, idx, w_D, A, 
             outAmp = [outAmp, second_peak_Amp];
             outXinit = [outXinit, second_peak_xInit];
             nt_out = [nt_out, nt];
-
+            xlabel('$x_0$', 'Interpreter', 'latex', 'FontSize', 20)
+            ylabel('$ \Delta x$', 'Interpreter', 'latex', 'FontSize', 20)
+            grid on
             % Stop once peak has attenuated past threshold, prevents from jumping, need to see if I need this anymore due to previous ones.
             % if second_peak_Amp < outAmp(1) * .60 % stop sim once 2nd peak amp is some percent of inital amp, .5 works well for low freq, but used .7 for others
             if second_peak_Amp < A * .09 % stop sim once 2nd peak amp is some percent of inital amp, .5 works well for low freq, but used .7 for others
