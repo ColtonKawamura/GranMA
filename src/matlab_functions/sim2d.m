@@ -1,6 +1,6 @@
 function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     %% with no ellipse
-    % Example command: sim2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1, "in/", "out/junk_yard")
+    % Example command: sim2d(100, 1, 1, 1.28, 5000, 0.01, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")
     
     % Set up initial conditions and visualization
     % Add random initial velocities
@@ -121,8 +121,9 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     
     %% Main Loop
     % P = 0; % CAK not sure why this was set to zero....
+    [x0_sorted,idx]=sort(x0);
     for nt = 1:Nt
-    
+        % visualizeSim(1000, x, x0, idx, A )
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% First step in Verlet integration %%%%%
