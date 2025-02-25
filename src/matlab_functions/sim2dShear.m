@@ -1,6 +1,5 @@
 function sim2dShear(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-    %% Molecular Dynamics Simulator (Adapted from Mark D. Shattuck, CCNY)
-    % Example command: simulation_2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1)
+    % Example command: sim2dShear(100, 1, 1, 1.28, 5000, 0.01, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")
     
     % Set up initial conditions and visualization
     % Add random initial velocities
@@ -120,7 +119,9 @@ function sim2dShear(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     [x0_sorted,idx]=sort(x0);
     %% Main Loop
     % P = 0; % CAK not sure why this was set to zero....
+    [~, idx] = sort(x0);
     for nt = 1:Nt
+        visualizeSim(1000, x, x0, idx, A )
         %%% Debug Plotting %%%
         % figure(1000)
         % plot(x0(idx), x(idx) - x0(idx), '.');  ylim(1.2*[-A,A]);drawnow
