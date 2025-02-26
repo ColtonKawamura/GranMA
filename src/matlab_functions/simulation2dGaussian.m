@@ -1,6 +1,6 @@
 function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     %% Molecular Dynamics Simulator (Adapted from Mark D. Shattuck, CCNY)
-    % Example command: simulation_2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1)
+    % Example command: simulation2dGaussian(100, 1, 0, 1.28, 5000, 0.01, 5, 1)
     
     % Set up initial conditions and visualization
     % Add random initial velocities
@@ -50,7 +50,7 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     %     return
     % end
     input_pressure = P;
-    load(['in/' packing_name '.mat']);
+    load(['in/2d_5wide_1000long/' packing_name '.mat']);
     
     % Nt = round(.9*Lx/(pi*sqrt(M/K)*0.05))
     
@@ -237,7 +237,8 @@ function simulation2dGaussian(K, M, Bv, w_D, N, P, W, seed)
     time_vector = (1:Nt)*dt;
     particle_position_range = [2,50];
     number_of_particles_to_view = 3;
-    fftGaus(time_vector, particle_position_range, number_of_particles_to_view, x0, x_all, y_all)
+    % fftGaus(time_vector, particle_position_range, number_of_particles_to_view, x0, x_all, y_all)
+
     % Find a value that is closest to the wall and plot the individual trajectory 
     target_distance = 2 ;
     [~, idx_particle] = min(abs(x0 - target_distance));
