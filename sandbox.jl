@@ -31,7 +31,6 @@ function threeD()
     filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
     getMeanField3d(filtered_data, transverse_axis)
 
-
     filtered_data = FilterData3d(simulation_data, .1, :pressure, .001, :omega, .5, :gamma, 1, :seed)
     
     # ----------------------- Final Equation Plots ------------------------
@@ -42,7 +41,7 @@ function threeD()
 end
 
 function shearPaperPlots()
-    # Shear plots
+    # Shear data
     simulation_data = load_data("out/processed/2d_K100_shear_1000by5_all.jld2")
     simulation_data = load_data("out/processed/2d_shear_80kby40.jld2")
 
