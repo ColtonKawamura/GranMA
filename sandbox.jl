@@ -15,23 +15,19 @@ using LinearAlgebra
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 simulation_data = load_data("out/processed/2d_K100_80kby40.jld2") # large packing with low freqs
 
-# Shear plots
-simulation_data = load_data("out/processed/2d_K100_shear_1000by5_all.jld2")
-simulation_data = load_data("out/processed/2d_shear_80kby40.jld2")
-
 # data_gaus = loadGausData("out/processed/gausGetAmps_noBacktrackV3.jld2")
 data_gaus = loadGausData("out/processed/2d_gaus_withDamping.jld2")
 # data_gaus = filter(x -> x.omega >= 0.03, data_gaus) # This is used for the presentation of the program review 
 data_gaus = filter(x -> x.omega > .02, data_gaus) # This is for the wavespeed plot
 data_gaus = filter(x -> x.pressure >= .001, data_gaus) 
 
-function 3dPaperPlots()
+function threeD()
     simulation_data = loadData3d("out/processed/3d_36900by7_V2.jld2") # 5by7by7
 
     plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
 
     # Mean Field Plots
-    transverse_axis = "z"
+    transverse_axis = "y"
     filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
     getMeanField3d(filtered_data, transverse_axis)
 
@@ -46,6 +42,10 @@ function 3dPaperPlots()
 end
 
 function shearPaperPlots()
+    # Shear plots
+    simulation_data = load_data("out/processed/2d_K100_shear_1000by5_all.jld2")
+    simulation_data = load_data("out/processed/2d_shear_80kby40.jld2")
+
     # high omega
     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .05, :gamma, 1, :seed)
     plotAmp(data, shear=true)
@@ -61,9 +61,9 @@ function shearPaperPlots()
     plotPhase(data, shear=true) # phase plot for low pressure, low gamma
     
     # Mean field plots combined
-    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed) # low pressure
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, 1, :gamma, 1, :seed) # low pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true) # save this as "f1.fig"
-    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, 1, :gamma, 1, :seed) # high pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true) # save this as "f1.fig"
  
     # mat"""addpath('src/matlab_functions'); combinePlotsTiled("f1.fig", "f2.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean field
