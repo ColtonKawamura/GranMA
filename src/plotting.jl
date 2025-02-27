@@ -1476,12 +1476,12 @@ function getMeanField(filtered_data; plot = true, shear = false)
         amplitude_vector = filtered_data[1].amplitude_vector_y
         attenuation = filtered_data[1].alphaoveromega_y
         distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-        omega = filtered_data[1].omega # but this is dimensionelss
+        omega = filtered_data[1].omega 
     else
         amplitude_vector = filtered_data[1].amplitude_vector_x
         attenuation = filtered_data[1].alphaoveromega_x
         distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-        omega = filtered_data[1].omega # but this is dimensionelss
+        omega = filtered_data[1].omega
     end
     # this was the old version before adding shear
     # attenuation = filtered_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
@@ -1520,6 +1520,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
         scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", "\$ A_\\perp \$")
         set(gca, 'YScale', 'log')
         grid on
+        hold on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15);
         legend('FontSize', 15)
@@ -1528,13 +1529,14 @@ function getMeanField(filtered_data; plot = true, shear = false)
 
     if plot==true
         mat"""
+        figure
         coefficients = polyfit($(distance_from_wall), log(abs($(y))), 1);
         fitted_attenuation = coefficients(1);
         intercept_attenuation = coefficients(2);
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
         prime_field_amp_new = abs($(y)-mean_field_new);
-        figure
         scatter($(x_parra), prime_field_amp_new / $(driving_amp), "*", "DisplayName", " \$ A_{||}' \$")
+        % scatter($(x_parra), $(prime_field_amp) / $(driving_amp), "*", "DisplayName", " \$ A_{||}' \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
