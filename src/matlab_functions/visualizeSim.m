@@ -1,6 +1,5 @@
 function visualizeSim(nt, x, x0, y, y0, idx, A)
     if mod(nt,1) == 0
-        figure;
         
         % Plot Δx
         subplot(1,2,1)
