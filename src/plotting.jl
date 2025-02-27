@@ -1501,9 +1501,6 @@ function getMeanField(filtered_data; plot = true, shear = false)
         x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft 
         prime_field_amp = abs.(y - mean_field_amp)
     end
-    # old version of above 
-    # y = filtered_data[1].amplitude_vector_x    
-    # prime_field_amp = abs.(y - mean_field_amp)
 
     driving_amp = filtered_data[1].pressure / 100
 
@@ -1515,17 +1512,6 @@ function getMeanField(filtered_data; plot = true, shear = false)
         y_perp = filtered_data[1].amplitude_vector_y
     end
 
-    if plot == true
-        mat"""
-        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", "\$ A_\\perp \$")
-        set(gca, 'YScale', 'log')
-        grid on
-        hold on
-        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
-        set(gca, 'FontSize', 15);
-        legend('FontSize', 15)
-        """
-    end
 
     if plot==true
         mat"""
@@ -1581,7 +1567,17 @@ function getMeanField(filtered_data; plot = true, shear = false)
         """
     end
     
-
+    if plot == true
+        mat"""
+        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", "\$ A_\\perp \$")
+        set(gca, 'YScale', 'log')
+        grid on
+        hold
+        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+        set(gca, 'FontSize', 15);
+        legend('FontSize', 15)
+        """
+    end
 
     # phase
     if shear == true
