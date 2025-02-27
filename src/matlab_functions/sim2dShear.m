@@ -1,5 +1,5 @@
 function sim2dShear(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-    % Example command: sim2dShear(100, 1, .01, .1, 5000, 0.1, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")
+    % Example command: sim2dShear(100, 1, 1, 1, 5000, 0.1, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")
     
     % Set up initial conditions and visualization
     % Add random initial velocities
@@ -121,14 +121,8 @@ function sim2dShear(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     % P = 0; % CAK not sure why this was set to zero....
     [~, idx] = sort(x0);
     for nt = 1:Nt
-        flag_shear = true;
-        visualizeSim(100000, x, x0, idx, A, flag_shear )
-        %%% Debug Plotting %%%
-        % figure(1000)
-        % plot(x0(idx), x(idx) - x0(idx), '.');  ylim(1.2*[-A,A]);drawnow
-        % figure(2000)
-        % plot(x0(idx), y(idx) - y0(idx), '.'); ylim(3*[-A,A]);drawnow
-        %%% Debug Plotting %%%
+        flag_plotY = true;
+        visualizeSim(10000, x, x0, y, y0, idx, A)
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% First step in Verlet integration %%%%%
