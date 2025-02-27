@@ -1,14 +1,23 @@
-function visualizeSim(nt, x, x0, idx, A, flag_shear)
-    if mod(nt,1)==0
-            plot(x0(idx), x(idx) - x0(idx),'o')
-            if flag_shear == true
-                ylim(1.2*[-A*.1,A*.1])
-            else
-                ylim(1.2*[-A,A])
-            end
-            xlabel('$x_0$', 'Interpreter', 'latex', 'FontSize', 20)
-            ylabel('$ \Delta x$', 'Interpreter', 'latex', 'FontSize', 20)
-            grid on
+function visualizeSim(nt, x, x0, y, y0, idx, A)
+    if mod(nt,1) == 0
+        figure;
+        
+        % Plot Δx
+        subplot(1,2,1)
+        plot(x0(idx), x(idx) - x0(idx), 'o')
+        xlabel('$x_0$', 'Interpreter', 'latex', 'FontSize', 20)
+        ylabel('$ \Delta x$', 'Interpreter', 'latex', 'FontSize', 20)
+        ylim(1.2*[-A,A])
+        grid on
+
+        % Plot Δy
+        subplot(1,2,2)
+        plot(x0(idx), y(idx) - y0(idx), 'o')
+        xlabel('$x_0$', 'Interpreter', 'latex', 'FontSize', 20)
+        ylabel('$ \Delta y$', 'Interpreter', 'latex', 'FontSize', 20)
+        ylim(1.2*[-A,A])
+        grid on
+        
         drawnow
     end
 end
