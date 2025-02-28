@@ -66,7 +66,7 @@ function shearPaperPlots()
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true) # save this as "f1.fig"
  
     # mat"""addpath('src/matlab_functions'); combinePlotsTiled("f1.fig", "f2.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean field
-    mat"""addpath('src/matlab_functions'); combinePlotsTiledFour("f1.fig", "f2.fig", "f3.fig", "f4.fig", [0,50], [1E-2, 1])""" # Need to normalize the mean field
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledFour("f1.fig", "f2.fig", "f3.fig", "f4.fig", [0,], [1E-2, 1])""" # Need to normalize the mean field
 
     # Single simulation
     mat"""addpath('src/matlab_functions'); sim2dShear(100, 1, 1, 1, 5000, 0.001, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")"""
