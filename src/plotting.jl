@@ -1477,12 +1477,21 @@ function getMeanField(filtered_data; plot = true, shear = false)
         attenuation = filtered_data[1].alphaoveromega_y
         distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
         omega = filtered_data[1].omega 
+        legend_para_prime = @sprintf("\$ \\hat{y}' \$")
+        legend_para = @sprintf("\$ \\hat{y} \$")
+        legend_para_mean = @sprintf("\$ \\hat{\\overline{y}} \$")
+        legend_perp = @sprintf("\$ \\hat{x} \$")
     else
         amplitude_vector = filtered_data[1].amplitude_vector_x
         attenuation = filtered_data[1].alphaoveromega_x
         distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
         omega = filtered_data[1].omega
+        legend_para_prime = @sprintf("\$ \\hat{x}' \$")
+        legend_para = @sprintf("\$ \\hat{x} \$")
+        legend_para_mean = @sprintf("\$ \\hat{\\overline{x}} \$")
+        legend_perp = @sprintf("\$ \\hat{y} \$")
     end
+
     # this was the old version before adding shear
     # attenuation = filtered_data[1].alphaoveromega_x # will need to figure out how to adapt this for y later
     # distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
@@ -1521,13 +1530,14 @@ function getMeanField(filtered_data; plot = true, shear = false)
         intercept_attenuation = coefficients(2);
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
         prime_field_amp_new = abs($(y)-mean_field_new);
-        scatter($(x_parra), prime_field_amp_new / $(driving_amp), "*", "DisplayName", " \$ A_{||}' \$")
+        legend_para_prime = $(legend_para_prime);
+        scatter($(x_parra), prime_field_amp_new / $(driving_amp), "*", "DisplayName", legend_para_prime)
         % scatter($(x_parra), $(prime_field_amp) / $(driving_amp), "*", "DisplayName", " \$ A_{||}' \$")
         hold on
         set(gca, 'YScale', 'log')
         grid on
-        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("\$ x_0 \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x_0)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -1538,12 +1548,13 @@ function getMeanField(filtered_data; plot = true, shear = false)
 
     if plot==true
         mat"""
-        scatter($(x_parra), $(y) / $(driving_amp), "o", "DisplayName", "\$ A_{||} \$")
+        legend_para = $(legend_para);
+        scatter($(x_parra), $(y) / $(driving_amp), "o", "DisplayName", legend_para)
         hold on
         set(gca, 'YScale', 'log')
         grid on
-        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("\$ x_0 \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x_0)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -1554,12 +1565,13 @@ function getMeanField(filtered_data; plot = true, shear = false)
     if plot==true
         mat"""
         % scatter($(x_parra), mean_field_new , "v","DisplayName", "\$ \\overline{A}_{||} \$")
-        plot($(x_parra), mean_field_new / $(driving_amp), ":", 'Color', 'k', 'LineWidth', 3 ,"DisplayName", "\$ \\overline{A}_{||} \$")
+        legend_para_mean = $(legend_para_mean);
+        plot($(x_parra), mean_field_new / $(driving_amp), ":", 'Color', 'k', 'LineWidth', 3 ,"DisplayName", legend_para_mean)
         hold on
         set(gca, 'YScale', 'log')
         grid on
-        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("\$ x_0 \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x_0)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -1569,7 +1581,8 @@ function getMeanField(filtered_data; plot = true, shear = false)
     
     if plot == true
         mat"""
-        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", "\$ A_\\perp \$")
+        legend_perp = $(legend_perp);
+        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", legend_perp)
         set(gca, 'YScale', 'log')
         grid on
         hold
