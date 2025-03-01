@@ -1520,12 +1520,15 @@ function getMeanField(filtered_data; plot = true, shear = false)
         x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
         y_perp = filtered_data[1].amplitude_vector_y
     end
-
-
+    vector_limit = length(y_perp)
+    
     if plot==true
         mat"""
         figure
-        coefficients = polyfit($(distance_from_wall), log(abs($(y))), 1);
+        distance_from_wall = $(distance_from_wall);
+        y = $(y);
+        vector_limit = $(vector_limit);
+        coefficients = polyfit(distance_from_wall(1:vector_limit), log(abs(y(1:vector_limit))), 1);
         fitted_attenuation = coefficients(1);
         intercept_attenuation = coefficients(2);
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));

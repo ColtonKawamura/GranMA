@@ -66,8 +66,9 @@ function shearPaperPlots()
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true) # save this as "f1.fig"
  
     # mat"""addpath('src/matlab_functions'); combinePlotsTiled("f1.fig", "f2.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean field
-    mat"""addpath('src/matlab_functions'); combinePlotsTiledFour("f1.fig", "f2.fig", "f3.fig", "f4.fig", [0,], [1E-2, 1])""" # Need to normalize the mean field
-
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("f1.fig", "f2.fig", [0,50], [1E-2, 1])""" # Need to normalize the mean field
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("f1_shear40wide.fig", "f2_shear40wide.fig", [0,50], [1E-2, 1])""" # Need to normalize the mean field
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("f3_shear40wide.fig", "f4_shear40wide.fig", [0,300], [1E-2, 1])""" # Need to normalize the mean fieldh
     # Single simulation
     mat"""addpath('src/matlab_functions'); sim2dShear(100, 1, 1, 1, 5000, 0.001, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")"""
 
@@ -144,13 +145,17 @@ function paperPlots()
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data)
 
     # Mean field plots combined
-    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed) # low pressure
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed) # low pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data) # save this as "f1.fig"
-    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed) # high pressure
+    data = FilterData(simulation_data, .1, :pressure, .1, :omega, .1, :gamma, 1, :seed) # high pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data) # save fiths as "f2.fig" 
  
     # mat"""addpath('src/matlab_functions'); combinePlotsTiled("f1.fig", "f2.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean field
-    mat"""addpath('src/matlab_functions'); combinePlotsTiledFour("f1.fig", "f2.fig", "f3.fig", "f4.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean field
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("f1_regular40wide.fig", "f2_regular40wide.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean field
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("f3_regular40wide.fig", "f4_regular40wide.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean fieldh
+    # 5 wide mean field
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("f1_regular5wide.fig", "f2_regular5wide.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean field
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("f3_regular5wide.fig", "f4_regular5wide.fig", [0,200], [1E-2, 1])""" # Need to normalize the mean fieldh
 
     # Mean field but for shear  simulation_data = load_data("out/processed/2d_K100_shear_1000by5.jld2")
     data = FilterData(simulation_data, .1, :pressure, .001, :omega, .5, :gamma, 1, :seed) # high pressure
