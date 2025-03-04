@@ -1,5 +1,5 @@
 function sim2dShear(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-    % Example command: sim2dShear(100, 1, 1, 1, 5000, 0.1, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")
+    % Example command: sim2dShear(100, 1, 1, 1, 80000, 0.1, 40, 1, "in/2d_tiled_2000by40/", "out/junk_yard")
     
     % Set up initial conditions and visualization
     % Add random initial velocities
@@ -121,7 +121,6 @@ function sim2dShear(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     % P = 0; % CAK not sure why this was set to zero....
     [~, idx] = sort(x0);
     for nt = 1:Nt
-        flag_plotY = true;
         visualizeSim(10000, x, x0, y, y0, idx, A)
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

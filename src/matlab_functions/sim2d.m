@@ -121,9 +121,9 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     
     %% Main Loop
     % P = 0; % CAK not sure why this was set to zero....
-    [x0_sorted,idx]=sort(x0);
+    [~, idx] = sort(x0);
     for nt = 1:Nt
-        % visualizeSim(1000, x, x0, idx, A )
+        visualizeSim(10000, x, x0, y, y0, idx, A)
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% First step in Verlet integration %%%%%
