@@ -1,7 +1,8 @@
 function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     %% with no ellipse
     % Example command: sim2d(100, 1, 1, 1.28, 5000, 0.01, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")
-    
+    % sim2d(100, 1, 1, 1, 80000, 0.1, 40, 1, "in/2d_tiled_2000by40/", "out/junk_yard")
+
     % Set up initial conditions and visualization
     % Add random initial velocities
     % Replace periodic boundaries with fixed walls

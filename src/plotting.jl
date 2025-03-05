@@ -1499,8 +1499,10 @@ function getMeanField(filtered_data; plot = true, shear = false)
 
     A = filtered_data[1].pressure/100
     mean_field_amp = A*exp.(-attenuation*omega*distance_from_wall)
-    # log_amplitude = log.(abs(amplitude_vector_x))
-    # coefficents = polyfit(distance_from_wall, log_amplitude, 1)
+    # log_amplitude = log.(abs.(filtered_data[1].amplitude_vector_x[1:100]))
+    # coefficents = fit(distance_from_wall[1:100], log_amplitude, 1)
+    # display(coefficents[1])
+    # mean_field_amp = A*exp.(-coefficents[1]*omega*distance_from_wall)
     if shear == true
         y = filtered_data[1].amplitude_vector_y
         x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft 
@@ -1527,8 +1529,9 @@ function getMeanField(filtered_data; plot = true, shear = false)
         figure
         distance_from_wall = $(distance_from_wall);
         y = $(y);
-        vector_limit = $(vector_limit);
-        coefficients = polyfit(distance_from_wall(1:vector_limit), log(abs(y(1:vector_limit))), 1);
+        y = y(1:200);
+        distance_from_wall = distance_from_wall(1:200);
+        coefficients = polyfit(distance_from_wall, log(abs(y)), 1);
         fitted_attenuation = coefficients(1);
         intercept_attenuation = coefficients(2);
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
@@ -1537,7 +1540,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
         scatter($(x_parra), prime_field_amp_new / $(driving_amp), "*", "DisplayName", legend_para_prime)
         % scatter($(x_parra), $(prime_field_amp) / $(driving_amp), "*", "DisplayName", " \$ A_{||}' \$")
         hold on
-        set(gca, 'YScale', 'log')
+        set(gca, 'YScale', 'log');
         grid on
         xlabel("\$ x_0 \$", "Interpreter", 'latex', "FontSize", 15)
         ylabel("\$A(x_0)\$", "Interpreter", 'latex', "FontSize", 15)
