@@ -44,7 +44,7 @@ function combinePlots(f1, f2)
     % title(leg, " $\hat{P} $")
 
     % Copy axis labels
-    xlabel(ax, fig2ax.XLabel.String, 'Interpreter', 'Latex', 'FontSize', 20)
+    xlabel(ax, fig2ax.XLabel.String, 'Interpreter', 'Latex', 'FontSize', 15)
     ylabel(ax, fig2ax.YLabel.String, 'Interpreter', 'Latex', 'FontSize', 20)
     set(get(gca, 'ylabel'), 'rotation', 0);
     box on;

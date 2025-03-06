@@ -195,6 +195,10 @@ function width_effect_tile_test()
     # Larger tiles (100 by 20)
     simulation_data = load_data("out/processed/2d_K100_tileTest_100by20.jld2")
     plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)
+
+    # For the tile-test plots in the paper, save the 20by20 and 100by20 plots and use the following command
+    # make sure to go into plotting.jl and comment out the loglog line in plot_ωγ_attenuation_2d to get rid of 1-D theory line
+    mat"""addpath('src/matlab_functions'); combinePlots("figures/tileTest_20by20.fig", "figures/tileTest_100by20.fig")""" 
 end
 
 
