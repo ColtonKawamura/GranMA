@@ -41,7 +41,7 @@ function combinePlots(f1, f2)
     h = [h2;h1];
     hasDisplayName = ~cellfun('isempty',get(h,'DisplayName'));
     leg = legend(ax, h(hasDisplayName),'Location', leg1.Location, 'Interpreter', 'Latex')
-    title(leg, " $\hat{P} $")
+    % title(leg, " $\hat{P} $")
 
     % Copy axis labels
     xlabel(ax, fig2ax.XLabel.String, 'Interpreter', 'Latex', 'FontSize', 20)
