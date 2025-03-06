@@ -24,6 +24,8 @@ yData_right = right_dataObjs(1).YData;
 yData_left(yData_left == 0) = NaN;
 yData_right(yData_right == 0) = NaN;
 
+close(fig_1)
+
 % Create a new figure because matlab is weird
 figure;
 ax1 = subplot(1,2,1); % Left subplot
@@ -97,6 +99,8 @@ yData_right = right_dataObjs(1).YData;
 % clean the rattlers for the visuliation
 yData_left(yData_left == 0) = NaN;
 yData_right(yData_right == 0) = NaN;
+
+close(fig_1)
 
 % Create a new figure because matlab is weird
 figure;
@@ -174,6 +178,8 @@ yData_right = right_dataObjs(1).YData;
 yData_left(yData_left == 0) = NaN;
 yData_right(yData_right == 0) = NaN;
 
+close(fig_1)
+
 % Create a new figure because matlab is weird
 figure;
 ax1 = subplot(1,2,1); % Left subplot
@@ -245,6 +251,7 @@ yData_left = left_dataObjs(1).YData;
 xData_right = right_dataObjs(1).XData;
 yData_right = right_dataObjs(1).YData;
 
+close(fig_1)
 % Create a new figure because matlab is weird
 figure;
 ax1 = subplot(1,2,1); % Left subplot
