@@ -20,6 +20,10 @@ yData_left = left_dataObjs(1).YData;
 xData_right = right_dataObjs(1).XData;
 yData_right = right_dataObjs(1).YData;
 
+% clean the rattlers for the visuliation
+yData_left(yData_left == 0) = NaN;
+yData_right(yData_right == 0) = NaN;
+
 % Create a new figure because matlab is weird
 figure;
 ax1 = subplot(1,2,1); % Left subplot
@@ -30,6 +34,9 @@ scatter(ax1, xData_left, yData_left)
 scatter(ax2, xData_right, yData_right)
 xlim(ax1, [0, 1000])
 xlim(ax2, [0, 1000])
+
+box(ax1, 'on')
+box(ax2, 'on')
 
 xlabel(ax1, '$x_0$', 'Interpreter', 'latex', 'FontSize', 20)
 ylabel(ax1, '$\Delta x$', 'Interpreter', 'latex', 'FontSize', 20)
@@ -43,9 +50,8 @@ ylim(ax2, leftYLim)
 
 grid(ax1, 'on')
 grid(ax2, 'on')
-box on
 %% **Inset for the Left Subplot**
-ax_inset1 = axes('Position', [0.24, 0.62, 0.18, 0.26]); % Adjust position & size
+ax_inset1 = axes('Position', [0.3, 0.68, 0.19, 0.28]); % Adjust position & size
 scatter(ax_inset1, xData_left, yData_left)
 xlim(ax_inset1, [1, 100])
 ylim(ax_inset1, [min(yData_left), max(yData_left)]) % Adjust y-axis for zoom-in
@@ -53,7 +59,7 @@ grid(ax_inset1, 'on')
 set(ax_inset1, 'Box', 'on', 'Layer', 'top', 'Color', 'w')
 
 %% **Inset for the Right Subplot**
-ax_inset2 = axes('Position', [0.68, 0.62, 0.18, 0.26]); % Adjust position & size
+ax_inset2 = axes('Position', [0.74, 0.68, 0.19, 0.28]); % Adjust position & size
 scatter(ax_inset2, xData_right, yData_right)
 xlim(ax_inset2, [1, 100])
 ylim(ax_inset2, [min(yData_right), max(yData_right)]) % Adjust y-axis for zoom-in
@@ -62,7 +68,7 @@ set(ax_inset2, 'Box', 'on', 'Layer', 'top', 'Color', 'w')
 
 drawnow % Force MATLAB to refresh the figure
 
-saveas(gcf, 'shear_displacement_40wide_highP.eps', 'epsc');  % Save as color EPS
+saveas(gcf, 'figures/shear_displacement_40wide_highP.eps', 'epsc');  % Save as color EPS
 
 %% Shear Low pressure
 
@@ -88,6 +94,10 @@ yData_left = left_dataObjs(1).YData;
 xData_right = right_dataObjs(1).XData;
 yData_right = right_dataObjs(1).YData;
 
+% clean the rattlers for the visuliation
+yData_left(yData_left == 0) = NaN;
+yData_right(yData_right == 0) = NaN;
+
 % Create a new figure because matlab is weird
 figure;
 ax1 = subplot(1,2,1); % Left subplot
@@ -96,6 +106,10 @@ ax2 = subplot(1,2,2); % Right subplot
 % Replot data
 scatter(ax1, xData_left, yData_left)
 scatter(ax2, xData_right, yData_right)
+
+box(ax1, 'on')
+box(ax2, 'on')
+
 xlim(ax1, [0, 1000])
 xlim(ax2, [0, 1000])
 
@@ -113,7 +127,7 @@ grid(ax1, 'on')
 grid(ax2, 'on')
 box on
 %% **Inset for the Left Subplot**
-ax_inset1 = axes('Position', [0.24, 0.62, 0.18, 0.26]); % Adjust position & size
+ax_inset1 = axes('Position', [0.3, 0.68, 0.19, 0.28]); % Adjust position & size
 scatter(ax_inset1, xData_left, yData_left)
 xlim(ax_inset1, [1, 40])
 ylim(ax_inset1, [min(yData_left), max(yData_left)]) % Adjust y-axis for zoom-in
@@ -121,7 +135,7 @@ grid(ax_inset1, 'on')
 set(ax_inset1, 'Box', 'on', 'Layer', 'top', 'Color', 'w')
 
 %% **Inset for the Right Subplot**
-ax_inset2 = axes('Position', [0.68, 0.62, 0.18, 0.26]); % Adjust position & size
+ax_inset2 = axes('Position', [0.74, 0.68, 0.19, 0.28]); % Adjust position & size
 scatter(ax_inset2, xData_right, yData_right)
 xlim(ax_inset2, [1, 40])
 ylim(ax_inset2, [min(yData_right), max(yData_right)]) % Adjust y-axis for zoom-in
@@ -129,7 +143,7 @@ grid(ax_inset2, 'on')
 set(ax_inset2, 'Box', 'on', 'Layer', 'top', 'Color', 'w')
 
 drawnow % Force MATLAB to refresh the figure
-saveas(gcf, 'shear_displacement_40wide_lowP.eps', 'epsc');  % Save as color EPS
+saveas(gcf, 'figures/shear_displacement_40wide_lowP.eps', 'epsc');  % Save as color EPS
 
 
 %% Compression High pressure
@@ -156,6 +170,10 @@ yData_left = left_dataObjs(1).YData;
 xData_right = right_dataObjs(1).XData;
 yData_right = right_dataObjs(1).YData;
 
+% clean the rattlers for the visuliation
+yData_left(yData_left == 0) = NaN;
+yData_right(yData_right == 0) = NaN;
+
 % Create a new figure because matlab is weird
 figure;
 ax1 = subplot(1,2,1); % Left subplot
@@ -164,6 +182,10 @@ ax2 = subplot(1,2,2); % Right subplot
 % Replot data
 scatter(ax1, xData_left, yData_left)
 scatter(ax2, xData_right, yData_right)
+
+box(ax1, 'on')
+box(ax2, 'on')
+
 xlim(ax1, [0, 1000])
 xlim(ax2, [0, 1000])
 
@@ -181,7 +203,7 @@ grid(ax1, 'on')
 grid(ax2, 'on')
 box on
 %% **Inset for the Left Subplot**
-ax_inset1 = axes('Position', [0.24, 0.62, 0.18, 0.26]); % Adjust position & size
+ax_inset1 = axes('Position', [0.3, 0.68, 0.19, 0.28]); % Adjust position & size
 scatter(ax_inset1, xData_left, yData_left)
 xlim(ax_inset1, [1, 100])
 ylim(ax_inset1, [min(yData_left), max(yData_left)]) % Adjust y-axis for zoom-in
@@ -189,7 +211,7 @@ grid(ax_inset1, 'on')
 set(ax_inset1, 'Box', 'on', 'Layer', 'top', 'Color', 'w')
 
 %% **Inset for the Right Subplot**
-ax_inset2 = axes('Position', [0.68, 0.62, 0.18, 0.26]); % Adjust position & size
+ax_inset2 = axes('Position', [0.74, 0.68, 0.19, 0.28]); % Adjust position & size
 scatter(ax_inset2, xData_right, yData_right)
 xlim(ax_inset2, [1, 100])
 ylim(ax_inset2, [min(yData_right), max(yData_right)]) % Adjust y-axis for zoom-in
@@ -198,7 +220,7 @@ set(ax_inset2, 'Box', 'on', 'Layer', 'top', 'Color', 'w')
 
 drawnow % Force MATLAB to refresh the figure
 
-saveas(gcf, 'compression_displacement_40wide_highP.eps', 'epsc');  % Save as color EPS
+saveas(gcf, 'figures/compression_displacement_40wide_highP.eps', 'epsc');  % Save as color EPS
 %% Compression Low pressure
 
 % Open the figure and extract axes
@@ -228,9 +250,17 @@ figure;
 ax1 = subplot(1,2,1); % Left subplot
 ax2 = subplot(1,2,2); % Right subplot
 
+% clean the rattlers for the visuliation
+yData_left(yData_left == 0) = NaN;
+yData_right(yData_right == 0) = NaN;
+
 % Replot data
 scatter(ax1, xData_left, yData_left)
 scatter(ax2, xData_right, yData_right)
+
+box(ax1, 'on')
+box(ax2, 'on')
+
 xlim(ax1, [0, 1000])
 xlim(ax2, [0, 1000])
 
@@ -248,7 +278,7 @@ grid(ax1, 'on')
 grid(ax2, 'on')
 box on
 %% **Inset for the Left Subplot**
-ax_inset1 = axes('Position', [0.24, 0.62, 0.18, 0.26]); % Adjust position & size
+ax_inset1 = axes('Position', [0.3, 0.68, 0.19, 0.28]); % Adjust position & size
 scatter(ax_inset1, xData_left, yData_left)
 xlim(ax_inset1, [1, 100])
 ylim(ax_inset1, [min(yData_left), max(yData_left)]) % Adjust y-axis for zoom-in
@@ -256,7 +286,7 @@ grid(ax_inset1, 'on')
 set(ax_inset1, 'Box', 'on', 'Layer', 'top', 'Color', 'w')
 
 %% **Inset for the Right Subplot**
-ax_inset2 = axes('Position', [0.68, 0.62, 0.18, 0.26]); % Adjust position & size
+ax_inset2 = axes('Position', [0.74, 0.68, 0.19, 0.28]); % Adjust position & size
 scatter(ax_inset2, xData_right, yData_right)
 xlim(ax_inset2, [1, 100])
 ylim(ax_inset2, [min(yData_right), max(yData_right)]) % Adjust y-axis for zoom-in
@@ -264,4 +294,4 @@ grid(ax_inset2, 'on')
 set(ax_inset2, 'Box', 'on', 'Layer', 'top', 'Color', 'w')
 
 drawnow % Force MATLAB to refresh the figure
-saveas(gcf, 'compression_displacement_40wide_lowP.eps', 'epsc');  % Save as color EPS
+saveas(gcf, 'figures/compression_displacement_40wide_lowP.eps', 'epsc');  % Save as color EPS
