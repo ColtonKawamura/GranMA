@@ -1,0 +1,19 @@
+using JLD2, FileIO, CSV, DataFrames
+
+# Define the input JLD2 file path and output CSV file path
+jld2_file = "out/processed/2d_bi_K100_W5.jld2"
+csv_file = "out/processed/2d_bi_K100_W5.csv"
+
+# Load the JLD2 file
+data = load(jld2_file)
+
+# Convert the simulation data to a DataFrame
+if haskey(data, "simulation_data")  # Ensure the key exists
+    df = DataFrame(data["simulation_data"])
+    
+    # Save as CSV
+    CSV.write(csv_file, df)
+    println("Successfully saved to CSV: $csv_file")
+else
+    println("Key 'simulation_data' not found in the JLD2 file.")
+end
