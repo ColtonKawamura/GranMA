@@ -1,7 +1,6 @@
 out/simulation_2d
 out/processed
 *.out
-HPC_scripts
 .gitignore
 packing_job_2d_bi.sh
 packing_job_2d_bi.txt
