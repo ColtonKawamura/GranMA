@@ -1,5 +1,5 @@
 function pack3dRepeatTile(N, K, P_target, W_factor, seed, x_mult, y_mult, z_mult, calc_eig, in_path, save_path)
-% pack3dRepeatTile(3780, 100, .1, 15, 1, 20, 1, 1, false, 'in/3D/tiles_20by20by20/', 'in/3D/tiled_15by300')
+% pack3dRepeatTile(3780, 100, .01, 15, 3, 20, 1, 1, false, 'in/3D/tiles_20by20by20/', 'in/3D/tiled_15by300/')
 
 packing_name = string(sprintf("3D_tile_N%d_P%s_Width%d_Seed%d", N, num2str(P_target), W_factor, seed));
 
@@ -21,7 +21,7 @@ filename = [save_path, '3D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num
 for i = 0:N_repeated-1
     x_shifted = x + i * Lx;
     y_shifted = y + i * Ly;
-    z_shifted = z + i * Lz
+    z_shifted = z + i * Lz;
     x_repeated = [x_repeated, x_shifted];
     y_repeated = [y_repeated, y];
     z_repeated = [z_repeated, z];
