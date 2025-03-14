@@ -1529,8 +1529,8 @@ function getMeanField(filtered_data; plot = true, shear = false)
         figure
         distance_from_wall = $(distance_from_wall);
         y = $(y);
-        y = y(1:200);
-        distance_from_wall = distance_from_wall(1:200);
+        % y = y(1:200); % Uncomment these for when the fit is incorrect
+        % distance_from_wall = distance_from_wall(1:200); %  % Uncomment these for when the fit is incorrect
         coefficients = polyfit(distance_from_wall, log(abs(y)), 1);
         fitted_attenuation = coefficients(1);
         intercept_attenuation = coefficients(2);
