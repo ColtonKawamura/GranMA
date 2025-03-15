@@ -1598,7 +1598,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
         """
     end
 
-    # phase
+    # phase --------------------------------------------------------------
     if shear == true
         phase = filtered_data[1].unwrapped_phase_vector_y 
     else
@@ -1636,7 +1636,7 @@ function getMeanField(filtered_data; plot = true, shear = false)
     fitline = Polynomials.fit(distance_from_wall_sorted, unwrapped_phase_sorted, 1)
     # get the phase of the fit line
     mean_field_phase = fitline.(distance_from_wall_sorted)
-    prime_field_phase = unwrapped_phase_sorted .- mean_field_phase
+    prime_field_phase = abs.(unwrapped_phase_sorted .- mean_field_phase)
     # _-----------------------------
 
 
@@ -1645,16 +1645,15 @@ function getMeanField(filtered_data; plot = true, shear = false)
     mean_field_phase = mod.(mean_field_phase, 2π)
     # prime_field_phase = phase .- mean_field_phase
     prime_field_phase = mod.(prime_field_phase, 2π)
-    prime_field_amp_new = prime_field_phase.- mean(prime_field_phase);
+    # prime_field_amp_new = prime_field_phase.- mean(prime_field_phase);
     
     if shear == true
-        prime_field_amp_new = abs.(prime_field_amp_new) # Did this because it was negative
-        # prime_field_amp_new = prime_field_phase
+        # No need for a shear component
     end
     if plot==true
         mat"""
         figure
-        scatter($(distance_from_wall), $(prime_field_amp), "*", "DisplayName", "\$ \\phi_{||}' \$")
+        scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "\$ \\phi_{||}' \$")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
