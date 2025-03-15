@@ -61,7 +61,7 @@ function shearPaperPlots()
     plotPhase(data, shear=true) # phase plot for low pressure, low gamma
     
     # Mean field plots combined
-    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed) # high pressure
+    data = FilterData(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed) # low pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true) # save this as "f1.fig"
     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .1, :gamma, 1, :seed) # high pressure
     mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase = getMeanField(data, shear = true) # save this as "f1.fig"
