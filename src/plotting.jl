@@ -854,6 +854,8 @@ function plotStitchAmpRatio(simulation_data, gamma_values; shear=false)
 end
 
 function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter; shear=false) 
+    shave = false # forgot why I put this here, need to fix int he future
+
     # Define the plot limits to match the 1D theory plot curves
     theory_x = collect(3E-4:1E-5:3)
     theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
