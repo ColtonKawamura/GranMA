@@ -8,7 +8,7 @@ function packPoly2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult
     % P_thres, targeted threshold pressure
     % W_factor, Factor of the width vs number of particles d
     % calc_eig, boolean wheter or not you want to caculate and save eigen stuff 
-    % packBi2dRepXY(26,100, 1, 1.5, 1, .1, 5, 1, true, 1, 1, false, 'in/damped_eig_test/')
+    % packPoly2dRepXY(26,100, 1, 1.5, 1, .1, 5, 1, true, 1, 1, false, 'in//')
     
     %% Set up section
     rng(seed)
@@ -16,7 +16,7 @@ function packPoly2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult
     N_new = N * x_mult*y_mult; % number of times x repeated times y repeated
     W_new = W_factor * y_mult; % just number of times y is repeated
     % filename = ['in/2D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_new) '_Seed' num2str(seed) '.mat']
-    filename = [save_path, '2D_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_new) '_Seed' num2str(seed) '.mat'];
+    filename = [save_path, '2D_poly_N' num2str(N_new) '_P' num2str(P_target) '_Width' num2str(W_new) '_Seed' num2str(seed) '.mat'];
 
     if exist(filename)
         display("file already exsists!")
