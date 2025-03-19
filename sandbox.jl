@@ -23,9 +23,9 @@ data_gaus = filter(x -> x.pressure >= .001, data_gaus)
 
 function threeD()
     simulation_data = loadData3d("out/processed/3d_36900by7_V2.jld2") # 5by7by7
-    simulation_data = loadData3d("out/processed/3d_80Kby15_V1.jld2") # 15by15 tiles out to 300 long channel
+    simulation_data = loadData3d("out/processed/3d_80Kby15_V2.jld2") # 15by15 tiles out to 300 long channel
 
-    plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
+    plot_ωγ_attenuation_2d(simulation_data, .1, 1.2)
 
     # Mean Field Plots
     transverse_axis = "y"

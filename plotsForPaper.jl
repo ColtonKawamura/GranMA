@@ -3,6 +3,21 @@ include("src/GranMA.jl")
 using .GranMA
 using MATLAB
 
+
+# 3D Compression Plots
+
+function compression3dAttenuation()
+    simulation_data = loadData3d("out/processed/3d_80Kby15_V2.jld2") # 15by15 tiles out to 300 long channel
+
+    plot_ωγ_attenuation_2d(simulation_data, .01, 1.2)    
+    
+    # Stitch Attenuation
+    gamma_values = 10 .^ range(-3, stop=2, length=8)
+    plotStitchAttenuation(simulation_data, gamma_values, 1.2)
+end
+
+
+
 # 2D Compression Plots
 
 function compressionMeanField2D()
@@ -54,6 +69,9 @@ function compressionMeanField2D()
     mat"close all"
 end
 
+function plotModeDensity2D()
+    mat"""plotDampedModeDensityPDF("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N400_K100_M1.mat", [.2, .01, .001], [.1])"""
+end
 
 # 2d Shear Plots
 
