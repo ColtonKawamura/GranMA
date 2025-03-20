@@ -1,7 +1,6 @@
-function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
-    %% Molecular Dynamics Simulator (Adapted from Mark D. Shattuck, CCNY)
-    % Example command: simulation_2d(100, 1, 1, 1.28, 5000, 5000, 0.01, 5, 1)
-    
+function sim2dPoly(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
+    % sim2dPoly(100, 1, 1, 1, 80000, 0.1, 40, 1, "in/2d_tiled_2000by40/", "out/junkyard")
+
     % Set up initial conditions and visualization
     % Add random initial velocities
     % Replace periodic boundaries with fixed walls
@@ -15,28 +14,40 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
     
     
     % % Script Variables for debugging
-    K = 100;
-    M = 1;
-    Bv = .5;
-    w_D = 0.36; % 
-    N = 10000;
-    P = 0.001; % 0.021544 0.046416
-    W = 10;
-    seed = 1;
-    
+    % addpath("/Users/coltonkawamura/Documents/GranMA/src/matlab_functions")
+    % K = 100;
+    % M = 1;
+    % Bv = .1;
+    % w_D = 0.36; % 
+    % N = 5000;
+    % P = 0.01; % 0.021544 0.046416
+    % W = 5;
+    % seed = 1;
+
+    % K = 100;
+    % M = 1;
+    % Bv = .1;
+    % w_D = 0.36; % 
+    % N = 12;
+    % P = 0.01; % 0.021544 0.046416
+    % W = 3;
+    % seed = 1;   
     
     % Create the packing name with the exact number format for P
-    packing_name = sprintf('2D_poly_N%d_P%s_Width%d_G_Seed%d', N, num2str(P), W, G, seed);
+    packing_name = string(sprintf("2D_N%d_P%s_Width%d_Seed%d", N, num2str(P), W, seed));
     
     % Create the filename
     % filename_output = sprintf('%s_K%d_Bv%d_wD%d_M%d.mat', packing_name, K, Bv, w_D, M);
-    filename_output = sprintf('%s_K%d_Bv%d_wD%.2f_M%d.mat', packing_name, K, Bv, w_D, M);
+    filename_output = string(sprintf("%s_K%d_Bv%d_wD%.2f_M%d.mat", packing_name, K, Bv, w_D, M));
     
-    % if exist(char("out/simulation_2d/K100_no_last_quarter/" + filename_output), 'file')
+    % if exist(char("out/simulation_2d/K100_everything_smaller_dt/" + filename_output), 'file')
     %     return
     % end
     input_pressure = P;
-    load(['in/' packing_name '.mat']);
+    filename = in_path + packing_name + ".mat";  % Concatenate path and filename
+
+    load(filename);
+    % load(['in/' packing_name '.mat']);
     
     % Nt = round(.9*Lx/(pi*sqrt(M/K)*0.05))
     
@@ -49,7 +60,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
     
     dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
-    Nt = round(.9.*(Lx ./ c_0)./(dt))
+    Nt = round(.9.*(Lx ./ c_0)./(dt));
     ax_old = 0*x;
     ay_old = 0*y;
     vx = 0*x;
@@ -92,7 +103,16 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
         Zn_list = [Zn_list;length(spring_list_nn)];
     end
     
-    
+    % [Hessian, eigen_values, eigen_vectors] = HessYale(x, y, Dn, N, Ly, K);
+    % sort eigen_vector's columns in ascending order, then short eignvectors accordingly
+    % [ascending_eigen_values, eigen_idx] = sort(eigen_values, 1);
+    % ascending_eigen_vectors = zeros(size(ascending_eigen_values));
+    % for col = 1:size(ascending_eigen_vectors, 2) % Go throuch each column 
+    %     ascending_eigen_vectors(:, col) = eigen_vectors(eigen_idx(:, col), col); % grab all the rows from each column in eigen_vectors and 
+    % end
+
+    % mode_to_plot = 2; % should just be the column
+    % plotEigenmode(x0', y0', eigen_vectors, mode_to_plot)
     % identify wall particles
     left_wall_list = (x<Dn/2);
     right_wall_list = (x>Lx-Dn/2);
@@ -100,8 +120,9 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
     
     %% Main Loop
     % P = 0; % CAK not sure why this was set to zero....
+    [~, idx] = sort(x0);
     for nt = 1:Nt
-    
+        visualizeSim(10000, x, x0, y, y0, idx, A)
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% First step in Verlet integration %%%%%
@@ -260,7 +281,40 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
     hold on;  % Keep the plot for adding the fitted line
     box on;  
     scatter(initial_distance_from_oscillation_output_y_fft, wrapped_phase_vector_y, 'o');
+   
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % % Figure of one particle's motion, just for poster purposes
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    target_distance = 21;
+    [~, index_to_plot] = min(abs(x0 - target_distance));
 
+    % Plotting
+    figure
+    
+    % Plot centered on zero
+    position_particles = x_all;
+    index_particle_to_plot = index_to_plot;
+    plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
+    hold on
+    position_particles = y_all;
+    plot(time_vector, position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:)))
+    
+    % title('Particle Position Over Time', 'Interpreter', 'latex')
+    xlabel('Time (s)', 'Interpreter', 'latex', 'FontSize', 15)
+    ylabel('$ A(x)$', 'Interpreter', 'latex', "Rotation", 0, 'FontSize', 15)
+    legend('$A_{||}$', '$A_{\perp}$' ,'Interpreter', 'latex', 'FontSize', 15)
+    legend show
+    grid on
+    hold off
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % % FFT of a single partcile 
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    position_particles = x_all; 
+    data = position_particles(index_particle_to_plot,:) - mean(position_particles(index_particle_to_plot,:));
+    fps = 1 / mean(diff(time_vector));
+    marker_color = 'b';
+    plotfft(data, fps, marker_color)
+    grid on
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Figure of one particle's motion, just for poster purposes
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -283,7 +337,7 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
         max_y_value = max(max_y_value, max(abs(x_all(index_particle_to_plot, :) - mean(x_all(index_particle_to_plot, :)))));
         max_y_value = max(max_y_value, max(abs(y_all(index_particle_to_plot, :) - mean(y_all(index_particle_to_plot, :)))));
     end
-
+    figure
     % Set up tiled layout for the plots
     tiledlayout(length(target_distances),1); % Create tiled layout with rows equal to the number of target distances
 
@@ -319,62 +373,11 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % % Ellipse Statistics
-    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    tvec = (1:Nt)*dt;
-    %  Only analyze data that passed fft_x check
-    x_all_xfft = x_all(cleaned_particle_index_x,:);
-    y_all_xfft = y_all(cleaned_particle_index_x, :);
-    x0_xfft = x0(cleaned_particle_index_x);
-    y0_xfft = y0(cleaned_particle_index_x);
-    N_xfft= length(x0_xfft);
-
-
-    %  make variables for y_fft
-    x_all_yfft = x_all(cleaned_particle_index_y,:);
-    y_all_yfft = y_all(cleaned_particle_index_y, :);
-    x0_yfft = x0(cleaned_particle_index_y);
-    y0_yfft = y0(cleaned_particle_index_y);
-    N_yfft= length(x0_yfft);
-
-    ellipse_stats = process_ellipse(tvec, N_xfft , x_all_xfft, y_all_xfft, x0_xfft, y0_xfft, left_wall_list, A);
-    
-    % Copy the ellipse_stats matrix to a new variable for processing.
-    ellipse_stats_nonzero = ellipse_stats; % (semi-major axis, semi-minor axis, rotation angle, initial position from oscillation)
-    
-    % Convert the rotation angles from radians to degrees for easier interpretation.
-    ellipse_stats_nonzero(:,3) = ellipse_stats_nonzero(:,3)*180/pi;
-    
-    % Ensure the semi-major and semi-minor axes values are positive.
-    ellipse_stats_nonzero(:,1:2) = abs(ellipse_stats_nonzero(:,1:2));
-    
-    % Remove any rows where the semi-major axis is zero.
-    ellipse_stats_nonzero = ellipse_stats_nonzero(ellipse_stats_nonzero(:,1)~=0,:);
-    
-    % Calculate the histogram of aspect ratios (semi-minor axis divided by semi-major axis) using bins of 0.05.
-    [asp_rat_counts,asp_rat_bins] = histcounts((ellipse_stats_nonzero(:,2))./(ellipse_stats_nonzero(:,1)),0:.05:1);
-    
-    % Calculate the histogram of absolute rotation angles using bins of 5 degrees up to 90 degrees.
-    [rot_ang_counts,rot_ang_bins] = histcounts(abs(ellipse_stats_nonzero(:,3)),0:5:90);
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Procesces Ellipse Statistics
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Find the limit of what's cleaned data
-    
-    max_distance_from_wall = round(max(initial_distance_from_oscillation_output_x_fft));
-    
-    [binned_semi_minor_values, binned_semi_major_values, binned_rot_angle_values, bin_centers] = process_ellipse_data(ellipse_stats_nonzero);
-    
-    [mean_aspect_ratio, mean_rotation_angles] =plot_ellipse_statistics(binned_semi_minor_values, binned_semi_major_values, binned_rot_angle_values, bin_centers, max_distance_from_wall);
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Output
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Let's make everything Dimensionless
-    diameter_average = mean(Dn); % This is only here until all the old packings are updated to have this as an output CAO 1JUN2024
+    diameter_average = 1; % This is only here until all the old packings are updated to have this as an output CAO 1JUN2024
     mass_particle_average = 1;
     attenuation_x_dimensionless = attenuation_x*diameter_average;
     attenuation_y_dimensionless = attenuation_y*diameter_average;
@@ -384,11 +387,26 @@ function simulation_2d(K, M, Bv, w_D, N, P, G, W, seed)
     gamma_dimensionless = Bv/sqrt(K*mass_particle_average);
     pressure_dimensionless = P;
     % Save the file
-    save(['out/simulation_2d/K100_everything2/' filename_output], 'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
+    % save(['out/simulation_2d/K100_everything_smaller_dt/' filename_output], 'gamma_dimensionless', 'time_vector', 'index_particles', 'attenuation_x_dimensionless','attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x','wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', 'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', 'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y")
+    save_path = fullfile(out_path, filename_output);
+
+    % save(save_path, 'gamma_dimensionless', 'time_vector', 'index_particles', 'attenuation_x_dimensionless','attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x','wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', 'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', 'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y")
+    
+    % Not doing ellispse stats, so save as zeros
+    ellipse_stats_nonzero = zeros(1, 6);
+    asp_rat_bins = zeros(1, 6);
+    asp_rat_counts = zeros(1, 6);
+    rot_ang_bins = zeros(1, 6);
+    rot_ang_counts = zeros(1, 6);
+    mean_aspect_ratio = 0;
+    mean_rotation_angles = 0;
+    y0_yfft = 0;
+    y0_xfft = 0;
+    
+    save( save_path,'gamma_dimensionless','ellipse_stats_nonzero', 'asp_rat_bins', 'asp_rat_counts', ...
         'rot_ang_bins', 'rot_ang_counts', 'time_vector', 'index_particles', 'attenuation_x_dimensionless', ...
         'attenuation_y_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavespeed_x', ...
          'wavespeed_y', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
             'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft', ...
-             'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y", "y0_yfft", "y0_xfft", "diameter_average")
-
+             'amplitude_vector_x', 'amplitude_vector_y', "pressure_dimensionless", "seed", "mean_aspect_ratio", "mean_rotation_angles", "seed", "input_pressure", "unwrapped_phase_vector_x", "unwrapped_phase_vector_y", "y0_yfft", "y0_xfft");
     % save(['out/simulation_2d/K100_everything3/' filename_output])
