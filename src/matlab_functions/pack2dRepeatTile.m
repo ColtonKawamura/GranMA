@@ -1,5 +1,5 @@
 function pack2dRepeatTile(N, K, P_target, W_factor, seed, x_mult, y_mult, calc_eig, in_path, save_path)
-% pack2dRepeatTile(1200, 100, .001, 20, 1, 20, 1, 1, false, 'in/3D/tiles_20by20by20/', 'in/2d_poly_20by20/')
+% pack2dRepeatTile(1200, 100, .001, 20, 1, 10, 1, false, 'in/2d_poly_20by20/tiles/', 'in/2d_poly_20by20/')
 
 packing_name = string(sprintf("2D_N%d_P%s_Width%d_Seed%d", N, num2str(P_target), W_factor, seed));
 

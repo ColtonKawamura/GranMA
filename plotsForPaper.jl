@@ -101,6 +101,17 @@ function shearMeanField2D()
     mat"close all"
 end
 
+# ----------------------------------------------------------------
+# ------------------- Packings -----------------------------------
+# ----------------------------------------------------------------
+
+
+# ------------------- 2d Poly Packings -------------------
+# Pack Poly Tiles
+mat"packPoly2dRepXY(400,100, 1, 1, 1, .001, 20, 1, false, 1, 1, false, 'in/2d_poly_20by20/tiles/')"
+# Repeat Poly Packings
+mat"pack2dRepeatTilePoly(1200, 100, .001, 20, 1, 100, 2, false, 'in/2d_poly_20by20/tiles/', 'in/2d_poly_20by20/')"
+
 
 # ------------------- Packing Visulaization -------------------
 mat"visualizeFullPacking('in/2d_poly_20by20/2D_N12000_P0.001_Width20_Seed1.mat', 20, 20)"
