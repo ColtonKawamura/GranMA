@@ -1,5 +1,5 @@
 function visualizeTile(packing_name)
-    % visualizeTile('in/2d_poly_20by20/2D_N12000_P0.001_Width20_Seed1.mat)
+    % visualizeTile('in/2d_poly_20by20/tiles/2D_poly_N400_P0.001_Width20_Seed1.mat')
         load(packing_name);
     x_mult = 3;
     y_mult = 3;
