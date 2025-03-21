@@ -100,3 +100,7 @@ function shearMeanField2D()
     mat"saveas(figure(1), 'figures/meanField_shear_2d_40wide.eps')"
     mat"close all"
 end
+
+
+# ------------------- Packing Visulaization -------------------
+mat"visualizeFullPacking('in/2d_poly_20by20/2D_N12000_P0.001_Width20_Seed1.mat', 20, 20)"
