@@ -8,7 +8,7 @@ function packPoly2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult
     % P_thres, targeted threshold pressure
     % W_factor, Factor of the width vs number of particles d
     % calc_eig, boolean wheter or not you want to caculate and save eigen stuff 
-    % packPoly2dRepXY(26,100, 1, 1.5, 1, .1, 5, 1, true, 1, 1, false, 'in//')
+    % packPoly2dRepXY(400,100, 1, 1, 1, .001, 20, 1, false, 3, 1, false, 'in/2d_poly_20by20/tiles/')
     
     %% Set up section
     rng(seed)
