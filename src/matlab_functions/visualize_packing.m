@@ -1,4 +1,4 @@
-load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
+load("in/2d_poly_20by20/2D_N12000_P0.001_Width20_Seed1.mat")
 
 x_mult = 3;
 y_mult = 3;
@@ -71,6 +71,7 @@ end
 % Update the figure display
 drawnow;
 hold off;
+
 figure
 hold on
 
@@ -119,21 +120,22 @@ annotation('textarrow', [x_start_y x_end_y], [y_start_y y_end_y], 'Color', 'red'
 annotation('textbox', [x_end_y, y_end_y, 0.05, 0.05], 'String', '$A_y$', 'Interpreter', 'Latex', 'FontSize', 14, 'EdgeColor', 'none', 'Color', 'red');
 
 
-%  Full Channel 
-load("in/2d_5wide_1000long/2D_N5000_P0.001_Width5_Seed1.mat")
-load("in/2d_tiled_2000by40/2D_N80000_P0.1_Width40_Seed1.mat")
-figure;
-hold on;
-axis equal;
-axis([0, Lx/60, 0, Ly]);
+% -----------------Below moved to own function visualizeFullPacking.m--------------------
+% %  Full Channel 
+% load("in/2d_5wide_1000long/2D_N5000_P0.001_Width5_Seed1.mat")
+% load("in/2d_poly_20by20/2D_N12000_P0.001_Width20_Seed1.mat")
+% figure;
+% hold on;
+% axis equal;
+% % axis([0, Lx/60, 0, Ly]);
 
-% Loop through each particle and plot its rectangle
-for np = 1:N
-    % Compute the position for the rectangle using the center coordinates (x, y)
-    % and the diameter Dn (width and height).
-    rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], ...
-        'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); % Optional LineWidth for better visibility
-end
-% Update the figure display
-drawnow;
-hold off;
+% % Loop through each particle and plot its rectangle
+% for np = 1:N
+%     % Compute the position for the rectangle using the center coordinates (x, y)
+%     % and the diameter Dn (width and height).
+%     rectangle('Position', [x(np) - Dn(np)/2, y(np) - Dn(np)/2, Dn(np), Dn(np)], ...
+%         'Curvature', [1, 1], 'EdgeColor', 'b', 'LineWidth', 1.5); % Optional LineWidth for better visibility
+% end
+% % Update the figure display
+% drawnow;
+% hold off;
