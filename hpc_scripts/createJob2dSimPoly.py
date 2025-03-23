@@ -16,7 +16,7 @@ def main():
     w_D_values = np.linspace(0.001, 100, 10)
     N_values = [80000]
     P_values = [0.1, 0.01, 0.001]
-    W_values = [20] # width of the simulation box
+    W_values = [40] # width of the simulation box
     seed_values = [1]
     in_path = 'in/2d_poly_20by20/'  
     out_path = 'out/simulation_2d/poly_80kby40/'
