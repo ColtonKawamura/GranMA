@@ -880,7 +880,7 @@ function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter; she
         closest_γ_value = simulation_data[closest_γ_index].gamma
         matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
         plot_gamma = γ_value
-        gamma_value = γ_value
+        gamma_value = closest_γ_value
 
         # Get a list of unique input pressures
         pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
