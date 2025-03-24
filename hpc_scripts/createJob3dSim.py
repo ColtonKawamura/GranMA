@@ -11,9 +11,9 @@ def main():
     K_values = [100]
     M_values = [1]
     # Bv_values = [.01, .05, .1, .5, 1, 5, 10,50, 100] 
-    Bv_values = np.linspace(0.01, 100, 20)
+    Bv_values = np.linspace(0.001, 10, 30)
     # w_D_values = [.01, .05, .1, .5, 1, 5, 10,50, 100]
-    w_D_values = np.linspace(0.01, 100, 20)
+    w_D_values = np.linspace(0.01, 10, 30)
     N_values = [75600]
     P_values = [0.1, 0.01, 0.001]
     W_values = [15] # width of the simulation box
