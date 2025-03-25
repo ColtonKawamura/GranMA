@@ -505,7 +505,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     fitline = Polynomials.fit(distance_from_wall_sorted, unwrapped_phase_sorted, 1)
     # get the phase of the fit line
     mean_field_phase = fitline.(distance_from_wall_sorted)
-    prime_field_phase = unwrapped_phase_sorted .- mean_field_phase
+    prime_field_phase = abs.(unwrapped_phase_sorted .- mean_field_phase)
     # -----------------------------
 
     
@@ -523,7 +523,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     if plot==true
         mat"""
         figure
-        scatter($(distance_from_wall), $(prime_field_amp), "*", "DisplayName", "\$ \\phi_{||}' \$")
+        scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "\$ \\phi_{||}' \$")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
