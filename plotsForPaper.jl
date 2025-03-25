@@ -8,25 +8,35 @@ using MATLAB
 # ------------------- 3D  -----------------------------------
 # ----------------------------------------------------------------
 
-# ------------------- 3D Compression Attenuation  ------------------
+#  3D Compression Attenuation  
 simulation_data = loadData3d("out/processed/3d_80Kby15_V3.jld2") # 15by15 tiles out to 300 long channel
-
 gamma_value = .5
 plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)    
+plot_ωγ_wavespeed_2d(simulation_data, gamma_value) 
 
-# ------------------- 3D Sitched Attenuation  ------------------
+#  3D Sitched Attenuation  
 gamma_values = 10 .^ range(-2, stop=2, length=5)
 gamma_values = [.2123, .3, .4, .5]
 plotStitchAttenuation(simulation_data, gamma_values, 1.2)
+
+# ------------------- 3D Compression MeanField  ------------------
+transverse_axis = "z"
+filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+getMeanField3d(filtered_data, transverse_axis)
 
 # ----------------------------------------------------------------
 # ------------------- 2D  -----------------------------------
 # ----------------------------------------------------------------
 
-# ------------------- 2D Compression MeanField  ------------------
+# Compression Attenuation and Wavespeed
+simulation_data = load_data("out/processed/2d_K100_80kby40.jld2") # large packing with low freqs
+gamma_value = .5
+plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)
+plot_ωγ_wavespeed_2d(simulation_data, gamma_value) 
 
-# 5 wide --------------------------------------------
-simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
+# 2D Compression MeanField 
+
+simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2") # 5 wide packing with low freqs
 
 # low pressure
 data = FilterData(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed) # low pressure
