@@ -30,3 +30,4 @@ out/2d_eigenModes/40by40/
 out/simulation_3d
 myenv/
 src/simMD.jl
+archive
