@@ -2747,12 +2747,6 @@ function plot_ωγ_wavespeed_2d(simulation_data, gamma_value) # Need to fix lgen
     # Define the plot limits to match the 1D theory plot curves
     theory_x = collect(3E-4:1E-5:3)
     theory_y = 1 ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(0.5) ./ (1 .+ theory_x.^2);
-    # upper_limit_line_x = [1*gamma_value; 1*gamma_value]
-    # upper_limit_line_y = [1E-5; 1]
-    # lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
-    # lower_limit_line_y = [1E-5; 1]
-    # % plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
-    # % plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
 
     # Intialized the plots to loop over
     mat"""
