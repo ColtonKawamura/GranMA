@@ -28,7 +28,7 @@ function threeD()
     plot_ωγ_attenuation_2d(simulation_data, .5, 1.2)
 
     # Mean Field Plots
-    transverse_axis = "y"
+    transverse_axis = "z"
     filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
     getMeanField3d(filtered_data, transverse_axis)
 
