@@ -15,9 +15,11 @@ plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)
 plot_ωγ_wavespeed_2d(simulation_data, gamma_value) 
 
 #  3D Sitched Attenuation  
-gamma_values = 10 .^ range(-2, stop=2, length=5)
 gamma_values = [.03, .07, .1, .14, .5, 1]
 plotStitchAttenuation(simulation_data, gamma_values, 1.2)
+mat"slopeLine('loglog' ,.75, [.005,.1], .05)"
+mat"slopeLine('loglog' ,.1, [.005,.1], .25)"
+
 
 # ------------------- 3D Compression MeanField  ------------------
 transverse_axis = "z"
