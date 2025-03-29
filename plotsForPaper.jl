@@ -10,7 +10,7 @@ using MATLAB
 
 #  3D Compression Attenuation  
 simulation_data = loadData3d("out/processed/3d_80Kby15_V3.jld2") # 15by15 tiles out to 300 long channel
-gamma_value = .5
+gamma_value = .001
 plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)    
 plot_ωγ_wavespeed_2d(simulation_data, gamma_value) 
 
