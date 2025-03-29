@@ -9,14 +9,14 @@ using MATLAB
 # ----------------------------------------------------------------
 
 #  3D Compression Attenuation  
-simulation_data = loadData3d("out/processed/3d_80Kby15_V3.jld2") # 15by15 tiles out to 300 long channel
-gamma_value = .001
+simulation_data = loadData3d("out/processed/3d_80Kby15_V4.jld2") # 15by15 tiles out to 300 long channel
+gamma_value = .03
 plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)    
 plot_ωγ_wavespeed_2d(simulation_data, gamma_value) 
 
 #  3D Sitched Attenuation  
 gamma_values = 10 .^ range(-2, stop=2, length=5)
-gamma_values = [.2123, .3, .4, .5]
+gamma_values = [.03, .07, .1, .14, .5, 1]
 plotStitchAttenuation(simulation_data, gamma_values, 1.2)
 
 # ------------------- 3D Compression MeanField  ------------------
