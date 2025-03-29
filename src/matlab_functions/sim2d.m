@@ -1,40 +1,7 @@
 function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-    %% with no ellipse
     % Example command: sim2d(100, 1, 1, 1.28, 5000, 0.01, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")
     % sim2d(100, 1, 1, 1, 80000, 0.1, 40, 1, "in/2d_tiled_2000by40/", "out/junk_yard")
 
-    % Set up initial conditions and visualization
-    % Add random initial velocities
-    % Replace periodic boundaries with fixed walls
-    % Replace Euler with Velocity Verlet
-    % Add "Nplotskip" so every frame is not plotted
-    % Add gravity
-    %%%%% CHANGE FORCE-DETECTION TO SPEED UP %%%%%
-    % Add dissipation during collisions
-    % Add dt calculation based on sqrt(m/k)
-    % Add Ek(nt) storage inside loop
-    
-    
-    % % Script Variables for debugging
-    % addpath("/Users/coltonkawamura/Documents/GranMA/src/matlab_functions")
-    % K = 100;
-    % M = 1;
-    % Bv = .1;
-    % w_D = 0.36; % 
-    % N = 5000;
-    % P = 0.01; % 0.021544 0.046416
-    % W = 5;
-    % seed = 1;
-
-    % K = 100;
-    % M = 1;
-    % Bv = .1;
-    % w_D = 0.36; % 
-    % N = 12;
-    % P = 0.01; % 0.021544 0.046416
-    % W = 3;
-    % seed = 1;   
-    
     % Create the packing name with the exact number format for P
     packing_name = string(sprintf("2D_N%d_P%s_Width%d_Seed%d", N, num2str(P), W, seed));
     
@@ -82,7 +49,9 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     Zn_list = [];
     neighbor_list_all = [];
     spring_list_all = [];
+    display("made it to here") % !! Debugging
     for nn = 1:N
+        display(nn)
         neighbor_list_nn = [];
         spring_list_nn = [];
         for mm = [1:nn-1,nn+1:N]
