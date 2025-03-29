@@ -27,9 +27,20 @@ export
     getMeanField3d,
     plotAmp3d,
     plotStitchAmpRatio3d,
-    plotStitchPhaseScatter3d
+    plotStitchPhaseScatter3d,
+    slopeLine
 
 #----------------------------------------------3d specific plots------------------------------------------------------------
+function slopeLine(type, slope, x_bounds, y_center)
+    mat"""
+    type = '$(type)';
+    slope = $(slope);
+    x_bounds = $(x_bounds);
+    y_center = $(y_center);
+    slopeLine(type, slope, x_bounds, y_center);
+    """
+end
+
 function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false) 
     mat"""
     ax_energy = figure;
