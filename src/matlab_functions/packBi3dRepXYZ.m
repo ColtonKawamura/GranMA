@@ -22,8 +22,7 @@ function packBi3dRepXYZ(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult,
 %   save_path- Path to save output data
 %
 % Example:
-%   packBi3dRepXYZ(126, 100, 1, 1.4, 1, 0.1, 5, 1, false, 100, 10, 10, false, 'in/3d/3d_junkyard')
-%   % Generates a 5x5x5 tiled packing structure
+%   packBi3dRepXYZ(126, 100, 1, 1.4, 1, 0.1, 5, 1, false, 100, 10, 10, false, 'in/3D/3d_junkyard')
 
 %% Set up section
 rng(seed)
