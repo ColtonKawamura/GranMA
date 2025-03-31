@@ -545,7 +545,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
 
     if plot==true
         mat"""
-        scatter($(distance_from_wall), $(phase), "o", "DisplayName", "\$ \\phi_{||} \$")
+        paraField = scatter($(distance_from_wall), $(phase), "o", "DisplayName", "\$ \\phi_{||} \$");
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -560,7 +560,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
 
     if plot==true
         mat"""
-        scatter($(distance_from_wall_sorted), $(mean_field_phase), "v",'k', "SizeData", 5, "DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
+        meanField = scatter($(distance_from_wall_sorted), $(mean_field_phase), "v",'k', "SizeData", 5, "DisplayName", "\$ \\overline{\\phi}_{||} \$ ");
         % plot($(distance_from_wall_sorted), $(mean_field_phase), ":", 'LineWidth', 2 ,"DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -613,6 +613,8 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15)
         legend('FontSize', 15, "interpreter", "latex")
+        uistack(paraField, 'top')
+        uistack(meanField, 'top')
         """
     end
 
