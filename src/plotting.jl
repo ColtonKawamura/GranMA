@@ -28,7 +28,7 @@ export
     plotAmp3d,
     plotStitchAmpRatio3d,
     plotStitchPhaseScatter3d,
-    slopeLine
+    slopeLine #broken - low priority to fix
 
 #----------------------------------------------3d specific plots------------------------------------------------------------
 function slopeLine(type, slope, x_bounds, y_center)
