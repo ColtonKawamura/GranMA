@@ -344,61 +344,86 @@ end
 
 function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = false)
     @assert transverse_axis in ["y", "z"] "transverse_axis must be either 'y' or 'z'"
-    # fit the prime of the parralell direction data
+    
     if shear == true
-        if transverse_axis == "y"
-            amplitude_vector = filtered_data[1].amplitude_vector_y
-            attenuation = filtered_data[1].alphaoveromega_y
-            distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-            omega = filtered_data[1].omega # but this is dimensionelss
-        else
-            amplitude_vector = filtered_data[1].amplitude_vector_z
-            attenuation = filtered_data[1].alphaoveromega_z
-            distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_z_fft
-            omega = filtered_data[1].omega # but this is dimensionelss
-        end
+        amplitude_vector = filtered_data[1].amplitude_vector_y
+        attenuation = filtered_data[1].alphaoveromega_y
+        distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        omega = filtered_data[1].omega 
+        legend_para_prime = @sprintf("\$ \\hat{y}' \$")
+        legend_para = @sprintf("\$ \\hat{y} \$")
+        legend_para_mean = @sprintf("\$ \\hat{\\overline{y}} \$")
+        legend_perp = @sprintf("\$ \\hat{x} \$")
     else
-        # for compressional waves
+        if transverse_axis == "y"
+            legend_perp = @sprintf("\$ \\hat{y} \$") 
+        else
+            legend_perp = @sprintf("\$ \\hat{z} \$")
+        end
         amplitude_vector = filtered_data[1].amplitude_vector_x
         attenuation = filtered_data[1].alphaoveromega_x
         distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-        omega = filtered_data[1].omega # but this is dimensionelss
+        omega = filtered_data[1].omega
+        legend_para_prime = @sprintf("\$ \\hat{x}' \$")
+        legend_para = @sprintf("\$ \\hat{x} \$")
+        legend_para_mean = @sprintf("\$ \\hat{\\overline{x}} \$")
+        # legend_perp = @sprintf("\$ \\hat{y} \$")
     end
 
     A = filtered_data[1].pressure/100
     mean_field_amp = A*exp.(-attenuation*omega*distance_from_wall)
-
-    #  This part picks out the "paralell" data
+    # log_amplitude = log.(abs.(filtered_data[1].amplitude_vector_x[1:100]))
+    # coefficents = fit(distance_from_wall[1:100], log_amplitude, 1)
+    # display(coefficents[1])
+    # mean_field_amp = A*exp.(-coefficents[1]*omega*distance_from_wall)
     if shear == true
-        if transverse_axis == "y"
-            y = filtered_data[1].amplitude_vector_y
-            x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-            prime_field_amp = abs.(y - mean_field_amp)
-        else
-            y = filtered_data[1].amplitude_vector_z
-            x_parra = filtered_data[1].initial_distance_from_oscillation_output_z_fft
-            prime_field_amp = abs.(y - mean_field_amp)
-        end
+        y = filtered_data[1].amplitude_vector_y
+        x_parra = filtered_data[1].initial_distance_from_oscillation_output_y_fft 
+        prime_field_amp = abs.(y - mean_field_amp)
     else
         y = filtered_data[1].amplitude_vector_x
         x_parra = filtered_data[1].initial_distance_from_oscillation_output_x_fft 
         prime_field_amp = abs.(y - mean_field_amp)
     end
 
+    driving_amp = filtered_data[1].pressure / 100
+
+    if shear ==true
+        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
+        y_perp = filtered_data[1].amplitude_vector_x
+    else
+        if transverse_axis == "y"
+            x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+            y_perp = filtered_data[1].amplitude_vector_y
+        else
+            x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
+            y_perp = filtered_data[1].amplitude_vector_z
+        end
+        # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        # y_perp = filtered_data[1].amplitude_vector_y
+    end
+    vector_limit = length(y_perp)
+    
     if plot==true
         mat"""
-        coefficients = polyfit($(distance_from_wall), log(abs($(y))), 1);
+        figure
+        distance_from_wall = $(distance_from_wall);
+        y = $(y);
+        % y = y(1:200); % Uncomment these for when the fit is incorrect
+        % distance_from_wall = distance_from_wall(1:200); %  % Uncomment these for when the fit is incorrect
+        coefficients = polyfit(distance_from_wall, log(abs(y)), 1);
         fitted_attenuation = coefficients(1);
         intercept_attenuation = coefficients(2);
         mean_field_new = exp(intercept_attenuation) * exp(fitted_attenuation .* $(distance_from_wall));
         prime_field_amp_new = abs($(y)-mean_field_new);
-        figure
-        scatter($(x_parra), prime_field_amp_new, "*", "DisplayName", " \$ A_{||}' \$")
+        legend_para_prime = $(legend_para_prime);
+        scatter($(x_parra), prime_field_amp_new / $(driving_amp), "*", "DisplayName", legend_para_prime)
+        % scatter($(x_parra), $(prime_field_amp) / $(driving_amp), "*", "DisplayName", " \$ A_{||}' \$")
         hold on
-        set(gca, 'YScale', 'log')
+        set(gca, 'YScale', 'log');
         grid on
-        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("\$ x_0 \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x_0)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -406,14 +431,16 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         """
     end
 
+
     if plot==true
         mat"""
-        scatter($(x_parra), $(y), "o", "DisplayName", "\$ A_{||} \$")
+        legend_para = $(legend_para);
+        scatter($(x_parra), $(y) / $(driving_amp), "o", "DisplayName", legend_para)
         hold on
         set(gca, 'YScale', 'log')
         grid on
-        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("\$ x_0 \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x_0)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -423,62 +450,42 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     
     if plot==true
         mat"""
-        scatter($(x_parra), mean_field_new, "v","DisplayName", "\$ \\overline{A}_{||} \$")
+        % scatter($(x_parra), mean_field_new , "v","DisplayName", "\$ \\overline{A}_{||} \$")
+        legend_para_mean = $(legend_para_mean);
+        plot($(x_parra), mean_field_new / $(driving_amp), ":", 'Color', 'k', 'LineWidth', 3 ,"DisplayName", legend_para_mean)
         hold on
         set(gca, 'YScale', 'log')
         grid on
-        xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("\$A(x)\$", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("\$ x_0 \$", "Interpreter", 'latex', "FontSize", 15)
+        ylabel("\$A(x_0)\$", "Interpreter", 'latex', "FontSize", 15)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
         legend("show")
         """
     end
-
-    # perpidicular data
-    if shear ==true
-        x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
-        y = filtered_data[1].amplitude_vector_x
-    else
-        if transverse_axis == "y"
-            # !! these are the same length but negative
-            x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-            y = filtered_data[1].amplitude_vector_y
-            println("x_perp max Amp: ", maximum(x_perp))
-            println("y max Amp: ", maximum(y))
-        else
-            x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
-            y = filtered_data[1].amplitude_vector_z
-            println("x_perp max Amp: ", maximum(x_perp))
-            println("y max Amp: ", maximum(y))
-        end
-        # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-        # y = filtered_data[1].amplitude_vector_y
-    end
-
+    
     if plot == true
         mat"""
-        scatter($(x_perp), $(y), "o", "DisplayName", "\$ A_\\perp \$")
+        legend_perp = $(legend_perp);
+        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", legend_perp)
         set(gca, 'YScale', 'log')
         grid on
+        hold
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15);
         legend('FontSize', 15)
         """
     end
 
-    # phase
-    
-
-    # ----------  phase in the x-direction ----------------------
+    # phase --------------------------------------------------------------
     if shear == true
         phase = filtered_data[1].unwrapped_phase_vector_y 
     else
         phase = filtered_data[1].unwrapped_phase_vector_x
     end
+    # phase = filtered_data[1].unwrapped_phase_vector_x # will need to figure out how to adapt this for y later
     phase = mod.(phase, 2π)
-
     if shear == true
         distance_from_wall = filtered_data[1].initial_distance_from_oscillation_output_y_fft
     else
@@ -486,44 +493,39 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     end
 
     if shear== true
-        # wavespeed = filtered_data[1].wavespeed_y # output of sims, but not in crunch
         wavespeed = -omega * .034  /(filtered_data[1].wavenumber_y)# using c = omega_hat * sqrt(K/M) / wavenumber; driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
         #  the .03 is a fit factor for the phase
     else
         wavespeed = filtered_data[1].wavespeed_x
     end
-    # wavespeed = filtered_data[1].wavespeed_x
+
     omega = filtered_data[1].omega # but this is dimensionelss
-    # wavespeed_x = driving_frequency*2*pi*sqrt(M/K)/(wavenumber*1);
 
     if shear == true
         wavenumber = filtered_data[1].wavenumber_y
     else
         wavenumber = filtered_data[1].wavenumber_x
     end
-    # wavenumber = filtered_data[1].wavenumber_x
-    # mean_field = (wavenumber).*distance_from_wall
     
-    # _----------------------------- new wrapped feature
+    # _-----------------------------
     distance_from_wall_sorted, unwrapped_phase_sorted = unwrapScattered(distance_from_wall, phase)
     # create a fit line to distance distance_from_wall_sorted and unwrapped_phase_sorted that are y values that correspond to distance_from_wall_sorted
     fitline = Polynomials.fit(distance_from_wall_sorted, unwrapped_phase_sorted, 1)
     # get the phase of the fit line
     mean_field_phase = fitline.(distance_from_wall_sorted)
     prime_field_phase = abs.(unwrapped_phase_sorted .- mean_field_phase)
-    # -----------------------------
+    # _-----------------------------
 
-    
+
 
     # mean_field_phase = -(omega/wavespeed).*distance_from_wall
     mean_field_phase = mod.(mean_field_phase, 2π)
     # prime_field_phase = phase .- mean_field_phase
     prime_field_phase = mod.(prime_field_phase, 2π)
-    prime_field_amp_new = prime_field_phase.- mean(prime_field_phase);
+    # prime_field_amp_new = prime_field_phase.- mean(prime_field_phase);
     
     if shear == true
-        prime_field_amp_new = abs.(prime_field_amp_new) # Did this because it was negative
-        # prime_field_amp_new = prime_field_phase
+        # No need for a shear component
     end
     if plot==true
         mat"""
@@ -554,10 +556,12 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         legend("show", "interpreter", "latex")
         """
     end
-    
+   
+
     if plot==true
         mat"""
-        scatter($(distance_from_wall_sorted), $(mean_field_phase), "v","DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
+        scatter($(distance_from_wall_sorted), $(mean_field_phase), "v",'k', "SizeData", 5, "DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
+        % plot($(distance_from_wall_sorted), $(mean_field_phase), ":", 'LineWidth', 2 ,"DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
         ylabel("\$ \\phi(x) \$", "Interpreter", 'latex', "FontSize", 15)
@@ -567,34 +571,44 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         legend("show", "interpreter", "latex")
         """
     end
-   
-
-
-    # ---------------------------------- this is all for the transverse data--------------------------------
    if shear == true
         x_perp = filtered_data[1].initial_distance_from_oscillation_output_x_fft
         y = filtered_data[1].unwrapped_phase_vector_x
     else
         if transverse_axis == "y"
-            # !!! Problem, these are differen lengths !!!
             x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
-            y = filtered_data[1].unwrapped_phase_vector_y 
-            println("length of x_perp: ", length(x_perp))
-            println("length of y:", length(y))
+            y = filtered_data[1].unwrapped_phase_vector_y
         else
             x_perp = filtered_data[1].initial_distance_from_oscillation_output_z_fft
             y = filtered_data[1].unwrapped_phase_vector_z
-            println("length of x_perp: ", length(x_perp))
-            println("length of y:", length(y))
         end
+        # x_perp = filtered_data[1].initial_distance_from_oscillation_output_y_fft
+        # y = filtered_data[1].unwrapped_phase_vector_y
     end 
+
+    if shear == true
+        y = filtered_data[1].unwrapped_phase_vector_x
+    else
+       if transverse_axis == "y"
+            y = filtered_data[1].unwrapped_phase_vector_y
+        else
+            y = filtered_data[1].unwrapped_phase_vector_z
+        end 
+        # y = filtered_data[1].unwrapped_phase_vector_y
+    end
 
     y = mod.(y, 2π)
     
+    # transverse_fitline = -1/6 .* x_perp # this is for the lower pressure data = FilterData(simulation_data, .001, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+    # # transverse_fitline = 1/7 .* x_perp # for the higher pressure     data = FilterData(simulation_data, .1, :pressure, .1, :omega, .5, :gamma, 1, :seed)
+
+    # transverse_fitline = mod.(transverse_fitline, 2π)
+    # z = abs.(transverse_fitline .- y)
+
     
     if plot == true
         mat"""
-        scatter($(x_perp), $(y), "o", "DisplayName", " \$ \\phi_\\perp \$ ")
+        scatter($(x_perp), $(y), "+", "DisplayName", " \$ \\phi_\\perp \$ ")
         grid on
         legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
         set(gca, 'FontSize', 15)
@@ -602,17 +616,6 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         """
     end
 
-    # new_y =  y + filtered_data[1].wavenumber_x.*x_perp
-    # new_y = mod.(new_y, 2π)
-    # if plot == true
-    #     mat"""
-    #     scatter($(x_perp), $(new_y), "o", "DisplayName", "raw -  mean-phase")
-    #     grid on
-    #     legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
-    #     set(gca, 'FontSize', 15)
-    #     legend('FontSize', 15)
-    #     """
-    # end
 
     return mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase
 end
