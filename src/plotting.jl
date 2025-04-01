@@ -1043,7 +1043,7 @@ function plotStitchPhaseScatter(simulation_data, gamma_values; shear=false)
             end
 
             # This is needed because MATLAB.jl has a hard time escaping \'s
-            pressure_label = @sprintf("\$ %.4f, %.4f \$", pressure_value, gamma_value)
+            pressure_label = @sprintf("\$ %.4f, %.4f \$", pressure_value, closest_γ_value)
 
             gamma_val = γ_value
             marker_shape = marker_shape_vector[findfirst(==(gamma_val), gamma_values)]
