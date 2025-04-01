@@ -1,3 +1,4 @@
+*.eps
 out/simulation_2d
 out/processed
 *.out
