@@ -530,7 +530,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     if plot==true
         mat"""
         figure
-        scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "\$ \\phi_{||}' \$")
+        primeField = scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "\$ \\phi_{||}' \$")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -615,6 +615,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         legend('FontSize', 15, "interpreter", "latex")
         uistack(paraField, 'top')
         uistack(meanField, 'top')
+        uistack(primeField, 'top')
         """
     end
 
