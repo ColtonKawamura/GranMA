@@ -418,7 +418,6 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         prime_field_amp_new = abs($(y)-mean_field_new);
         legend_para_prime = $(legend_para_prime);
         scatter($(x_parra), prime_field_amp_new / $(driving_amp), "*", "DisplayName", legend_para_prime)
-        % scatter($(x_parra), $(prime_field_amp) / $(driving_amp), "*", "DisplayName", " \$ A_{||}' \$")
         hold on
         set(gca, 'YScale', 'log');
         grid on
@@ -468,7 +467,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     if plot == true
         mat"""
         legend_perp = $(legend_perp);
-        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", legend_perp)
+        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", legend_perp, "SizeData", 1)
         set(gca, 'YScale', 'log')
         grid on
         hold
@@ -530,7 +529,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     if plot==true
         mat"""
         figure
-        primeField = scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "\$ \\phi_{||}' \$")
+        primeField = scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "\$ \\phi_{||}' \$", "SizeData", 5)
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
@@ -561,7 +560,6 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     if plot==true
         mat"""
         meanField = scatter($(distance_from_wall_sorted), $(mean_field_phase), "v",'k', "SizeData", 5, "DisplayName", "\$ \\overline{\\phi}_{||} \$ ");
-        % plot($(distance_from_wall_sorted), $(mean_field_phase), ":", 'LineWidth', 2 ,"DisplayName", "\$ \\overline{\\phi}_{||} \$ ")
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
         ylabel("\$ \\phi(x) \$", "Interpreter", 'latex', "FontSize", 15)
