@@ -1061,7 +1061,6 @@ function plotStitchPhaseScatter(simulation_data, gamma_values; shear=false)
     end
     # Add legends to the plots
     mat"""
-    % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
     title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
     fitx = [.03, .8]
