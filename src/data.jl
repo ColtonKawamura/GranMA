@@ -23,51 +23,17 @@ function FilterData3d(data::Vector{data3d}, args...)
     # Initialize the filtered data to be the full simulation_data
     filtered_data = data
 
-    # Iterate over the provided arguments
+    # Iterate over the provided arguments in pairs
     for i in 1:2:length(args)
         value = args[i]
         field_name = args[i+1]
 
-        if isa(value, Tuple) && length(value) == 2
-            # If value is a tuple, treat it as a range [lower, upper]
-            lower, upper = value
-            
-             # Filter elements below the upper threshold
+        # Determine the closest match for the given field
+        closest_index = argmin(abs.([getfield(idx, field_name) for idx in filtered_data] .- value))
+        closest_value = getfield(filtered_data[closest_index], field_name)
 
-            for element in getfield(filtered_data[1], field_name)
-                if element < upper
-                    # remove all other elements of field_name in filtered_data[1]
-                    for entry in filtered_data
-                        setfield!(entry, field_name, filter(x -> x < upper, getfield(entry, field_name)))
-                    end
-                end
-                if element > lower
-                    # remove all other elements of field_name in filtered_data[1]
-                    for entry in filtered_data
-                        setfield!(entry, field_name, filter(x -> x > lower, getfield(entry, field_name)))
-                    end
-                end
-            end
-
-            # Filter elements above the lower threshold
-            # filtered_data = filter(entry -> all(x -> x >= lower, getfield(entry, field_name)), filtered_data)
-            # # keep lower values
-            # closest_index = argmin(abs.([getfield(idx, field_name) for idx in filtered_data] .- upper))
-            # closest_value = getfield(filtered_data[closest_index], field_name)
-            # filtered_data = filter(entry -> getfield(entry, field_name) <= closest_value, filtered_data)
-
-            # # keep upper values
-            # closest_index = argmin(abs.([getfield(idx, field_name) for idx in filtered_data] .- lower))
-            # closest_value = getfield(filtered_data[closest_index], field_name)
-            # filtered_data = filter(entry -> getfield(entry, field_name) >= closest_value, filtered_data)
-        else
-            # Determine the closest match for the given field
-            closest_index = argmin(abs.([getfield(idx, field_name) for idx in filtered_data] .- value))
-            closest_value = getfield(filtered_data[closest_index], field_name)
-
-            # Filter the data to match the closest value
-            filtered_data = filter(entry -> getfield(entry, field_name) == closest_value, filtered_data)
-        end
+        # Filter the data to match the closest value
+        filtered_data = filter(entry -> getfield(entry, field_name) == closest_value, filtered_data)
     end
 
     return filtered_data
