@@ -1,5 +1,5 @@
 function sim3d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-       % sim3d(100, 1, 1, 1, 75600, 0.1, 15, 1, 'in/3D/tiled_15by300/', 'out/junkyard/');
+       % sim3d(100, 1, 1, 10, 75600, 0.1, 15, 1, 'in/3D/tiled_15by300/', 'out/junkyard/');
 
 % Set up initial conditions and visualization
 % Add random initial velocities

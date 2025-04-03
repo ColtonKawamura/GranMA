@@ -38,7 +38,6 @@ mutable struct data3d
         x_fft_initial_z::Vector{Float64}
         y_fft_initial_x::Vector{Float64}
         y_fft_initial_z::Vector{Float64}
-        z_fft_initial_x::Vector{Float64}
         z_fft_initial_y::Vector{Float64}
         z_fft_initial_z::Vector{Float64}
     end

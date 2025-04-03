@@ -7,9 +7,9 @@ using MATLAB
 # ----------------------------------------------------------------
 # ------------------- 3D  ----------------------------------------
 # ----------------------------------------------------------------
+simulation_data = loadData3d("out/processed/3d_80Kby15_V4.jld2"); # 15by15 tiles out to 300 long channel
 
 #  3D Compression Attenuation  
-    simulation_data = loadData3d("out/processed/3d_80Kby15_V4.jld2") # 15by15 tiles out to 300 long channel
     gamma_value = .03
     plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)    
     plot_ωγ_wavespeed_2d(simulation_data, gamma_value) 
@@ -24,9 +24,9 @@ using MATLAB
     # Low pressure
     # z-axis
     filtered_data = FilterData3d(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed);
-    filtered_data = FilterData3d(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed, (0, 5), :initial_distance_from_oscillation_output_y_fft, (0, 5), :initial_distance_from_oscillation_output_z_fft ) # this one is for a slice
-    transverse_axis = "z"
-    getMeanField3d(filtered_data, transverse_axis)
+    # filtered_data = FilterData3d(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed, (0, 5), :initial_distance_from_oscillation_output_y_fft, (0, 5), :initial_distance_from_oscillation_output_z_fft ) # this one is for a slice
+    transverse_axis = "y";
+    getMeanField3d(filtered_data, transverse_axis);
     mat"saveas(figure(1), 'figures/meanField_compression_3d_z_15wide_lowP_amp.fig')"
     mat"saveas(figure(2), 'figures/meanField_compression_3d_z_15wide_lowP_phase.fig')"
     mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("figures/meanField_compression_3d_z_15wide_lowP_phase.fig", "figures/meanField_compression_3d_z_15wide_lowP_amp.fig", [0,40], [1E-2, 1])""" 
