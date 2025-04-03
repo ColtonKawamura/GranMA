@@ -98,7 +98,7 @@ for nn = index_particles(1:iskip:end) % go through all th eparticles
                                 amplitude_vector = [amplitude_vector, max_particle_amplitude];
                                 initial_distance_from_oscillation_output = [initial_distance_from_oscillation_output, initial_distance_from_oscillation(nn)];
                                 initial_position_y_out = [initial_position_y_out, initial_position_y(nn)];
-                                intials_position_z_out = [initial_position_z_out, initial_position_z(nn)];
+                                initial_position_z_out = [initial_position_z_out, initial_position_z(nn)];
                                 phase_vector = [phase_vector, angle(normalized_fft_data(idx_driving_freq))];
                                 cleaned_particle_index = [cleaned_particle_index, nn];
                             end
@@ -120,6 +120,8 @@ amplitude_vector = amplitude_vector(1:cut_off_index);
 initial_distance_from_oscillation_output = initial_distance_from_oscillation_output(1:cut_off_index);
 phase_vector = phase_vector(1:cut_off_index);
 cleaned_particle_index = cleaned_particle_index(1:cut_off_index);
+initial_position_y_out = initial_position_y_out(1:cut_off_index);
+initial_position_z_out = initial_position_z_out(1:cut_off_index);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Attenuation Fitting and Plotting
