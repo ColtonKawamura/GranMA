@@ -1,5 +1,6 @@
 function sim3d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-    % sim3d(100, 1, 1, 10, 1060, 0.1, 5, 1, 'in/3D/3d_junkyard', 'out/simulation_3d/initial_test/')
+       % sim3d(100, 1, 1, 1, 75600, 0.1, 15, 1, 'in/3D/tiled_15by300/', 'out/junkyard/');
+
 % Set up initial conditions and visualization
 % Add random initial velocities
 % Replace periodic boundaries with fixed walls
@@ -267,8 +268,8 @@ position_particles = x_all;
 initial_distance_from_oscillation = x0;
 
 % Perform fft fitting
-[fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = ...
-    process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
+[fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index, x_fft_initial_y, x_fft_initial_z] = ...
+    process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation, y0, z0);
 
 % Don't waste time if we didn't get enough data
 if isempty(cleaned_particle_index)
@@ -301,9 +302,9 @@ position_particles = y_all;
 initial_distance_from_oscillation = x0;
 driving_frequency = w_D/6.2832;
 
-% Perform fft fitting
-[fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = ...
-    process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
+
+[fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index, y_fft_initial_y, y_fft_initial_z] = ...
+    process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation, y0, z0);
 
 attenuation_y = fitted_attenuation;
 attenuation_fit_line_y = attenuation_fit_line;
@@ -328,9 +329,9 @@ driving_amplitude=A;
 position_particles = z_all;
 initial_distance_from_oscillation = x0;
 
-% Perform fft fitting
-[fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = ...
-    process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation);
+
+[fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index, z_fft_initial_y, z_fft_initial_z] = ...
+    process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation, y0, z0);
 
 % Don't waste time if we didn't get enough data
 if isempty(cleaned_particle_index)
@@ -372,4 +373,5 @@ save( save_path, 'gamma_dimensionless','time_vector', 'index_particles', 'attenu
     'attenuation_y_dimensionless', 'attenuation_z_dimensionless', 'wavenumber_x_dimensionless', 'wavenumber_y_dimensionless', 'wavenumber_z_dimensionless', 'wavespeed_x', ...
      'wavespeed_y', 'wavespeed_z', 'driving_angular_frequency_dimensionless', 'attenuation_fit_line_x', ...
      'initial_distance_from_oscillation_output_x_fft', 'initial_distance_from_oscillation_output_y_fft','initial_distance_from_oscillation_output_z_fft', ...
-     'amplitude_vector_x', 'amplitude_vector_y', 'amplitude_vector_z', "pressure_dimensionless", "seed", 'index_particles', 'input_pressure', 'unwrapped_phase_vector_x', 'unwrapped_phase_vector_y', 'unwrapped_phase_vector_z' );
+     'amplitude_vector_x', 'amplitude_vector_y', 'amplitude_vector_z', 'pressure_dimensionless', 'seed', 'index_particles', 'input_pressure', 'unwrapped_phase_vector_x', 'unwrapped_phase_vector_y', 'unwrapped_phase_vector_z', ...
+     'x_fft_initial_y', 'x_fft_initial_z', 'y_fft_initial_y', 'y_fft_initial_z', 'z_fft_initial_y', 'z_fft_initial_z');

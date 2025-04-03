@@ -34,6 +34,13 @@ mutable struct data3d
         initial_distance_from_oscillation_output_x_fft::Vector{Float64}
         initial_distance_from_oscillation_output_y_fft::Vector{Float64}
         initial_distance_from_oscillation_output_z_fft::Vector{Float64}
+        x_fft_initial_y::Vector{Float64}
+        x_fft_initial_z::Vector{Float64}
+        y_fft_initial_x::Vector{Float64}
+        y_fft_initial_z::Vector{Float64}
+        z_fft_initial_x::Vector{Float64}
+        z_fft_initial_y::Vector{Float64}
+        z_fft_initial_z::Vector{Float64}
     end
 
 struct Pos2D{T} <: FieldVector{2,T}

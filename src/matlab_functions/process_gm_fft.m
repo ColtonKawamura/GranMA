@@ -1,4 +1,4 @@
-function [fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index] = process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation)
+function [fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index, initial_position_y_out, initial_position_z_out] = process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation, initial_position_y, initial_position_z)
 % Purpose - finds attenuation, wavenumber, and wave speed for a granular mechanics simulation.
 %
 % Format:   [fitted_attenuation, wavenumber, wavespeed] = ...
@@ -29,6 +29,8 @@ min_time_span = 5 / driving_frequency;
 
 % Initialize output vectors
 initial_distance_from_oscillation_output = [];
+initial_position_y_out = [];
+initial_position_z_out = [];
 amplitude_vector = [];
 phase_vector = [];
 cleaned_particle_index = [];
@@ -95,6 +97,8 @@ for nn = index_particles(1:iskip:end) % go through all th eparticles
                             if time_span >= min_time_span
                                 amplitude_vector = [amplitude_vector, max_particle_amplitude];
                                 initial_distance_from_oscillation_output = [initial_distance_from_oscillation_output, initial_distance_from_oscillation(nn)];
+                                initial_position_y_out = [initial_position_y_out, initial_position_y(nn)];
+                                intials_position_z_out = [initial_position_z_out, initial_position_z(nn)];
                                 phase_vector = [phase_vector, angle(normalized_fft_data(idx_driving_freq))];
                                 cleaned_particle_index = [cleaned_particle_index, nn];
                             end

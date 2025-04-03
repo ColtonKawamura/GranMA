@@ -209,44 +209,6 @@ function crunch(datapath::String)
                                                             [iloop_file_data["initial_distance_from_oscillation_output_y_fft"]]) : 
                                                         Float64[]
 
-        
-        # yfft_posY = isa(iloop_file_data["y_all_yfft"], Array) ? 
-        #                     vec(iloop_file_data["y_all_yfft"]) : 
-        #                     [iloop_file_data["y_all_yfft"]]
-
-        # yfft_posX = isa(iloop_file_data["x_all_yfft"], Array) ? 
-        #                     vec(iloop_file_data["x_all_yfft"]) : 
-        #                     [iloop_file_data["x_all_yfft"]]
-
-        # yfft_init_posX = isa(iloop_file_data["x0_yfft"], Array) ? 
-        #                     vec(iloop_file_data["x0_yfft"]) : 
-        #                     [iloop_file_data["x0_yfft"]]
-
-        # yfft_init_posY = isa(iloop_file_data["y0_yfft"], Array) ? 
-        #                     vec(iloop_file_data["y0_yfft"]) : 
-        #                     [iloop_file_data["y0_yfft"]]
-
-        # xfft_posY = isa(iloop_file_data["y_all_xfft"], Array) ? 
-        #                     vec(iloop_file_data["y_all_xfft"]) : 
-        #                     [iloop_file_data["y_all_xfft"]]
-
-        # xfft_posX = isa(iloop_file_data["x_all_xfft"], Array) ? 
-        #                     vec(iloop_file_data["x_all_xfft"]) : 
-        #                     [iloop_file_data["x_all_xfft"]]
-
-        # xfft_init_posX = isa(iloop_file_data["x0_xfft"], Array) ? 
-        #                     vec(iloop_file_data["x0_xfft"]) : 
-        #                     [iloop_file_data["x0_xfft"]]
-
-        # xfft_init_posY = isa(iloop_file_data["y0_xfft"], Array) ? 
-        #                     vec(iloop_file_data["y0_xfft"]) : 
-        #                     [iloop_file_data["y0_xfft"]]
-        
-        # timeVec = isa(iloop_file_data["tvec"], Array) ? 
-        #                     vec(iloop_file_data["tvec"]) : 
-        #                     [iloop_file_data["tvec"]]
-
-
         # Handle potentially empty arrays for fft limits
         fft_x = get(iloop_file_data, "initial_distance_from_oscillation_output_x_fft", [])
         fft_y = get(iloop_file_data, "initial_distance_from_oscillation_output_y_fft", [])
@@ -282,15 +244,12 @@ function crunch(datapath::String)
             unwrapped_phase_vector_y,
             initial_distance_from_oscillation_output_x_fft,
             initial_distance_from_oscillation_output_y_fft,
-            # yfft_posY,
-            # yfft_posX,
-            # yfft_init_posX,
-            # yfft_init_posY,
-            # xfft_posY,
-            # xfft_posX,
-            # xfft_init_posX,
-            # xfft_init_posY,
-            # timeVec
+            iloop_data_file_data["x_fft_initial_y"],
+            iloop_data_file_data["x_fft_initial_z"],
+            iloop_data_file_data["y_fft_initial_y"],
+            iloop_data_file_data["y_fft_initial_z"],
+            iloop_data_file_data["z_fft_initial_y"],
+            iloop_data_file_data["z_fft_initial_z"]
         )
 
         push!(simulation_data, data_entry)
