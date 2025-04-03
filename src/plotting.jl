@@ -344,7 +344,22 @@ end
 
 function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = false)
     @assert transverse_axis in ["y", "z"] "transverse_axis must be either 'y' or 'z'"
+    filtered_data = deepcopy(filtered_data) 
+    # # FILTER SECTION ----------------------------------------------
+    lower = 0
+    upper = 5
     
+    field_y = filtered_data[1].y_fft_initial_y
+    mask = (field_y .>= lower) .& (field_y .<= upper)
+    filtered_data[1].y_fft_initial_y = filtered_data[1].y_fft_initial_y[mask]
+    filtered_data[1].y_fft_initial_z = filtered_data[1].y_fft_initial_z[mask]
+    filtered_data[1].initial_distance_from_oscillation_output_y_fft = filtered_data[1].initial_distance_from_oscillation_output_y_fft[mask]
+    filtered_data[1].amplitude_vector_y = filtered_data[1].amplitude_vector_y[mask]
+    
+
+    filtered_data[1].unwrapped_phase_vector_y = filtered_data[1].unwrapped_phase_vector_y[mask]
+    # FILTER SECTION ----------------------------------------------
+
     if shear == true
         amplitude_vector = filtered_data[1].amplitude_vector_y
         attenuation = filtered_data[1].alphaoveromega_y
@@ -403,14 +418,12 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
         # y_perp = filtered_data[1].amplitude_vector_y
     end
     vector_limit = length(y_perp)
-    
+     
     if plot==true
         mat"""
         figure
         distance_from_wall = $(distance_from_wall);
         y = $(y);
-        % y = y(1:200); % Uncomment these for when the fit is incorrect
-        % distance_from_wall = distance_from_wall(1:200); %  % Uncomment these for when the fit is incorrect
         coefficients = polyfit(distance_from_wall, log(abs(y)), 1);
         fitted_attenuation = coefficients(1);
         intercept_attenuation = coefficients(2);
@@ -467,7 +480,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     if plot == true
         mat"""
         legend_perp = $(legend_perp);
-        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", legend_perp, "SizeData", 1)
+        scatter($(x_perp), $(y_perp)/ $(driving_amp), "+", "DisplayName", legend_perp)
         set(gca, 'YScale', 'log')
         grid on
         hold
@@ -529,7 +542,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     if plot==true
         mat"""
         figure
-        primeField = scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "\$ \\phi_{||}' \$", "SizeData", 5)
+        primeField = scatter($(distance_from_wall), $(prime_field_phase), "*", "DisplayName", "\$ \\phi_{||}' \$")
         hold on
         grid on
         xlabel("\$ x \$", "Interpreter", 'latex', "FontSize", 15)
