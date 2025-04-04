@@ -7,7 +7,7 @@ using MATLAB
 # ----------------------------------------------------------------
 # ------------------- 3D  ----------------------------------------
 # ----------------------------------------------------------------
-simulation_data = loadData3d("out/processed/TEST_new3dStruct.jld2"); # 15by15 tiles out to 300 long channel
+simulation_data = loadData3d("out/processed/TEST_slice_V1.jld2"); # 15by15 tiles out to 300 long channel
 
 #  3D Compression Attenuation  
     gamma_value = .03
@@ -43,6 +43,7 @@ simulation_data = loadData3d("out/processed/TEST_new3dStruct.jld2"); # 15by15 ti
     # High pressure
     # z-axis
     filtered_data = FilterData3d(simulation_data, .1, :pressure, .2, :omega, .1, :gamma, 1, :seed)
+    filtered_data = FilterData3d(simulation_data, .1, :pressure, .5, :omega, .1, :gamma, 1, :seed) # want to get this down to .1 oemga (so far only to .5)
     transverse_axis = "z"
     getMeanField3d(filtered_data, transverse_axis)
     mat"saveas(figure(1), 'figures/meanField_compression_3d_z_15wide_highP_amp.fig')"
@@ -165,13 +166,13 @@ simulation_data = load_data("out/processed/2d_shear_80kby40.jld2")
 
 # ------------------- 2d Poly Packings -------------------
 # Pack Poly Tiles
-mat"packPoly2dRepXY(400,100, 1, 1, 1, .1, 20, 1, false, 1, 1, false, 'in/2d_poly_20by20/tiles/')"
+    mat"packPoly2dRepXY(400,100, 1, 1, 1, .1, 20, 1, false, 1, 1, false, 'in/2d_poly_20by20/tiles/')"
 # Repeat Poly Packings
-mat"pack2dRepeatTilePoly(400, 100, .1, 20, 1, 100, 2, false, 'in/2d_poly_20by20/tiles/', 'in/2d_poly_20by20/')"
+    mat"pack2dRepeatTilePoly(400, 100, .1, 20, 1, 100, 2, false, 'in/2d_poly_20by20/tiles/', 'in/2d_poly_20by20/')"
 
 
 # ------------------- Packing Visulaization -------------------
 # Visulize Tile (not good for big tiles)
-mat"visualizeTile('in/2d_poly_20by20/tiles/2D_poly_N400_P0.001_Width20_Seed1.mat')"
+    mat"visualizeTile('in/2d_poly_20by20/tiles/2D_poly_N400_P0.001_Width20_Seed1.mat')"
 # Visualize Full Packing
-mat"visualizeFullPacking('in/2d_poly_20by20/2D_N80000_P0.001_Width40_Seed1.mat', 20, 20)"
+    mat"visualizeFullPacking('in/2d_poly_20by20/2D_N80000_P0.001_Width40_Seed1.mat', 20, 20)"
