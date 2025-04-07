@@ -348,7 +348,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Let's make everything Dimensionless
-    diameter_average = 1; % This is only here until all the old packings are updated to have this as an output CAO 1JUN2024
+    % diameter_average = 1; % This is only here until all the old packings are updated to have this as an output CAO 1JUN2024
     mass_particle_average = 1;
     attenuation_x_dimensionless = attenuation_x*diameter_average;
     attenuation_y_dimensionless = attenuation_y*diameter_average;
