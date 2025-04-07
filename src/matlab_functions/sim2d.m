@@ -1,5 +1,5 @@
 function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
-    % Example command: sim2d(100, 1, 1, 1.28, 5000, 0.01, 5, 1, "in/2d_5wide_1000long/", "out/junk_yard")
+    % Example command: sim2d(100, 1, 1, 1.28, 80000, 0.1, 40, 1, "in/2d_poly_20by20/", "out/junk_yard")
     % sim2d(100, 1, 1, 1, 80000, 0.1, 40, 1, "in/2d_tiled_2000by40/", "out/junk_yard")
 
     % Create the packing name with the exact number format for P
@@ -49,9 +49,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     Zn_list = [];
     neighbor_list_all = [];
     spring_list_all = [];
-    display("made it to here") % !! Debugging
     for nn = 1:N
-        display(nn)
         neighbor_list_nn = [];
         spring_list_nn = [];
         for mm = [1:nn-1,nn+1:N]
