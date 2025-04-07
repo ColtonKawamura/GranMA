@@ -190,7 +190,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     
     % Perform fft fitting
     [fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index, initial_position_y_out, initial_position_z_out] = ...
-        process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation, y0, z0);
+        process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation, y0, y0);
     
     % Don't waste time if we didn't get enough data
     if isempty(cleaned_particle_index)
@@ -226,7 +226,7 @@ function sim2d(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     
     % Perform fft fitting
     [fitted_attenuation, wavenumber, attenuation_fit_line, initial_distance_from_oscillation_output, amplitude_vector, unwrapped_phase_vector, cleaned_particle_index, initial_position_y_out, initial_position_z_out] = ...
-        process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation, y0, z0);
+        process_gm_fft(driving_amplitude, time_vector, index_particles, index_oscillating_wall, driving_frequency, position_particles, initial_distance_from_oscillation, y0, y0);
     
     attenuation_y = fitted_attenuation;
     attenuation_fit_line_y = attenuation_fit_line;
