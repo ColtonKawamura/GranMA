@@ -1,7 +1,7 @@
 function plotModeDensityPDF(file_name_list, process_data)
 % Plots the PDF of Eigen Modes. Input is list of packings like this:
 % 
-% file_name_list1 = [
+% file_name_list = [
 %     "in/packings_processed_eig_PDF/2D_N6400_P0.1_Width40_Seed1.mat", 
 %     "in/packings_processed_eig_PDF/2D_N6400_P0.01_Width40_Seed1.mat", 
 %     "in/packings_processed_eig_PDF/2D_N6400_P0.001_Width40_Seed1.mat"

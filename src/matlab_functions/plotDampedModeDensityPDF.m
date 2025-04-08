@@ -3,7 +3,7 @@ function plotDampedModeDensityPDF(struct_file, pressure_list, damping_list)
 % 
 % pressure, damping, eigen_values, eigen_vectors
 % 
-% struct_file = *.mat file processed by ______ 
+% struct_file = *.mat file processed by processEigenModesDamped("in/2d_damped_eigen_small", "out/junkyard", [1, 0.1, 0.01, 0.001]); 
 % pressure_list = vector of pressures you want to be plotted
 % damping_list = damping list you want to have plotted
 % 
