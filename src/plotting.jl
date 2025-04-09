@@ -347,12 +347,15 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
 
     # # FILTER SECTION ----------------------------------------------
     filtered_data = deepcopy(filtered_data) # need this because methods are scoped globally and will change the mutable data
-    lower = 0
-    upper = 5
+    lower_y = 0
+    upper_y = 5
+   
     
+    lower_z = 0
+    upper_z = 2
     # This section filters out particles that have a initial y outside of [lower, upper] 
     yFFT_initialY = filtered_data[1].y_fft_initial_y
-    mask = (yFFT_initialY .>= lower) .& (yFFT_initialY .<= upper)
+    mask = (yFFT_initialY .>= lower_y) .& (yFFT_initialY .<= upper_y)
     filtered_data[1].y_fft_initial_y = filtered_data[1].y_fft_initial_y[mask]
     filtered_data[1].y_fft_initial_z = filtered_data[1].y_fft_initial_z[mask]
     filtered_data[1].initial_distance_from_oscillation_output_y_fft = filtered_data[1].initial_distance_from_oscillation_output_y_fft[mask]
@@ -360,7 +363,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     filtered_data[1].unwrapped_phase_vector_y = filtered_data[1].unwrapped_phase_vector_y[mask]
 
     yFFT_initialZ = filtered_data[1].y_fft_initial_z
-    mask = (yFFT_initialZ .>= lower) .& (yFFT_initialZ .<= upper)
+    mask = (yFFT_initialZ .>= lower_z) .& (yFFT_initialZ .<= upper_z)
     filtered_data[1].y_fft_initial_y = filtered_data[1].y_fft_initial_y[mask]
     filtered_data[1].y_fft_initial_z = filtered_data[1].y_fft_initial_z[mask]
     filtered_data[1].initial_distance_from_oscillation_output_y_fft = filtered_data[1].initial_distance_from_oscillation_output_y_fft[mask]
@@ -369,7 +372,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
 
     # This section filters out particles that have a initial z outside of [lower, upper] 
     zFFT_initialY = filtered_data[1].z_fft_initial_y
-    mask = (zFFT_initialY .>= lower) .& (zFFT_initialY .<= upper)
+    mask = (zFFT_initialY .>= lower_y) .& (zFFT_initialY .<= upper_y)
     filtered_data[1].z_fft_initial_y = filtered_data[1].z_fft_initial_y[mask]
     filtered_data[1].z_fft_initial_z = filtered_data[1].z_fft_initial_z[mask]
     filtered_data[1].initial_distance_from_oscillation_output_z_fft = filtered_data[1].initial_distance_from_oscillation_output_z_fft[mask]
@@ -377,7 +380,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     filtered_data[1].unwrapped_phase_vector_z = filtered_data[1].unwrapped_phase_vector_z[mask]
 
     zFFT_initialZ = filtered_data[1].z_fft_initial_z
-    mask = (zFFT_initialZ .>= lower) .& (zFFT_initialZ .<= upper)
+    mask = (zFFT_initialZ .>= lower_z) .& (zFFT_initialZ .<= upper_z)
     filtered_data[1].z_fft_initial_y = filtered_data[1].z_fft_initial_y[mask]
     filtered_data[1].z_fft_initial_z = filtered_data[1].z_fft_initial_z[mask]
     filtered_data[1].initial_distance_from_oscillation_output_z_fft = filtered_data[1].initial_distance_from_oscillation_output_z_fft[mask]
