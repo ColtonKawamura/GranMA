@@ -90,7 +90,7 @@ function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false)
                 seed_list = sort(unique([entry.seed for entry in matching_omega_gamma_data]))
 
                 for k_seed in seed_list
-                    k_seed_data = FilterData(matching_omega_gamma_data, k_seed, :seed)
+                    k_seed_data = FilterData3d(matching_omega_gamma_data, k_seed, :seed)
                     if isempty(k_seed_data[1].unwrapped_phase_vector_y)
                         println("Empty y-phase vector for: Pressure $(pressure_value) OmegaGamma $(omega_gamma_value) seed $(k_seed)")
                         continue
