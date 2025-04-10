@@ -116,7 +116,7 @@ function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false)
             loop_mean_E_list = $(loop_mean_E_list);
             mean_attenuation_x = $(loop_mean_attenuation_list);
             iloop_pressure_value = $(pressure_value);
-            plot_gamma = $(plot_gamma);
+            plot_gamma = $(closest_γ_value);
             marker_color = $(marker_color);
             pressure_label = $(pressure_label);
             marker_shape = $(marker_shape);
@@ -133,14 +133,7 @@ function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false)
     mat"""
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
     title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
-    fitx = [.03, .8]
-    fity = 2*fitx.^.5
-    fitz = 1*fitx.^2
     leg.AutoUpdate = 'off'; 
-    plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', 'slope = 1/2')
-    plot(fitx, fitz, 'k-',  'LineWidth', 3,'DisplayName', 'slope = 2')
-    text(.1, 1.2, '\$ \\frac{1}{2} \$', 'Interpreter', 'latex', 'FontSize', 20);
-    text(.2, .02, '\$ 2 \$', 'Interpreter', 'latex', 'FontSize', 20)
     """ 
 end
 
