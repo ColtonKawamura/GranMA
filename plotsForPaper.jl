@@ -8,6 +8,7 @@ using MATLAB
 # ------------------- 3D  ----------------------------------------
 # ----------------------------------------------------------------
 simulation_data = loadData3d("out/processed/TEST_slice_V1.jld2"); # 15by15 tiles out to 300 long channel
+simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2"); # 15by15 tiles with yz intial positions
 
 #  3D Compression Attenuation  
     gamma_value = .03
@@ -24,7 +25,6 @@ simulation_data = loadData3d("out/processed/TEST_slice_V1.jld2"); # 15by15 tiles
     # Low pressure
     # z-axis
     filtered_data = FilterData3d(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed);
-    # filtered_data = FilterData3d(simulation_data, .001, :pressure, .1, :omega, .1, :gamma, 1, :seed, (0, 5), :initial_distance_from_oscillation_output_y_fft, (0, 5), :initial_distance_from_oscillation_output_z_fft ) # this one is for a slice
     transverse_axis = "z";
     getMeanField3d(filtered_data, transverse_axis);
     mat"saveas(figure(1), 'figures/meanField_compression_3d_z_15wide_lowP_amp.fig')"
@@ -42,8 +42,7 @@ simulation_data = loadData3d("out/processed/TEST_slice_V1.jld2"); # 15by15 tiles
 
     # High pressure
     # z-axis
-    filtered_data = FilterData3d(simulation_data, .1, :pressure, .2, :omega, .1, :gamma, 1, :seed)
-    filtered_data = FilterData3d(simulation_data, .1, :pressure, .5, :omega, .1, :gamma, 1, :seed) # want to get this down to .1 oemga (so far only to .5)
+    filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .1, :gamma, 1, :seed)
     transverse_axis = "z"
     getMeanField3d(filtered_data, transverse_axis)
     mat"saveas(figure(1), 'figures/meanField_compression_3d_z_15wide_highP_amp.fig')"
@@ -129,9 +128,10 @@ simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 
 # 2D Energy per Cycle Theory
     gamma_values = [ .05, .1, .5, 1]
-    plotStitchPhaseScatter(simulation_data, gamma_values) 
-    plotStitchAmpRatio(simulation_data, gamma_values)
-    plotStitchAmpPhase(simulation_data, gamma_values)
+    plotStitchPhaseScatter(simulation_data, gamma_values);
+    plotStitchAmpRatio(simulation_data, gamma_values);
+    plotStitchAmpPhase(simulation_data, gamma_values);
+
 
 ## 2D Shear
 simulation_data = load_data("out/processed/2d_shear_80kby40.jld2")
