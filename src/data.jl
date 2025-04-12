@@ -20,23 +20,88 @@ export
     FilterData3d
 
 function FilterData3d(data::Vector{data3d}, args...)
-    # Initialize the filtered data to be the full simulation_data
-    filtered_data = data
 
     # Iterate over the provided arguments in pairs
     for i in 1:2:length(args)
-        value = args[i]
-        field_name = args[i+1]
+        if isa(args[i], Vector)
+            limits = args[i]
+            dimension = args[i+1]
+            if dimension == "y"
+                lower_y = limits[1]
+                upper_y = limits[2]
+                for j in 1:length(data)
+                    yFFT_initialY = data[j].y_fft_initial_y
+                    mask = (yFFT_initialY .>= lower_y) .& (yFFT_initialY .<= upper_y)
+                    data[j].y_fft_initial_y = data[j].y_fft_initial_y[mask]
+                    data[j].y_fft_initial_z = data[j].y_fft_initial_z[mask]
+                    data[j].initial_distance_from_oscillation_output_y_fft = data[j].initial_distance_from_oscillation_output_y_fft[mask]
+                    data[j].amplitude_vector_y = data[j].amplitude_vector_y[mask]
+                    data[j].unwrapped_phase_vector_y = data[j].unwrapped_phase_vector_y[mask]
+                    
+                    # This section filters out particles that have a initial z outside of [lower, upper] 
+                    zFFT_initialY = data[j].z_fft_initial_y
+                    mask = (zFFT_initialY .>= lower_y) .& (zFFT_initialY .<= upper_y)
+                    data[j].z_fft_initial_y = data[j].z_fft_initial_y[mask]
+                    data[j].z_fft_initial_z = data[j].z_fft_initial_z[mask]
+                    data[j].initial_distance_from_oscillation_output_z_fft = data[j].initial_distance_from_oscillation_output_z_fft[mask]
+                    data[j].amplitude_vector_z = data[j].amplitude_vector_z[mask]
+                    data[j].unwrapped_phase_vector_z = data[j].unwrapped_phase_vector_z[mask]
+    
+                    # This section filters out particles that have a initial z outside of [lower, upper] for the x fft
+                    xFFT_initialY = data[j].x_fft_initial_y
+                    mask = (xFFT_initialY .>= lower_y) .& (xFFT_initialY .<= upper_y)
+                    data[j].x_fft_initial_y = data[j].x_fft_initial_y[mask]
+                    data[j].x_fft_initial_z = data[j].x_fft_initial_z[mask]
+                    data[j].initial_distance_from_oscillation_output_x_fft = data[j].initial_distance_from_oscillation_output_x_fft[mask]
+                    data[j].amplitude_vector_x = data[j].amplitude_vector_x[mask]
+                    data[j].unwrapped_phase_vector_x = data[j].unwrapped_phase_vector_x[mask]
+                end
+            elseif dimension == "z"
+                lower_z = limits[1]
+                upper_z = limits[2]
+                for j in 1:length(data)
+                    yFFT_initialZ = data[j].y_fft_initial_z
+                    mask = (yFFT_initialZ .>= lower_z) .& (yFFT_initialZ .<= upper_z)
+                    data[j].y_fft_initial_y = data[j].y_fft_initial_y[mask]
+                    data[j].y_fft_initial_z = data[j].y_fft_initial_z[mask]
+                    data[j].initial_distance_from_oscillation_output_y_fft = data[j].initial_distance_from_oscillation_output_y_fft[mask]
+                    data[j].amplitude_vector_y = data[j].amplitude_vector_y[mask]
+                    data[j].unwrapped_phase_vector_y = data[j].unwrapped_phase_vector_y[mask]
+        
+                    zFFT_initialZ = data[j].z_fft_initial_z
+                    mask = (zFFT_initialZ .>= lower_z) .& (zFFT_initialZ .<= upper_z)
+                    data[j].z_fft_initial_y = data[j].z_fft_initial_y[mask]
+                    data[j].z_fft_initial_z = data[j].z_fft_initial_z[mask]
+                    data[j].initial_distance_from_oscillation_output_z_fft = data[j].initial_distance_from_oscillation_output_z_fft[mask]
+                    data[j].amplitude_vector_z = data[j].amplitude_vector_z[mask]
+                    data[j].unwrapped_phase_vector_z = data[j].unwrapped_phase_vector_z[mask]
+        
+                    xFFT_initialZ = data[j].x_fft_initial_z
+                    mask = (xFFT_initialZ .>= lower_z) .& (xFFT_initialZ .<= upper_z)
+                    data[j].x_fft_initial_y = data[j].x_fft_initial_y[mask]
+                    data[j].x_fft_initial_z = data[j].x_fft_initial_z[mask]
+                    data[j].initial_distance_from_oscillation_output_x_fft = data[j].initial_distance_from_oscillation_output_x_fft[mask]
+                    data[j].amplitude_vector_x = data[j].amplitude_vector_x[mask]
+                    data[j].unwrapped_phase_vector_x = data[j].unwrapped_phase_vector_x[mask]
+                end
+            else
+                error("Invalid dimension specified. Use 'y' or 'z'.")
+            end
 
-        # Determine the closest match for the given field
-        closest_index = argmin(abs.([getfield(idx, field_name) for idx in filtered_data] .- value))
-        closest_value = getfield(filtered_data[closest_index], field_name)
 
-        # Filter the data to match the closest value
-        filtered_data = filter(entry -> getfield(entry, field_name) == closest_value, filtered_data)
+        else
+            value = args[i]
+            field_name = args[i+1]
+            # Determine the closest match for the given field
+            closest_index = argmin(abs.([getfield(idx, field_name) for idx in data] .- value))
+            closest_value = getfield(data[closest_index], field_name)
+
+            # Filter the data to match the closest value
+            data = filter(entry -> getfield(entry, field_name) == closest_value, data)
+        end
     end
 
-    return filtered_data
+    return data
 end
 
 function saveData3d(simulation_data::Vector{data3d}, filepath::String)
