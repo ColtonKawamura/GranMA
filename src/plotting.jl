@@ -453,8 +453,8 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
 
     # # FILTER SECTION ----------------------------------------------
     filtered_data = deepcopy(filtered_data) # need this because methods are scoped globally and will change the mutable data
-    lower_y = 0
-    upper_y = 5
+    lower_y = 5
+    upper_y = 10
    
     
     lower_z = 0

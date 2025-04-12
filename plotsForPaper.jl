@@ -2,12 +2,12 @@ include("src/GranMA.jl")
 
 using .GranMA
 using MATLAB
+mat"addpath('src/matlab_functions')"
 
 
 # ----------------------------------------------------------------
 # ------------------- 3D  ----------------------------------------
 # ----------------------------------------------------------------
-simulation_data = loadData3d("out/processed/TEST_slice_V1.jld2"); # 15by15 tiles out to 300 long channel
 simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2"); # 15by15 tiles with yz intial positions
 
 #  3D Compression Attenuation  
@@ -20,6 +20,7 @@ simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2"); # 15by15 til
     plotStitchAttenuation(simulation_data, gamma_values, 1.2)
     mat"slopeLine('loglog' ,.75, [.005,.1], .05)"
     mat"slopeLine('loglog' ,.17, [.005,.1], .25)"
+    
 
 #  3D Compression MeanField 
     # Low pressure
@@ -29,15 +30,14 @@ simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2"); # 15by15 til
     getMeanField3d(filtered_data, transverse_axis);
     mat"saveas(figure(1), 'figures/meanField_compression_3d_z_15wide_lowP_amp.fig')"
     mat"saveas(figure(2), 'figures/meanField_compression_3d_z_15wide_lowP_phase.fig')"
-    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("figures/meanField_compression_3d_z_15wide_lowP_phase.fig", "figures/meanField_compression_3d_z_15wide_lowP_amp.fig", [0,40], [1E-2, 1])""" 
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("figures/meanField_compression_3d_z_15wide_lowP_phase.fig", "figures/meanField_compression_3d_z_15wide_lowP_amp.fig", [0,80], [1E-2, 1])""" 
 
     # y-ax
     transverse_axis = "y"
     getMeanField3d(filtered_data, transverse_axis)
     mat"saveas(figure(1), 'figures/meanField_compression_3d_y_15wide_lowP_amp.fig')"
     mat"saveas(figure(2), 'figures/meanField_compression_3d_y_15wide_lowP_phase.fig')"
-    mat"close all"
-    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("figures/meanField_compression_3d_y_15wide_lowP_phase.fig", "figures/meanField_compression_3d_y_15wide_lowP_amp.fig", [0,40], [1E-2, 1])""" 
+    mat"""addpath('src/matlab_functions'); combinePlotsTiledTwo("figures/meanField_compression_3d_y_15wide_lowP_phase.fig", "figures/meanField_compression_3d_y_15wide_lowP_amp.fig", [0,80], [1E-2, 1])""" 
     # mat"saveas(figure(1), 'figures/meanField_compression_3d_y_15wide_lowP.eps')"
 
     # High pressure
@@ -59,6 +59,12 @@ simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2"); # 15by15 til
     mat"saveas(figure(1), 'figures/meanField_compression_3d_y_15wide_highP.eps')"
 
 
+# 3D Energy per Cycle Theory
+    gamma_values = [ .05, .1, .5, 1]
+    plotStitchPhaseScatter3d(simulation_data, gamma_values);
+    mat"slopeLine('loglog' ,.833, [.08,1], .1)"
+    # plotStitchAmpRatio(simulation_data, gamma_values); neeed 3d version
+    # plotStitchAmpPhase(simulation_data, gamma_values);
 # ----------------------------------------------------------------
 # ------------------- 2D  ----------------------------------------
 # ----------------------------------------------------------------
