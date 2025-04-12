@@ -123,7 +123,6 @@ function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false)
             marker_size = exp(plot_gamma/$(max_gamma))*3;
 
             plot( omega_gamma/$(gamma_val), loop_mean_E_list, "-o", 'MarkerSize', marker_size, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
-            %plot( omega_gamma, loop_mean_E_list, marker_shape, 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
             """
         end
 
