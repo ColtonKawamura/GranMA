@@ -467,7 +467,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     filtered_data[1].initial_distance_from_oscillation_output_y_fft = filtered_data[1].initial_distance_from_oscillation_output_y_fft[mask]
     filtered_data[1].amplitude_vector_y = filtered_data[1].amplitude_vector_y[mask]
     filtered_data[1].unwrapped_phase_vector_y = filtered_data[1].unwrapped_phase_vector_y[mask]
-
+    
     yFFT_initialZ = filtered_data[1].y_fft_initial_z
     mask = (yFFT_initialZ .>= lower_z) .& (yFFT_initialZ .<= upper_z)
     filtered_data[1].y_fft_initial_y = filtered_data[1].y_fft_initial_y[mask]
@@ -475,6 +475,7 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     filtered_data[1].initial_distance_from_oscillation_output_y_fft = filtered_data[1].initial_distance_from_oscillation_output_y_fft[mask]
     filtered_data[1].amplitude_vector_y = filtered_data[1].amplitude_vector_y[mask]
     filtered_data[1].unwrapped_phase_vector_y = filtered_data[1].unwrapped_phase_vector_y[mask]
+
 
     # This section filters out particles that have a initial z outside of [lower, upper] 
     zFFT_initialY = filtered_data[1].z_fft_initial_y
@@ -493,6 +494,22 @@ function getMeanField3d(filtered_data, transverse_axis; plot = true, shear = fal
     filtered_data[1].amplitude_vector_z = filtered_data[1].amplitude_vector_z[mask]
     filtered_data[1].unwrapped_phase_vector_z = filtered_data[1].unwrapped_phase_vector_z[mask]
 
+    # This section filters out particles that have a initial z outside of [lower, upper] for the x fft
+    xFFT_initialY = filtered_data[1].x_fft_initial_y
+    mask = (xFFT_initialY .>= lower_y) .& (xFFT_initialY .<= upper_y)
+    filtered_data[1].x_fft_initial_y = filtered_data[1].x_fft_initial_y[mask]
+    filtered_data[1].x_fft_initial_z = filtered_data[1].x_fft_initial_z[mask]
+    filtered_data[1].initial_distance_from_oscillation_output_x_fft = filtered_data[1].initial_distance_from_oscillation_output_x_fft[mask]
+    filtered_data[1].amplitude_vector_x = filtered_data[1].amplitude_vector_x[mask]
+    filtered_data[1].unwrapped_phase_vector_x = filtered_data[1].unwrapped_phase_vector_x[mask]
+
+    xFFT_initialZ = filtered_data[1].x_fft_initial_z
+    mask = (xFFT_initialZ .>= lower_z) .& (xFFT_initialZ .<= upper_z)
+    filtered_data[1].x_fft_initial_y = filtered_data[1].x_fft_initial_y[mask]
+    filtered_data[1].x_fft_initial_z = filtered_data[1].x_fft_initial_z[mask]
+    filtered_data[1].initial_distance_from_oscillation_output_x_fft = filtered_data[1].initial_distance_from_oscillation_output_x_fft[mask]
+    filtered_data[1].amplitude_vector_x = filtered_data[1].amplitude_vector_x[mask]
+    filtered_data[1].unwrapped_phase_vector_x = filtered_data[1].unwrapped_phase_vector_x[mask]
     # FILTER SECTION ----------------------------------------------
 
     if shear == true
