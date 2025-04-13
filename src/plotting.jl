@@ -57,7 +57,7 @@ function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false)
 
         # Get a list of unique input pressures
         pressure_list = sort(unique([entry.pressure for entry in matching_γ_data])) # goes through each entry of simulation_data and get the P value at that entry
-        pressure_list = [minimum(pressure_list), maximum(pressure_list)] # just get the limits
+        pressure_list = [minimum(pressure_list), maximum(pressure_list)] # just get the limits for this plot, comment out for all pressures
 
         # get a range for plotting color from 0 to 1
         normalized_variable = (log.(pressure_list) .- minimum(log.(pressure_list))) ./ (maximum(log.(pressure_list)) .- minimum(log.(pressure_list)))
@@ -94,6 +94,12 @@ function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false)
                     if isempty(k_seed_data[1].unwrapped_phase_vector_y)
                         println("Empty y-phase vector for: Pressure $(pressure_value) OmegaGamma $(omega_gamma_value) seed $(k_seed)")
                         continue
+                    end
+                    if isempty(k_seed_data[1].initial_distance_from_oscillation_output_x_fft) || 
+                        isempty(k_seed_data[1].initial_distance_from_oscillation_output_y_fft) ||
+                        isempty(k_seed_data[1].initial_distance_from_oscillation_output_z_fft)
+                         println("Empty distance vector for: Pressure $(pressure_value) OmegaGamma $(omega_gamma_value) seed $(k_seed)")
+                         continue
                     end
                     mean_scatter = plotPhase(k_seed_data; plot=false, shear=shear)
                     mean_scatter = isinf(mean_scatter) ? NaN : mean_scatter # saftey for infinite values
