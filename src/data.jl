@@ -20,7 +20,7 @@ export
     FilterData3d
 
 function FilterData3d(data::Vector{data3d}, args...)
-
+    data = deepcopy(data)
     # Iterate over the provided arguments in pairs
     for i in 1:2:length(args)
         if isa(args[i], Vector)
