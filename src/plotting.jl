@@ -356,7 +356,7 @@ function plotStitchAmpRatio3d(simulation_data, gamma_values; shear=false)
             marker_color = $(marker_color);
             pressure_label = $(pressure_label);
             marker_shape = $(marker_shape);
-            marker_size = exp(plot_gamma/$(max_gamma))*3
+            marker_size = exp(plot_gamma/$(max_gamma))*3;
             y =  plot_gamma*loop_mean_E_list.^2;
             y(y > 1) = NaN;
             plot( omega_gamma/$(gamma_val),y, "-o", 'MarkerSize', marker_size , 'MarkerFaceColor', marker_color, 'Color', marker_color, 'DisplayName', pressure_label);
@@ -370,9 +370,9 @@ function plotStitchAmpRatio3d(simulation_data, gamma_values; shear=false)
     % legend(ax_attenuation, 'show', 'Location', 'eastoutside', 'Interpreter', 'latex');
     leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
     title(leg, "\$  \\hat{P}, \\hat{\\gamma} \$")
-    fitx = [.03, 2]
-    fity = .2*fitx.^1
-    fitz = .001*fitx.^1
+    fitx = [.03, 2];
+    fity = .2*fitx.^1;
+    fitz = .001*fitx.^1;
     leg.AutoUpdate = 'off'; 
     plot(fitx, fity, 'k-', 'LineWidth', 3, 'DisplayName', 'slope = 1')
     plot(fitx, fitz, 'k-', 'LineWidth', 3, 'DisplayName', 'slope = 1')
