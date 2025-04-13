@@ -61,9 +61,12 @@ simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2") # 15by15 tile
 
 
 # 3D Energy per Cycle Theory
-    filtered_data = FilterData3d(simulation_data, [5,10], :initialRangeY, [0,2], :initialRangeZ)
+    filtered_data = FilterData3d(simulation_data, [5,10], "y", [0,2], "z")
+    simulation_data = nothing
+    GC.gc()
     gamma_values = [ .05, .1, .5, 1]
     plotStitchPhaseScatter3d(filtered_data, gamma_values);
+    mat"slopeLine('loglog' ,.833, [.08,1], .1)" # (type, slope, [xlower, xupper], yMean)
     plotStitchPhaseScatter3d(simulation_data, gamma_values);
     mat"slopeLine('loglog' ,.833, [.08,1], .1)" # (type, slope, [xlower, xupper], yMean)
     
