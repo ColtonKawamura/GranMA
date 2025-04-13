@@ -12,6 +12,31 @@ using MAT
 using Polynomials
 using LinearAlgebra
 
+## 3d energy theory development
+include("src/GranMA.jl")
+using .GranMA
+using MATLAB
+mat"addpath('src/matlab_functions')"
+simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2") # 15by15 tiles with yz intial positions
+# filtered_data = FilterData3d(simulation_data, [5,10], "y", [0,2], "z")
+filtered_data = FilterData3d(simulation_data, .1, :pressure, .1, :omega, .1, :gamma, 1, :seed, [5,10], "y", [0,2], "z")
+simulation_data = nothing
+GC.gc()
+mat"figure"
+mat"close all"
+transverse_axis = "z";
+# getMeanField3d(filtered_data, transverse_axis);
+gamma_values = [ .05, .1, .5, 1]
+# plotStitchPhaseScatter3d(filtered_data, gamma_values);
+mean_scatter = plotPhase(filtered_data; plot=true, shear=false)
+
+## 3d energy theory development
+
+
+
+
+
+
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 simulation_data = load_data("out/processed/2d_K100_80kby40.jld2") # large packing with low freqs
 
