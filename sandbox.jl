@@ -29,6 +29,10 @@ transverse_axis = "z";
 gamma_values = [ .05, .1, .5, 1]
 plotStitchPhaseScatter3d(filtered_data, gamma_values);
 plotStitchAmpRatio3d(filtered_data, gamma_values);
+mat"slopeLine('loglog' ,1, [.1,1], .01)" # (type, slope, [xlower, xupper], yMean)
+mat"slopeLine('loglog' ,1.5, [.1,1], .0013)" # (type, slope, [xlower, xupper], yMean)
+plotStitchAmpPhase3d(filtered_data, gamma_values);
+mat"slopeLine('loglog' ,-5/6, [.005,.5], .1)" # (type, slope, [xlower, xupper], yMean)
 mean_scatter = plotPhase(filtered_data; plot=true, shear=false)
 
 
