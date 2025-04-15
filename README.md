@@ -1,5 +1,5 @@
 # Granular Media Acoustics (GranMA)
-<img width="401" alt="Image" src="https://github.com/user-attachments/assets/95f105e2-c8e1-4b43-8a95-edd028cc19e4" />
+<img width="407" alt="Image" src="https://github.com/user-attachments/assets/805a7700-32eb-4e7c-b932-d19566c9a30d" />
 ## Project Overview
 A comprehensive computational framework for investigating acoustic wave propagation in granular materials using advanced molecular dynamics (MD) simulations. This research explores how particle-level characteristics and packing arrangements influence macro-scale acoustic properties, with implications for materials science, seismology, and advanced sensing applications.
 
