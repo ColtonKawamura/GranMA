@@ -28,13 +28,14 @@ transverse_axis = "z";
 # getMeanField3d(filtered_data, transverse_axis);
 gamma_values = [ .05, .1, .5, 1]
 plotStitchPhaseScatter3d(filtered_data, gamma_values);
+mat"slopeLine('loglog' ,.2, [.1,1], .7)" # (type, slope, [xlower, xupper], yMean)
 plotStitchAmpRatio3d(filtered_data, gamma_values);
 mat"slopeLine('loglog' ,1, [.1,1], .01)" # (type, slope, [xlower, xupper], yMean)
 mat"slopeLine('loglog' ,1.5, [.1,1], .0013)" # (type, slope, [xlower, xupper], yMean)
 plotStitchAmpPhase3d(filtered_data, gamma_values);
 mat"slopeLine('loglog' ,-5/6, [.005,.5], .1)" # (type, slope, [xlower, xupper], yMean)
 mean_scatter = plotPhase(filtered_data; plot=true, shear=false)
-
+mat"xlim([0,200])"
 
 #compare to 2D
 simulation_data = load_data("out/processed/2d_K100_80kby40.jld2") # large packing with low freqs

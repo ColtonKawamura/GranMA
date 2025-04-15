@@ -52,8 +52,8 @@ function plotStitchAmpPhase3d(simulation_data, gamma_values)
         closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
         closest_γ_value = simulation_data[closest_γ_index].gamma
         matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
-        plot_gamma = γ_value
-        gamma_value = γ_value
+        plot_gamma = closest_γ_value
+        gamma_value = closest_γ_value
         max_gamma = maximum(gamma_values)
 
         # Get a list of unique input pressures
@@ -168,7 +168,7 @@ function plotStitchPhaseScatter3d(simulation_data, gamma_values; shear=false)
         closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
         closest_γ_value = simulation_data[closest_γ_index].gamma
         matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
-        plot_gamma = γ_value
+        plot_gamma = closest_γ_value
         gamma_value = γ_value
         max_gamma = maximum(gamma_values)
 
@@ -282,8 +282,8 @@ function plotStitchAmpRatio3d(simulation_data, gamma_values; shear=false)
         closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
         closest_γ_value = simulation_data[closest_γ_index].gamma
         matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
-        plot_gamma = γ_value
-        gamma_value = γ_value
+        plot_gamma = closest_γ_value
+        gamma_value = closest_γ_value
         max_gamma = maximum(gamma_values)
 
         # Get a list of unique input pressures
