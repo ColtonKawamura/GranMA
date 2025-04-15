@@ -1,6 +1,6 @@
 # Granular Materials - Acoustics (GranMA)
 
-GranMA molecular dynamics (MD) simulation and post-processing package used for modeling and analyzing the effects of granular packing on acoustic wave propagation.
+GranMA molecular dynamics (MD) simulation and post-processing package used for modeling and analyzing the effects of granular packing on acoustic wave propagation. a
 
 There are three main stages to the workflow.
 1. Create packings.
