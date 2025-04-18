@@ -11,12 +11,14 @@ mat"addpath('src/matlab_functions')"
 simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2") # 15by15 tiles with yz intial positions
 
 #  3D Compression Attenuation  
-    gamma_value = .03
+    gamma_value = .2
     plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)    
     plot_ωγ_wavespeed_2d(simulation_data, gamma_value) 
+    mat"slopeLine('loglog' ,1/4, [.05,.5], .3)" # for gamma = .5
+    mat"slopeLine('loglog' ,1/6, [.02,.2], .35)" # for gamma = .2
 
 #  3D Sitched Attenuation  
-    gamma_values = [.03, .07, .1, .14, .5, 1]
+    gamma_values = [.1, .2, .5]
     plotStitchAttenuation(simulation_data, gamma_values, 1.2)
     mat"slopeLine('loglog' ,.75, [.005,.1], .05)"
     mat"slopeLine('loglog' ,.17, [.005,.1], .25)"
