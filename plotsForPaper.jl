@@ -1,7 +1,11 @@
+
 include("src/GranMA.jl")
 
 using .GranMA
 using MATLAB
+mat"set(0, 'DefaultFigureVisible', 'on')"
+mat"set(groot, 'defaultFigureCreateFcn', @(fig,~)addlistener(fig, 'ObjectBeingDestroyed', @(~,~)disp(['Figure destroyed: ' num2str(fig.Number)])))"
+mat"addpath('src/matlab_functions')"
 mat"addpath('src/matlab_functions')"
 
 
@@ -80,6 +84,7 @@ simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2") # 15by15 tile
 
 ## 2D Compression
 simulation_data = load_data("out/processed/2d_K100_80kby40.jld2") # large packing with low freqs
+saveData2dToMat(simulation_data, "out/processed/2d_K100_80kby40.mat") # save data to matlab format
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 
 # Compression Attenuation and Wavespeed
