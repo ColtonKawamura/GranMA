@@ -17,7 +17,78 @@ export
     loadData3d,
     saveData3d,
     crunchNSave3d,
-    FilterData3d
+    FilterData3d,
+    saveData3dToMat,
+    saveData2dToMat
+
+function saveData2dToMat(data::Vector{file_data}, filepath::String)
+    # Convert the Vector{file_data} to a Dict of arrays for MATLAB compatibility
+    mat_dict = Dict{String, Any}()
+    
+    # Extract all fields from the first data entry to get field names
+    if isempty(data)
+        @warn "No data to save to MAT file."
+        return
+    end
+    
+    # Process each field across all data entries
+    for field in fieldnames(file_data)
+        values = [getfield(entry, field) for entry in data]
+        
+        # Special handling for vector fields
+        if eltype(values) <: Vector
+            # For vector fields, we create a cell array in MATLAB
+            mat_dict[String(field)] = values
+        else
+            # For scalar fields, create normal arrays
+            mat_dict[String(field)] = values
+        end
+    end
+    
+    # Ensure file has .mat extension
+    if !endswith(filepath, ".mat")
+        filepath = filepath * ".mat"
+    end
+    
+    # Save to MAT file
+    matwrite(filepath, mat_dict)
+    println("Data saved to MATLAB file: $filepath")
+end
+
+function saveData3dToMat(data::Vector{data3d}, filepath::String)
+    # Convert the Vector{data3d} to a Dict of arrays for MATLAB compatibility
+    mat_dict = Dict{String, Any}()
+    
+    # Extract all fields from the first data entry to get field names
+    if isempty(data)
+        @warn "No data to save to MAT file."
+        return
+    end
+    
+    # Process each field across all data entries
+    for field in fieldnames(data3d)
+        values = [getfield(entry, field) for entry in data]
+        
+        # Special handling for vector fields
+        if eltype(values) <: Vector
+            # For vector fields, we create a cell array in MATLAB
+            mat_dict[String(field)] = values
+        else
+            # For scalar fields, create normal arrays
+            mat_dict[String(field)] = values
+        end
+    end
+    
+    
+    # Ensure file has .mat extension
+    if !endswith(filepath, ".mat")
+        filepath = filepath * ".mat"
+    end
+    
+    # Save to MAT file
+    matwrite(filepath, mat_dict)
+    println("Data saved to MATLAB file: $filepath")
+end
 
 function FilterData3d(data::Vector{data3d}, args...)
     data = deepcopy(data)
