@@ -1047,6 +1047,7 @@ function plotStitchAttenuation(simulation_data, gamma_values, mean_diameter; she
         closest_γ_index = argmin(abs.([idx.gamma for idx in simulation_data] .- γ_value))
         closest_γ_value = simulation_data[closest_γ_index].gamma
         matching_γ_data = filter(entry -> entry.gamma == closest_γ_value, simulation_data)
+        matching_γ_data = filter(entry -> entry.omega <= .5, matching_γ_data) # filter out the data that is too high
         plot_gamma = γ_value
         gamma_value = closest_γ_value
 
@@ -2797,6 +2798,7 @@ function plot_ωγ_attenuation_2d(simulation_data, gamma_value, mean_diameter; p
     closest_gamma_index = argmin(abs.([idx.gamma for idx in simulation_data] .- gamma_value))
     closest_gamma_value = simulation_data[closest_gamma_index].gamma
     matching_gamma_data = filter(entry -> entry.gamma == closest_gamma_value, simulation_data)
+    # matching_gamma_data = filter(entry -> entry.omega <= .2, matching_gamma_data) # filter out the data that is too high
     plot_gamma = gamma_value
 
     # Get a list of unique input pressures
@@ -2806,12 +2808,6 @@ function plot_ωγ_attenuation_2d(simulation_data, gamma_value, mean_diameter; p
     # Define the plot limits to match the 1D theory plot curves
     theory_x = collect(3E-4:1E-5:3)
     theory_y = theory_x ./ sqrt(2) .* ((1 .+ theory_x.^2) .* (1 .+ sqrt.(1 .+ theory_x.^2))).^(-0.5);
-    # upper_limit_line_x = [1*gamma_value; 1*gamma_value]
-    # upper_limit_line_y = [1E-5; 1]
-    # lower_limit_line_x = [.1*gamma_value; .1*gamma_value]
-    # lower_limit_line_y = [1E-5; 1]
-    # % plot($(upper_limit_line_x), $(upper_limit_line_y), 'k', 'DisplayName', '\$ \\omega_0 \$')
-    # % plot($(lower_limit_line_x), $(lower_limit_line_y), 'b', 'DisplayName', '\$ .1 \\omega_0 \$')
 
     if plot
         # Intialized the plots to loop over
