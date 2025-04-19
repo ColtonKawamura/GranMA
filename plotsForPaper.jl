@@ -1,4 +1,3 @@
-
 include("src/GranMA.jl")
 
 using .GranMA
@@ -13,6 +12,7 @@ mat"addpath('src/matlab_functions')"
 # ------------------- 3D  ----------------------------------------
 # ----------------------------------------------------------------
 simulation_data = loadData3d("out/processed/3d_80Kby15_V4_1.jld2") # 15by15 tiles with yz intial positions
+saveData3dToMat(simulation_data, "out/processed/3d_80Kby15_V4_1.mat") # save data to matlab format
 
 #  3D Compression Attenuation  
     gamma_value = .2
