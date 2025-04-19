@@ -2863,6 +2863,7 @@ function plot_ωγ_attenuation_2d(simulation_data, gamma_value, mean_diameter; p
         # This is needed because MATLAB.jl has a hard time escaping \'s
         legend_label = @sprintf("\$ \\hat{P} = %.3f, \\hat{\\gamma} = %.3f\$", pressure_value, closest_gamma_value)
 
+        
         if plot
             # Transfer data to MATLAB
             mat"""

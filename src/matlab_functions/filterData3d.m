@@ -14,8 +14,28 @@ function filteredData = filterData3d(data, varargin)
     % Returns:
     %   filtered_data: The filtered struct array.
 
-    
 
-    
+    if ~isscalar(data) || ~isstruct(data)
+        error('Input data must be a scalar struct.');
+    end
+
+    if mod(length(varargin), 2) ~= 0
+        error('Filtering arguments must be provided in field_name/value pairs.');
+    end
+
+
+    allFieldNames = fieldnames(data);
+
+    for i = 1:2:length(varargin)
+        fieldName = varargin{i}
+        value = varargin{i+1}
+        whos value
+        % fullFieldData = data.(fieldName); % all the values for fieldName for all simulations
+
+        % absDif = abs(fullFieldData - value); 
+        % minDiff = min(absDif);
+        % tolerance = minDef * 1e-9;
+        % matchingIndex = find(absDif <= minDiff+ tolerance);
+    end
 
 end % End function

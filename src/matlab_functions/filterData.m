@@ -50,53 +50,77 @@ function filtered_data_struct = filterData(data_struct, varargin)
     for i = 1:2:length(varargin)
         field_name = varargin{i};
         value = varargin{i+1};
+        if length(value) == 2
+            if field_name == "y"
+                lower_y = value(1);
+                upper_y = value(2);
+                for j = 1:length(data_struct.alphaoveromega_x)
+                    xFFT_initialY = data_struct.x_fft_initial_y{j}; % all the initial y for sim j
+                    mask = (xFFT_initialY >= lower_y) & (xFFT_initialY <= upper_y);
+                    data_struct.x_fft_initial_y{j} = xFFT_initialY(mask);
+                    xFFT_initialZ = data_struct.x_fft_initial_z{j};
+                    data_struct.x_fft_initial_z{j} = data_struct.x_fft_initial_z{j}(mask);
+                    data_struct.amplitude_vector_x{j} = data_struct.amplitude_vector_x{j}(mask);
+                    
+                    yFFT_initialY = data_struct.x_fft_initial_y{j}; % all the initial y for sim j
+                    mask = (xFFT_initialY >= lower_y) & (xFFT_initialY <= upper_y);
+                    data_struct.x_fft_initial_y{j} = xFFT_initialY(mask);
+                    xFFT_initialZ = data_struct.x_fft_initial_z{j};
+                    data_struct.x_fft_initial_z{j} = data_struct.x_fft_initial_z{j}(mask);
+                end
+            elseif field_name == "z"
+                field_name
+            end
+            continue
+        else
 
-        if ~ischar(field_name) && ~isstring(field_name)
-             error('Field name argument must be a string.');
-        end
-        field_name = char(field_name);
+            if ~ischar(field_name) && ~isstring(field_name)
+                error('Field name argument must be a string.');
+            end
+            field_name = char(field_name);
 
-        if isempty(valid_indices)
-            break; % Stop if no valid indices remain
-        end
-
-        if ~isfield(data_struct, field_name)
-            error('Field "%s" does not exist in the data structure.', field_name);
-        end
-
-        % Extract the full data for the field being filtered
-        try
-            full_field_data = data_struct.(field_name);
-            % Check consistency of the number of elements (using first dimension)
-            current_field_size = size(full_field_data, 1);
-             if current_field_size == 1 && ~iscell(full_field_data) && ndims(full_field_data) == 2 && size(full_field_data, 2) > 1
-                 current_field_size = size(full_field_data, 2);
-                 % If it looks like a row vector, transpose it for consistency
-                 if current_field_size == num_elements
-                     full_field_data = full_field_data';
-                 end
-             end
-
-            if ~isempty(full_field_data) && current_field_size ~= num_elements
-                 error('Field "%s" has inconsistent number of elements (%d) in the first dimension compared to expected (%d).', field_name, current_field_size, num_elements);
+            if isempty(valid_indices)
+                break; % Stop if no valid indices remain
             end
 
-            % Ensure it's numeric for comparison
-            if ~isnumeric(full_field_data)
-                error('Filtering field "%s" must be numeric.', field_name);
+            if ~isfield(data_struct, field_name)
+                error('Field "%s" does not exist in the data structure.', field_name);
             end
-             % Ensure it's a column vector if it's a vector
-             if isvector(full_field_data)
-                 full_field_data = full_field_data(:);
-             elseif ~isempty(full_field_data)
-                 % If not a vector, filtering logic might need adjustment
-                 % For now, assume we compare based on the first column if it's a matrix?
-                 % Or error? Let's error for now if it's not a vector.
-                 error('Filtering field "%s" must be a vector (or empty).', field_name);
-             end
 
-        catch ME
-            error('Could not extract or validate data from field "%s". Original error: %s', field_name, ME.message);
+            % Extract the full data for the field being filtered
+            try
+                full_field_data = data_struct.(field_name);
+                % Check consistency of the number of elements (using first dimension)
+                current_field_size = size(full_field_data, 1);
+                if current_field_size == 1 && ~iscell(full_field_data) && ndims(full_field_data) == 2 && size(full_field_data, 2) > 1
+                    current_field_size = size(full_field_data, 2);
+                    % If it looks like a row vector, transpose it for consistency
+                    if current_field_size == num_elements
+                        full_field_data = full_field_data';
+                    end
+                end
+
+                if ~isempty(full_field_data) && current_field_size ~= num_elements
+                    error('Field "%s" has inconsistent number of elements (%d) in the first dimension compared to expected (%d).', field_name, current_field_size, num_elements);
+                end
+
+                % Ensure it's numeric for comparison
+                if ~isnumeric(full_field_data)
+                    error('Filtering field "%s" must be numeric.', field_name);
+                end
+                % Ensure it's a column vector if it's a vector
+                if isvector(full_field_data)
+                    full_field_data = full_field_data(:);
+                elseif ~isempty(full_field_data)
+                    % If not a vector, filtering logic might need adjustment
+                    % For now, assume we compare based on the first column if it's a matrix?
+                    % Or error? Let's error for now if it's not a vector.
+                    error('Filtering field "%s" must be a vector (or empty).', field_name);
+                end
+
+            catch ME
+                error('Could not extract or validate data from field "%s". Original error: %s', field_name, ME.message);
+            end
         end
 
         % Extract the subset of values corresponding to currently valid indices
