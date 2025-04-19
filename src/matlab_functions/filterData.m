@@ -55,21 +55,82 @@ function filtered_data_struct = filterData(data_struct, varargin)
                 lower_y = value(1);
                 upper_y = value(2);
                 for j = 1:length(data_struct.alphaoveromega_x)
-                    xFFT_initialY = data_struct.x_fft_initial_y{j}; % all the initial y for sim j
-                    mask = (xFFT_initialY >= lower_y) & (xFFT_initialY <= upper_y);
-                    data_struct.x_fft_initial_y{j} = xFFT_initialY(mask);
-                    xFFT_initialZ = data_struct.x_fft_initial_z{j};
-                    data_struct.x_fft_initial_z{j} = data_struct.x_fft_initial_z{j}(mask);
-                    data_struct.amplitude_vector_x{j} = data_struct.amplitude_vector_x{j}(mask);
-                    
-                    yFFT_initialY = data_struct.x_fft_initial_y{j}; % all the initial y for sim j
-                    mask = (xFFT_initialY >= lower_y) & (xFFT_initialY <= upper_y);
-                    data_struct.x_fft_initial_y{j} = xFFT_initialY(mask);
-                    xFFT_initialZ = data_struct.x_fft_initial_z{j};
-                    data_struct.x_fft_initial_z{j} = data_struct.x_fft_initial_z{j}(mask);
+                    initialY = data_struct.x_fft_initial_y{j}; % all the initial y for sim j
+                    mask = (initialY >= lower_y) & (initialY <= upper_y);
+                    data_struct.x_fft_initial_y{j} = initialY(mask);
+                    initialZ = data_struct.x_fft_initial_z{j};
+                    data_struct.x_fft_initial_z{j} = initialZ(mask);
+                    amp = data_struct.amplitude_vector_x{j};
+                    data_struct.amplitude_vector_x{j} = amp(mask);
+                    phase = data_struct.unwrapped_phase_vector_x{j};
+                    data_struct.unwrapped_phase_vector_x{j} = phase(mask);
+                    initialX = data_struct.initial_distance_from_oscillation_output_x_fft{j};
+                    data_struct.initial_distance_from_oscillation_output_x_fft{j} = initialX(mask); 
+
+                    initialY = data_struct.y_fft_initial_y{j}; % all the initial y for sim j
+                    mask = (initialY >= lower_y) & (initialY <= upper_y);
+                    data_struct.y_fft_initial_y{j} = initialY(mask);
+                    initialZ = data_struct.y_fft_initial_z{j};
+                    data_struct.y_fft_initial_z{j} = initialZ(mask);
+                    amp = data_struct.amplitude_vector_y{j};
+                    data_struct.amplitude_vector_y{j} = amp(mask);
+                    phase = data_struct.unwrapped_phase_vector_y{j};
+                    data_struct.unwrapped_phase_vector_y{j} = phase(mask);
+                    initialX = data_struct.initial_distance_from_oscillation_output_y_fft{j};
+                    data_struct.initial_distance_from_oscillation_output_y_fft{j} = initialX(mask); 
+                
+                    initialY = data_struct.z_fft_initial_y{j}; % all the initial y for sim j
+                    mask = (initialY >= lower_y) & (initialY <= upper_y);
+                    data_struct.z_fft_initial_y{j} = initialY(mask);
+                    initialZ = data_struct.z_fft_initial_z{j};
+                    data_struct.z_fft_initial_z{j} = initialZ(mask);
+                    amp = data_struct.amplitude_vector_z{j};
+                    data_struct.amplitude_vector_z{j} = amp(mask);
+                    phase = data_struct.unwrapped_phase_vector_z{j};
+                    data_struct.unwrapped_phase_vector_z{j} = phase(mask);
+                    initialX = data_struct.initial_distance_from_oscillation_output_z_fft{j};
+                    data_struct.initial_distance_from_oscillation_output_z_fft{j} = initialX(mask); 
                 end
             elseif field_name == "z"
-                field_name
+                lower_z = value(1);
+                upper_z = value(2);
+                for j = 1:length(data_struct.alphaoveromega_x)
+                    initialY = data_struct.x_fft_initial_y{j}; % all the initial y for sim j
+                    mask = (initialY >= lower_z) & (initialY <= upper_z);
+                    data_struct.x_fft_initial_y{j} = initialY(mask);
+                    initialZ = data_struct.x_fft_initial_z{j};
+                    data_struct.x_fft_initial_z{j} = initialZ(mask);
+                    amp = data_struct.amplitude_vector_x{j};
+                    data_struct.amplitude_vector_x{j} = amp(mask);
+                    phase = data_struct.unwrapped_phase_vector_x{j};
+                    data_struct.unwrapped_phase_vector_x{j} = phase(mask);
+                    initialX = data_struct.initial_distance_from_oscillation_output_x_fft{j};
+                    data_struct.initial_distance_from_oscillation_output_x_fft{j} = initialX(mask); 
+
+                    initialY = data_struct.y_fft_initial_y{j}; % all the initial y for sim j
+                    mask = (initialY >= lower_z) & (initialY <= upper_z);
+                    data_struct.y_fft_initial_y{j} = initialY(mask);
+                    initialZ = data_struct.y_fft_initial_z{j};
+                    data_struct.y_fft_initial_z{j} = initialZ(mask);
+                    amp = data_struct.amplitude_vector_y{j};
+                    data_struct.amplitude_vector_y{j} = amp(mask);
+                    phase = data_struct.unwrapped_phase_vector_y{j};
+                    data_struct.unwrapped_phase_vector_y{j} = phase(mask);
+                    initialX = data_struct.initial_distance_from_oscillation_output_y_fft{j};
+                    data_struct.initial_distance_from_oscillation_output_y_fft{j} = initialX(mask); 
+                
+                    initialY = data_struct.z_fft_initial_y{j}; % all the initial y for sim j
+                    mask = (initialY >= lower_z) & (initialY <= upper_z);
+                    data_struct.z_fft_initial_y{j} = initialY(mask);
+                    initialZ = data_struct.z_fft_initial_z{j};
+                    data_struct.z_fft_initial_z{j} = initialZ(mask);
+                    amp = data_struct.amplitude_vector_z{j};
+                    data_struct.amplitude_vector_z{j} = amp(mask);
+                    phase = data_struct.unwrapped_phase_vector_z{j};
+                    data_struct.unwrapped_phase_vector_z{j} = phase(mask);
+                    initialX = data_struct.initial_distance_from_oscillation_output_z_fft{j};
+                    data_struct.initial_distance_from_oscillation_output_z_fft{j} = initialX(mask); 
+                end
             end
             continue
         else

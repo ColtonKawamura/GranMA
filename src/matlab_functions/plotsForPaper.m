@@ -17,11 +17,12 @@ plotAttenuationMult(simulation_data, gamma_values, 1.2)
 
 % Mean Field
 data = load('out/processed/3d_80Kby15_V4_1.mat')
-filteredData = filterData3d(data, [2,5], 'y', [2,5], 'z')
+filteredData = filterData(data, 'y', [2,5], 'z', [3,6]);
+
 
 
 % # ----------------------------------------------------------------
-% # ------------------- 3D  ----------------------------------------
+% # ------------------- 2D  ----------------------------------------
 % # ----------------------------------------------------------------
 data = load("out/processed/2d_K100_80kby40.mat")
 
