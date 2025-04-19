@@ -17,8 +17,8 @@ plotAttenuationMult(simulation_data, gamma_values, 1.2)
 
 % Mean Field
 data = load('out/processed/3d_80Kby15_V4_1.mat')
-filteredData = filterData(data, 'y', [2,5], 'z', [3,6]);
-
+filteredData = filterData(data,'gamma', .1 , 'pressure', 0.1, 'omega', .1, 'seed', 1, 'y', [2,5], 'z', [3,6]);
+[mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] = plotMeanField(filteredData)
 
 
 % # ----------------------------------------------------------------

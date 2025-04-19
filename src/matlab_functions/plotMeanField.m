@@ -4,6 +4,7 @@ function [mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] 
         filtered_data (1,1) struct % Required argument: scalar struct containing simulation data fields
         options.plot (1,1) logical = true % Optional flag to generate plots
         options.shear (1,1) logical = false % Optional flag for shear vs compression
+        options.z (1,1) logical = false % plots z direction instead
     end
 
     % Access fields directly from the scalar struct
@@ -25,7 +26,11 @@ function [mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] 
         legend_para_prime = '$ \hat{x}'' $';
         legend_para = '$ \hat{x} $';
         legend_para_mean = '$ \hat{\overline{x}} $';
-        legend_perp = '$ \hat{y} $';
+        if options.z
+            legend_perp = '$ \hat{z} $';
+        else
+            legend_perp = '$ \hat{y} $';
+        end
     end
 
     % Ensure vectors are column vectors for polyfit
@@ -62,10 +67,14 @@ function [mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] 
         x_perp = filtered_data.initial_distance_from_oscillation_output_x_fft{1}(:); % Extract & ensure column
         y_perp = filtered_data.amplitude_vector_x{1}(:); % Extract & ensure column
     else
-        x_perp = filtered_data.initial_distance_from_oscillation_output_y_fft{1}(:); % Extract & ensure column
-        y_perp = filtered_data.amplitude_vector_y{1}(:); % Extract & ensure column
+        if options.z
+            x_perp = filtered_data.initial_distance_from_oscillation_output_y_fft{1}(:); % Extract & ensure column
+            y_perp = filtered_data.amplitude_vector_y{1}(:); % Extract & ensure column
+        else
+            x_perp = filtered_data.initial_distance_from_oscillation_output_z_fft{1}(:); % Extract & ensure column
+            y_perp = filtered_data.amplitude_vector_z{1}(:); % Extract & ensure column
+        end
     end
-    % vector_limit = length(y_perp); % Not used
 
     % --- Amplitude Plotting ---
     if options.plot
@@ -161,8 +170,13 @@ function [mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] 
         x_perp_phase = filtered_data.initial_distance_from_oscillation_output_x_fft{1}(:); % Extract & ensure column
         y_perp_phase = filtered_data.unwrapped_phase_vector_x{1}(:); % Extract & ensure column
     else
-        x_perp_phase = filtered_data.initial_distance_from_oscillation_output_y_fft{1}(:); % Extract & ensure column
-        y_perp_phase = filtered_data.unwrapped_phase_vector_y{1}(:); % Extract & ensure column
+        if options.z
+            x_perp_phase = filtered_data.initial_distance_from_oscillation_output_z_fft{1}(:); % Extract & ensure column
+            y_perp_phase = filtered_data.unwrapped_phase_vector_z{1}(:); % Extract & ensure column
+        else
+            x_perp_phase = filtered_data.initial_distance_from_oscillation_output_y_fft{1}(:); % Extract & ensure column
+            y_perp_phase = filtered_data.unwrapped_phase_vector_y{1}(:); % Extract & ensure column
+        end
     end
     y_perp_phase_mod = mod(y_perp_phase, 2*pi);
 
@@ -202,7 +216,7 @@ function [mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] 
 
 end % End of function
 
-% Helper function (if not available elsewhere)
+% Helper funciton
 function [x_unique_sorted, y_unwrapped_mean_sorted] = unwrapScattered(x, y_wrapped)
     % Handle duplicate x values by averaging y values, then unwrap.
     [x_unique, ~, ic] = unique(x); % Find unique x values and indices for grouping
