@@ -38,3 +38,7 @@ filtered_data = filterData(data, 'gamma', .1 , 'pressure', 0.1, 'omega', .1, 'se
 %  2D Stiched Attenution
 gamma_values = [ .5, .7]
 plotAttenuationMult(data, gamma_values, 1.2)
+
+% 2D Stitched Amp Ratio
+gammaValues = [ .5, .7]
+plotAmpRatio(data, gammaValues)

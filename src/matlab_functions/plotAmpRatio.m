@@ -1,10 +1,10 @@
 function plotAmpRatio(data, gammaValues)
 
     ax_energy = figure;
-    xlabel('\$  \\hat{\\omega} \$', "FontSize", 20, "Interpreter", "latex");
+    xlabel('$  \hat{\omega} $', "FontSize", 20, "Interpreter", "latex");
 
     %xlabel('\$\\hat{\\omega}\\hat{\\gamma}\$', "FontSize", 20, "Interpreter", "latex");
-    ylabel('\$ \\hat{\\gamma} \\left( \\overline{\\frac{A_{\\perp}}{A_{\\parallel}}} \\right) ^2\$', "FontSize", 20, "Interpreter", "latex");
+    ylabel('$ \hat{\gamma} \left( \overline{\frac{A_{\perp}}{A_{\parallel}}} \right) ^2$', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'XScale', 'log');
     set(gca, 'YScale', 'log');
     grid on;
@@ -12,7 +12,6 @@ function plotAmpRatio(data, gammaValues)
     hold on;
 
 
-    markerShapeVector = ["-*", "-o", "-v", "-+", "-.", "-x", "-d"];
 
     for gammaValue = gammaValues
         matchingGammaData = filterData(data, 'gamma', gammaValue);
@@ -41,14 +40,14 @@ function plotAmpRatio(data, gammaValues)
                     AmpRatioList = [AmpRatioList, ampRatio];
                 end
                 meanAmpRatio = mean(AmpRatioList);
-                meanAmpRatioList= [meanAmpRatio];
-                
+                meanAmpRatioList= [meanAmpRatioList, meanAmpRatio];
+
             end
-            markerShape = markerShapeVector(find(pressureList == pressureValue));
+            markerSize = exp(gammaValue/max(gammaValues))*3;
             pressureLabel = sprintf('$ %.4f, %.4f $', pressureValue, gammaValue); 
-            plot(uniqueOmegaGammaValues, meanAmpRatioList, markerShape, 'Color', markerColor, 'DisplayName', pressureLabel);
+            plot(uniqueOmegaGammaValues/gammaValue, gammaValue*meanAmpRatioList.^2, "-o", 'MarkerSize', markerSize, 'MarkerFaceColor', markerColor, 'Color', markerColor, 'DisplayName', pressureLabel);
         end
-    
+        leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
+        title(leg, "$  \hat{P}, \hat{\gamma} $")
     end
-    leg = legend('show', 'Location', 'northeastoutside', 'Interpreter', 'latex', 'FontSize', 15);
-    title(leg, "$  \hat{P}, \hat{\gamma} $")
+end
