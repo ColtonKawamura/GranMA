@@ -5,7 +5,7 @@ using CSV
 # using GLMakie # Not supported on HPC. Need to comment out before running on HPC
 using LaTeXStrings
 using Debugger # REPL: Debugger.@run function(); @bp
-# using MATLAB
+using MATLAB
 using Statistics
 using Printf
 using MAT

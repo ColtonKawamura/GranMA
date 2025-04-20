@@ -86,6 +86,7 @@ saveData3dToMat(simulation_data, "out/processed/3d_80Kby15_V4_1.mat") # save dat
 simulation_data = load_data("out/processed/2d_K100_80kby40.jld2") # large packing with low freqs
 saveData2dToMat(simulation_data, "out/processed/2d_K100_80kby40.mat") # save data to matlab format
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
+saveData2dToMat(simulation_data, "out/processed/2d_bi_K100_W5.mat") # save data to matlab format
 
 # Compression Attenuation and Wavespeed
     gamma_value = .5

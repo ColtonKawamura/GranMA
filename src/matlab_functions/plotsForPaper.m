@@ -8,6 +8,8 @@ addpath("src/matlab_functions")
 % # ------------------- 3D  ----------------------------------------
 % # ----------------------------------------------------------------
 data = load('out/processed/3d_80Kby15_V4_1.mat')
+
+% Regular Attenuation
 gamma_value = .2;
 [omega_gamma_values, attenuation_values] = plotAttenuation(data, gamma_value);
 plotWavespeed(data, gamma_value);
@@ -16,15 +18,18 @@ plotAttenuationMult(simulation_data, gamma_values, 1.2)
 
 
 % Mean Field
-data = load('out/processed/3d_80Kby15_V4_1.mat')
 filteredData = filterData(data,'gamma', .1 , 'pressure', 0.1, 'omega', .1, 'seed', 1, 'y', [2,5], 'z', [3,6]);
 [mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] = plotMeanField(filteredData)
 
 
+% 3D Energy Theory Plot
+gammaValues = [ .05, .1, .5, 1]
+plotEnergyTheory(data, gammaValues)
 % # ----------------------------------------------------------------
 % # ------------------- 2D  ----------------------------------------
 % # ----------------------------------------------------------------
 data = load("out/processed/2d_K100_80kby40.mat")
+data = load("out/processed/2d_bi_K100_W5.mat")
 
 % Attenuation and Wavespeed
 gamma_value = .5;
@@ -48,3 +53,8 @@ slopeLine('loglog' ,1, [.02,1.1], .0005)
 % 2D Stitched Phase Scatter
 gammaValues = [ .05, .1, .5, 1]
 plotPhaseScatter(data, gammaValues)
+
+
+% 2D Stitched Energy Loss Theory
+gammaValues = [ .05, .1, .5, 1]
+plotEnergyTheory(data, gammaValues)
