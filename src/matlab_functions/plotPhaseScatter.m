@@ -14,8 +14,6 @@ function plotPhaseScatter(data, gammaValues)
     box on; 
     hold on;
 
-
-
     for gammaValue = gammaValues
         matchingGammaData = filterData(data, 'gamma', gammaValue);
         gammaValue = matchingGammaData.gamma(1);
