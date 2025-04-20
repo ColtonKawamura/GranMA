@@ -7,7 +7,7 @@ function plotEnergyTheory(data, gammaValues)
     % end
     ax_energy = figure;
     xlabel('$  \hat{\omega} \hat{\gamma} $', "FontSize", 20, "Interpreter", "latex");
-    ylabel('$  \frac{2\hat{c}^2 \left( 1 - \cos\overline{\sigma}_{\Delta \phi_{ij}} \right)}{\hat{d^2\omega}^2}\left(\overline{\frac{A_{\perp}}{A_{\parallel}}}\right)^2 $', "FontSize", 20, "Interpreter", "latex");
+    ylabel('$  \frac{2 \left( 1 - \cos\overline{\sigma}_{\Delta \phi_{ij}} \right)}{\hat{\omega}^2}\left(\overline{\frac{A_{\perp}}{A_{\parallel}}}\right)^2 $', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'YScale', 'log')
     set(gca, 'XScale', 'log')
     grid on;
