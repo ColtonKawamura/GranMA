@@ -32,13 +32,19 @@ gamma_value = .5;
 plotWavespeed(data, gamma_value);
 
 % Mean Field
-filtered_data = filterData(data, 'gamma', .1 , 'pressure', 0.1, 'omega', .1, 'seed', 1);
-[mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] = plotMeanField(filtered_data)
+filteredData = filterData(data, 'gamma', .1 , 'pressure', 0.1, 'omega', .1, 'seed', 1);
+[mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] = plotMeanField(filteredData)
 
 %  2D Stiched Attenution
 gamma_values = [ .5, .7]
 plotAttenuationMult(data, gamma_values, 1.2)
 
 % 2D Stitched Amp Ratio
-gammaValues = [ .5, .7]
+gammaValues = [ .05, .1, .5, 1]
 plotAmpRatio(data, gammaValues)
+slopeLine('loglog' ,1, [.02,1.1], .03)
+slopeLine('loglog' ,1, [.02,1.1], .0005)
+
+% 2D Stitched Phase Scatter
+gammaValues = [ .05, .1, .5, 1]
+plotPhaseScatter(data, gammaValues)

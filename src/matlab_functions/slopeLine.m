@@ -22,7 +22,10 @@ end
 
 plot(x, y, 'k', 'LineWidth', 2, 'HandleVisibility', 'off'); % Exclude from legend
 hold on;
-text(mean(x_bounds), mean(y) - 0.05 * range(y), ['$' sprintf('%.2f', slope) '$'], ...
+% Calculate the range manually using max and min
+y_range = max(y) - min(y); 
+
+% Use the manually calculated range in the text function
+text(mean(x_bounds), mean(y) - 0.05 * y_range, ['$' sprintf('%.2f', slope) '$'], ...
     'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', ...
     'FontSize', 14, 'Interpreter', 'latex');
-
