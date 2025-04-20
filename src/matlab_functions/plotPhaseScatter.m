@@ -1,5 +1,10 @@
 function plotPhaseScatter(data, gammaValues)
-
+    % arguments
+    %     data (1,1) struct % Required argument: scalar struct containing simulation data fields
+    %     gammaValues (1,:) double 
+    %     options.shear (1,1) logical = false % Optional flag for shear vs compression
+    %     options.z (1,1) logical = false % plots z direction instead
+    % end
     ax_energy = figure;
     xlabel('$  \hat{\omega} $', "FontSize", 20, "Interpreter", "latex");
 
