@@ -1,13 +1,8 @@
+
 file_name_list1 = [
     "in/packings_processed_eig_PDF/2D_N1600_P0.1_Width40_Seed1.mat", 
     "in/packings_processed_eig_PDF/2D_N1600_P0.01_Width40_Seed1.mat", 
     "in/packings_processed_eig_PDF/2D_N1600_P0.001_Width40_Seed1.mat"
-];
-
-file_name_list2 = [
-    "in/2D_N1600_P0.1_Width20_Seed1.mat", 
-    "in/2D_N1600_P0.01_Width20_Seed1.mat", 
-    "in/2D_N1600_P0.001_Width20_Seed1.mat"
 ];
 
 file_name_list3 = [
