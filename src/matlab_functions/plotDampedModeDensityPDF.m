@@ -11,8 +11,9 @@ function plotDampedModeDensityPDF(struct_file, pressure_list, damping_list)
 % More note: this assumes that the eigen_values = damping + i frequency
 % plotDampedModeDensityPDF("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N400_K100_M1.mat", [.2, .01, .001], [.1])
 load(struct_file)
-
-figure
+Lx = 40;
+Ly = 40;
+disp("Using hard-coded Lx and Ly values. Please change this if necessary.")
 for i = 1:length(pressure_list)
     pressure = pressure_list(i);
 
@@ -36,7 +37,7 @@ for i = 1:length(pressure_list)
         xlabel('eigen frequencies (edges)', 'Interpreter', 'latex', 'FontSize', 20)
         ylabel('counts', 'Interpreter', 'latex', 'FontSize', 20)
         % legend('show', 'Interpreter', 'latex');
-        % title(sprintf('$L_x$ by $L_y$: %.2f by %.2f', Lx, Ly), 'Interpreter', 'latex', 'FontSize', 16);
+        title(sprintf('$L_x$ by $L_y$: %.2f by %.2f', Lx, Ly), 'Interpreter', 'latex', 'FontSize', 16);
         set(gca, "XScale", "log")
         set(gca, "YScale", "log")
         grid on; 
