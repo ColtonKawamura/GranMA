@@ -27,8 +27,8 @@ slopeLine('loglog' ,-5/6, [.05,.5], .012, 'TextPosition', 'bottomLeft')
 % 3D Energy Theory Plot
 gammaValues = [ .3 , .5, .7]
 plotEnergyTheory(data, gammaValues)
-slopeLine('loglog' ,-5/6, [.05,.5], .1, 'TextPosition', 'bottomLeft')
-slopeLine('loglog' ,-5/6, [.05,.5], .012, 'TextPosition', 'bottomLeft')
+slopeLine('loglog' ,-5/6, [.05,.5], .1, 'TextLocation', [.16, .0089])
+slopeLine('loglog' ,-5/6, [.05,.5], .012, 'TextLocation', [.16, .07])
 
 % # ----------------------------------------------------------------
 % # ------------------- 2D  ----------------------------------------
@@ -61,5 +61,6 @@ plotPhaseScatter(data, gammaValues)
 
 
 %% 2D Stitched Energy Loss Theory
-gammaValues = [ .05, .1, .5, 1]
+gammaValues = [ .3 , .5, .7]
 plotEnergyTheory(data, gammaValues)
+slopeLine('loglog' ,-2/3, [.02,1], 1.5, 'TextLocation', [.14,2.2])
