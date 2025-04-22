@@ -131,6 +131,68 @@ function filtered_data_struct = filterData(data_struct, varargin)
                     initialX = data_struct.initial_distance_from_oscillation_output_z_fft{j};
                     data_struct.initial_distance_from_oscillation_output_z_fft{j} = initialX(mask); 
                 end
+            elseif field_name == "omega"
+                % Handle range filtering for 'omega' by updating valid_indices
+                if isempty(valid_indices)
+                    continue; % Skip if no valid indices left from previous filters
+                end
+                lower_omega = value(1);
+                upper_omega = value(2);
+
+                % --- Get and validate the full 'omega' data ---
+                try
+                    if ~isfield(data_struct, 'omega')
+                         error('Field "omega" does not exist in the data structure.');
+                    end
+                    full_omega_data = data_struct.omega;
+
+                    % Check consistency of the number of elements (using first dimension)
+                    current_field_size = size(full_omega_data, 1);
+                    if current_field_size == 1 && ~iscell(full_omega_data) && ndims(full_omega_data) == 2 && size(full_omega_data, 2) > 1
+                        current_field_size = size(full_omega_data, 2);
+                        % If it looks like a row vector, transpose it for consistency
+                        if current_field_size == num_elements
+                            full_omega_data = full_omega_data';
+                        end
+                    end
+
+                    if ~isempty(full_omega_data) && current_field_size ~= num_elements
+                        error('Field "omega" has inconsistent number of elements (%d) in the first dimension compared to expected (%d).', current_field_size, num_elements);
+                    end
+
+                    % Ensure it's numeric for comparison
+                    if ~isnumeric(full_omega_data)
+                        error('Filtering field "omega" must be numeric.');
+                    end
+                    % Ensure it's a column vector if it's a vector
+                    if isvector(full_omega_data)
+                        full_omega_data = full_omega_data(:);
+                    elseif ~isempty(full_omega_data)
+                        % If not a vector, filtering logic might need adjustment
+                        error('Filtering field "omega" must be a vector (or empty).');
+                    end
+
+                catch ME
+                    error('Could not extract or validate data from field "omega". Original error: %s', ME.message);
+                end
+                % --- End validation ---
+
+                if isempty(full_omega_data)
+                    valid_indices = []; % No data left to filter
+                    continue; % Skip to next filter criterion
+                end
+
+                % Extract the subset of omega values corresponding to currently valid indices
+                omega_subset = full_omega_data(valid_indices);
+
+                % Find which indices *within the current subset* satisfy the range condition
+                matching_indices_in_subset = find((omega_subset >= lower_omega) & (omega_subset <= upper_omega));
+
+                % Update valid_indices: keep only those original indices that correspond
+                % to the matching indices found in the subset.
+                valid_indices = valid_indices(matching_indices_in_subset);
+
+                continue; % Skip the default closest-value logic for this filter pair
             end
             continue
         else
