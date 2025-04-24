@@ -6,38 +6,46 @@ function processEigenModesDamped(in_path, out_path, damping_constants)
 % processEigenModesDamped("in/2d_eigen_mode_test", "out/2d_damped_eigenStuff", [1, 0.1, 0.01, 0.001]);
 % processEigenModesDamped("in/2d_damped_eigen_small", "out/junkyard", [1, 0.1, 0.01, 0.001]);
 
-results = struct();
-loop_counter = 0;
-filename_list = dir(fullfile(in_path, '*.mat'));
+data = struct();
+filenameList = dir(fullfile(in_path, '*.mat'));
 
-for i = 1:length(filename_list)
-    filename = fullfile(in_path, filename_list(i).name);
-    load(filename)
+for i = 1:length(filenameList)
+    filename = fullfile(in_path, filenameList(i).name);
+
+    try
+        load(filename, 'x', 'y', 'Dn', 'K', 'Ly', 'Lx', 'P', 'N');
+    catch
+        warning("File %s does not contain the expected variables. Skipping...", filename);
+        continue;
+    end
+
     positions = [x', y'];
     radii = Dn ./ 2;
     [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
     mass = 1;
 
     for j = 1:length(damping_constants)
-        loop_counter = loop_counter +1;
         damping_constant = damping_constants(j);
         
         [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, damping_constant, mass);
         
         [eigen_vectors, eigen_values] = polyeig(matSpring, matDamp, matMass);
         
-        results(loop_counter).pressure = P;
-        results(loop_counter).damping = damping_constant;
-        results(loop_counter).eigen_vectors = eigen_vectors;
-        results(loop_counter).eigen_values = eigen_values;
+        data.pressure(i,1) = P;
+        data.damping(i,1) = damping_constant;
+        data.eigen_vectors{i,1} = eigen_vectors;
+        data.eigen_values{i,1} = eigen_values;
+        data.diameter{i,1} = Dn;
+        data.Ly(i,1) = Ly;
+        data.Lx(i,1) = Lx;
+        data.x{i,1} = x;
+        data.y{i,1} = y;
     end
 end
 
-% Save the results to a .mat file
-% save('eigen_results.mat', 'results');
-filename_output = string(sprintf("2D_damped_eigenstuff_N%d_%d_by_%d_K%d_M%d.mat", N, Lx, round(Ly), K, mass));
+filename_output = string(sprintf("2D_damped_eigenstuff_N%d_%dby%d_K%d_M%d.mat", N, Lx, round(Ly), K, mass));
 save_path = fullfile(out_path, filename_output);
-% save(save_path, 'results');
-save(save_path, 'results', '-v7.3'); % need this for file sizes larger than 2G's
-
+save(save_path, 'data', '-v7.3'); % need this for file sizes larger than 2G's
+display("Saved to: " + save_path);
+data
 end
