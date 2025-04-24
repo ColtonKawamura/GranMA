@@ -79,9 +79,9 @@ function packBi2dRepXY(N, K, D, G, M, P_target, W_factor, seed, plotit, x_mult, 
     
     %% Verlet cell parameters
     raw_cell_width = 2*G*D;
-    num_cells = (Lx/raw_cell_width)
-    num_cells = round(num_cells)
-    cell_width = Lx/num_cells
+    num_cells = (Lx/raw_cell_width);
+    num_cells = round(num_cells);
+    cell_width = Lx/num_cells;
     jj_max = ceil(Lx/cell_width);
     
     cell_num = ceil(x/cell_width);
