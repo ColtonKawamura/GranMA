@@ -1,14 +1,14 @@
 function plotDampedModeDensityPDF(data, pressure_list, damping_list)
 % Plots the PDF of Damped Eigen Modes. Input is a struct with fields :
 % 
-% pressure, damping, eigen_values, eigen_vectors
+% pressure, damping, eigenValues, eigen_vectors
 % 
 % data = *.mat file processed by processEigenModesDamped("in/2d_damped_eigen_small", "out/junkyard", [1, 0.1, 0.01, 0.001]); 
 % pressure_list = vector of pressures you want to be plotted
 % damping_list = damping list you want to have plotted
 % 
 % Note: usually you want multiple presssures and a single damping constant
-% More note: this assumes that the eigen_values = damping + i frequency
+% More note: this assumes that the eigenValues = damping + i frequency
 % plotDampedModeDensityPDF("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N400_K100_M1.mat", [.2, .01, .001], [.1])
 
 for i = 1:length(pressure_list)
@@ -19,11 +19,11 @@ for i = 1:length(pressure_list)
         % radii = Dn./2;  % Assuming Dn is in the loaded .mat file
         damping_constant = damping_list(j);
         dataPressureDamping = filterData(data, 'pressure', pressure,  'damping', damping_constant);
-        eigen_values = dataPressureDamping.eigen_values{1};
+        eigenValues = dataPressureDamping.eigenValues{1};
         Lx = dataPressureDamping.Lx(1);
         Ly = dataPressureDamping.Ly(1);
 
-        [edges, normalized_counts] = modeDensity(abs(imag(eigen_values)));
+        [edges, normalized_counts] = modeDensity(abs(imag(eigenValues)));
         if length(pressure_list) == 1
             [~, marker_color] = normVarColor(damping_list, damping_constant, 1);
         else

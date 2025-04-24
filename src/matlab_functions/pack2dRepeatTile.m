@@ -1,9 +1,9 @@
 function pack2dRepeatTile(N, K, P_target, W_factor, seed, x_mult, y_mult, calc_eig, in_path, save_path)
-% pack2dRepeatTile(1200, 100, .001, 20, 1, 10, 1, false, 'in/2d_poly_20by20/tiles/', 'in/2d_poly_20by20/')
+% pack2dRepeatTile(400, 100, .001, 20, 1, 2, 1, false, 'in/2d_tile_20by20/tiles/', 'in/2d_tile_20by20/20by40/')
 
 packing_name = string(sprintf("2D_N%d_P%s_Width%d_Seed%d", N, num2str(P_target), W_factor, seed));
 
-filename = in_path + packing_name + ".mat";  % Concatenate path and filename
+filename = in_path + packing_name + ".mat"  % Concatenate path and filename
 
 load(filename);
 
@@ -51,10 +51,10 @@ W_factor = W_factor * N_repeated;
 
 Lx = Lx * x_mult; 
 Ly = Ly * y_mult;
-Lz = Lz * z_mult;
 W_factor = W_factor * y_mult;
 diameter_average = mean(Dn);
 
+mass = 1;
 if calc_eig == true
     positions = [x',y'];
     radii = Dn./2;
