@@ -10,8 +10,8 @@ function plotEigenmodeDamped(x0, y0, eigen_vectors, mode_to_plot)
     N = length(x0); % number of particles
 
     % Need to flip the row vectors of positions
-    x0 = x0';
-    y0 = y0';
+    x0 = x0;
+    y0 = y0;
 
     % grab the egienmode(vector) each column is a mode (eigen_vector = 2N by 4N because each particle has xy coordiantes (rows) and each particle has a real and imaginary part (columns))
     mode_vector = eigen_vectors(:, mode_to_plot);
@@ -47,7 +47,7 @@ function plotEigenmodeDamped(x0, y0, eigen_vectors, mode_to_plot)
     % Combined plot
     figure(1); clf;
     hold on;
-    
+    whos 
     quiver(x0, y0, dx_real, dy_real, 0.5, 'b', 'LineWidth', 1.5); % Blue for real part
     quiver(x0, y0, dx_imag, dy_imag, 0.5, 'r', 'LineWidth', 1.5); % Red for imaginary part
     quiver(x0, y0, dx_abs, dy_abs, 0.5, 'g', 'LineWidth', 1.5);   % Green for magnitude

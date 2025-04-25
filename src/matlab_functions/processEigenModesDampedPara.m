@@ -22,11 +22,10 @@ outData.pressure       = zeros(numTotalCombinations, 1);
 outData.damping        = zeros(numTotalCombinations, 1);
 outData.eigenVectors  = cell(numTotalCombinations, 1);
 outData.eigenValues   = cell(numTotalCombinations, 1);
-outData.diameter       = cell(numTotalCombinations, 1);
 outData.Ly             = zeros(numTotalCombinations, 1);
 outData.Lx             = zeros(numTotalCombinations, 1);
-outData.x              = cell(numTotalCombinations, 1);
-outData.y              = cell(numTotalCombinations, 1);
+outData.radii              = cell(numTotalCombinations, 1);
+outData.positions              = cell(numTotalCombinations, 1);
 outData.source_file_index = zeros(numTotalCombinations, 1);
 outData.damping_index   = zeros(numTotalCombinations, 1);
 
@@ -62,13 +61,10 @@ parfor i = 1:numFiles
         data_j.damping = dampingConstant;
         data_j.eigenVectors = eigenVectors_j;
         data_j.eigenValues = eigenValues_j;
-        data_j.diameter = loadedVars.Dn;
+        data_j.radii = radii;
         data_j.Ly = loadedVars.Ly;
         data_j.Lx = loadedVars.Lx;
-        data_j.x = loadedVars.x;
-        data_j.y = loadedVars.y;
-        data_j.source_file_index = i;
-        data_j.damping_index = j;
+        data_j.positions = positions;
 
         % Put this struct into the cell for the current file i
         workerData_i{j} = data_j;
@@ -78,7 +74,6 @@ parfor i = 1:numFiles
     allWorkerData{i} = workerData_i;
 end
 
-% --- Assemble outData after parfor loop ---
 % --- Assemble outData after parfor loop ---
 for i = 1:numFiles
     workerData_i = allWorkerData{i}; % Get the cell array of results for file i
@@ -94,13 +89,10 @@ for i = 1:numFiles
         outData.damping(idx) = data_j.damping;
         outData.eigenVectors{idx} = data_j.eigenVectors;
         outData.eigenValues{idx} = data_j.eigenValues;
-        outData.diameter{idx} = data_j.diameter;
+        outData.radii{idx} = data_j.radii;
         outData.Ly(idx) = data_j.Ly;
         outData.Lx(idx) = data_j.Lx;
-        outData.x{idx} = data_j.x;
-        outData.y{idx} = data_j.y;
-        outData.source_file_index(idx) = data_j.source_file_index; % This should be i
-        outData.damping_index(idx) = data_j.damping_index;     % This should be j
+        outData.positions{idx} = data_j.positions;
     end
 end
 
@@ -108,7 +100,7 @@ end
 % --- Saving ---
 first_valid_idx = find(outData.pressure ~= 0 | ~cellfun('isempty', outData.eigenValues), 1, 'first');
 if ~isempty(first_valid_idx)
-    N_save = length(outData.x{first_valid_idx});
+    N_save = length(outData.positions{first_valid_idx});
     Lx_save = outData.Lx(first_valid_idx);
     Ly_save = outData.Ly(first_valid_idx);
     K_save = 100; % Placeholder - adjust as needed if K varies and needs to be stored/retrieved
