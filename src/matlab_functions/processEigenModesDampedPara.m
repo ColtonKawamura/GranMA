@@ -113,9 +113,9 @@ if ~isempty(first_valid_idx)
     Ly_save = outData.Ly(first_valid_idx);
     K_save = 100; % Placeholder - adjust as needed if K varies and needs to be stored/retrieved
     mass_save = 1;
-    filename_output = sprintf("2D_damped_eigenstuff_N%d_%dby%d_K%d_M%d_Combined.mat", N_save, Lx_save, round(Ly_save), K_save, mass_save);
+    filename_output = sprintf("2D_damped_eigenstuff_N%d_%dby%d_K%d_M%d.mat", N_save, Lx_save, round(Ly_save), K_save, mass_save);
 else
-    filename_output = '2D_damped_eigenstuff_NoResults.mat';
+    error('No valid data found to save.');
 end
 
 save_path = fullfile(out_path, filename_output);

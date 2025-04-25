@@ -29,7 +29,8 @@ function sim2dGauss(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     tau = 1/(w_D/(2*pi) )* 2; % ten cycles long, was 5
     sigma = tau  / sqrt(2*log(2)); % spread of the pulse
     t_max = 4*tau; % time when the center of the pulse occursVk 
-    f = @(t,tmax,sigma) exp(-(t-tmax).^2./(sigma.^2)); 
+    f = @(t,tmax,sigma) exp(-(t-tmax).^2./(sigma.^2));
+    nt_out = []; 
 
     dt = pi*sqrt(M/K)*0.05; %  was pi*sqrt(M/K)*0.05
     c_0 = min(Dn).*sqrt(K/M);
@@ -97,18 +98,18 @@ function sim2dGauss(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
     %% Main Loop
     [~, idx] = sort(x0);
     for nt = 1:Nt
-        % visualizeSim(10000, x, x0, y, y0, idx, A)
-        [breakOut, outAmp, outXinit, nt_out]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
-        % [breakOut, outAmp, outXinit, nt_out]= getAmpsK(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out); % use this for full motion
-        % [breakOut, outAmp, outXinit, nt_out]= getAmpsGIF(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
-        if any(x(idx(end-200:end)) - x0_sorted(end-200:end) > A * 0.01)
-            display("wave reached back wall")
-            breakOut = true;
-        end
+        visualizeSim(1000, x, x0, y, y0, idx, A)
+        % [breakOut, outAmp, outXinit, nt_out]= getAmps(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
+        % % [breakOut, outAmp, outXinit, nt_out]= getAmpsK(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out); % use this for full motion
+        % % [breakOut, outAmp, outXinit, nt_out]= getAmpsGIF(nt, x, x0, idx, w_D, A, outAmp, outXinit, Lx, nt_out);
+        % if any(x(idx(end-200:end)) - x0_sorted(end-200:end) > A * 0.01)
+        %     display("wave reached back wall")
+        %     breakOut = true;
+        % end
 
-        if breakOut
-            break;
-        end
+        % if breakOut
+        %     break;
+        % end
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%% First step in Verlet integration %%%%%
@@ -120,7 +121,7 @@ function sim2dGauss(K, M, Bv, w_D, N, P, W, seed, in_path, out_path)
         x  =  x+vx*dt+ax_old.*dt.^2/2;
         y  =  y+vy*dt+ay_old.*dt.^2/2;
     
-        x(left_wall_list) = x0(left_wall_list)+A*sin(w_D*dt*nt);
+        x(left_wall_list) = x0(left_wall_list)+A*cos(w_D*((nt)*dt-t_max))*f(nt*dt,t_max,sigma);
         y(left_wall_list) = y0(left_wall_list);
         x(right_wall_list) = x0(right_wall_list);
         y(right_wall_list) = y0(right_wall_list);

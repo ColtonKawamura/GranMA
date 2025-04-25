@@ -2,6 +2,7 @@ function [breakOut, outAmp, outXinit, nt_out] = getAmps(nt, x, x0, idx, w_D, A, 
     breakOut = false;
     if mod(nt,1)==0
 
+        % These were all different methods of smoothing the data
         % smoothAmp = smooth(x(idx) - x0(idx), 20, 'sgolay');
         % smoothAmp = smoothdata(x(idx)- x0(idx), "SamplePoints", x0(idx));
         smoothAmp = smoothdata(x(idx)- x0(idx), "sgolay");

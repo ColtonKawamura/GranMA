@@ -7,7 +7,7 @@ function visualizeSim(nt, x, x0, y, y0, idx, A)
         xlabel('$x_0$', 'Interpreter', 'latex', 'FontSize', 20)
         ylabel('$ \Delta x$', 'Interpreter', 'latex', 'FontSize', 20)
         ylim(1.2*[-A,A])
-        xlim([0,200])
+        xlim([0,1000])
         grid on
 
         % Plot Δy
@@ -16,7 +16,7 @@ function visualizeSim(nt, x, x0, y, y0, idx, A)
         xlabel('$x_0$', 'Interpreter', 'latex', 'FontSize', 20)
         ylabel('$ \Delta y$', 'Interpreter', 'latex', 'FontSize', 20)
         ylim(1.2*[-A,A])
-        xlim([0,200])
+        xlim([0,1000])
         grid on
         
         drawnow
