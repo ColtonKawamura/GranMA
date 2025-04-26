@@ -4,7 +4,7 @@ addpath("src/matlab_functions")
 
 
 
-% 3D
+%% 3D
 data = load('out/processed/3d_80Kby15_V4_1.mat')
 
 %% Regular Attenuation
@@ -30,7 +30,7 @@ plotEnergyTheory(data, gammaValues)
 slopeLine('loglog' ,-5/6, [.05,.5], .1, 'TextLocation', [.16, .0089])
 slopeLine('loglog' ,-5/6, [.05,.5], .012, 'TextLocation', [.16, .07])
 
-% # ----------------------------------------------------------------
+%% 2D ----------------------------------------------------------------
 % # ------------------- 2D  ----------------------------------------
 % # ----------------------------------------------------------------
 data = load("out/processed/2d_K100_80kby40.mat")
@@ -63,4 +63,5 @@ plotPhaseScatter(data, gammaValues)
 %% 2D Stitched Energy Loss Theory
 gammaValues = [ .3 , .5, .7]
 plotEnergyTheory(data, gammaValues)
-slopeLine('loglog' ,-2/3, [.02,1], 1.5, 'TextLocation', [.14,2.2])
+slopeLine('loglog' ,-2/3, [.02,1], .5E-11, 'TextLocation', [.14,1E-12])
+slopeLine('loglog' ,-2/3, [.02,1], .2E-15, 'TextLocation', [.14,1E-16])

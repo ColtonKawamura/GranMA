@@ -1,17 +1,19 @@
-function plotEigenmodeDamped(x0, y0, eigen_vectors, mode_to_plot)
-    % need to have the packing loaded in adddition to this so you can feed it the inital coordinates
-    %  They are currently in in/2d_eigen_mode_test
-    %  Pick the matchign pressure you picked in eigen_vectors = findInStruct(results, {'pressure', 'damping'}, {.1, .1}, 'eigen_vectors')
+function plotEigenmodeDamped(x0, y0, eigen_vectors, mode_to_plot, options)
+
+    arguments
+        x0 (:,1) double
+        y0 (:,1) double
+        eigen_vectors (:,:) double
+        mode_to_plot (1,1) double
+        options.undamped (1,1) logical = false
+    end
+
 
     if mode_to_plot > size(eigen_vectors, 2) || mode_to_plot < 1
         error('Invalid mode_to_plot. It must be a valid column index in eigen_vectors.');
     end
      
     N = length(x0); % number of particles
-
-    % Need to flip the row vectors of positions
-    x0 = x0;
-    y0 = y0;
 
     % grab the egienmode(vector) each column is a mode (eigen_vector = 2N by 4N because each particle has xy coordiantes (rows) and each particle has a real and imaginary part (columns))
     mode_vector = eigen_vectors(:, mode_to_plot);
