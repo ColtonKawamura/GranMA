@@ -31,6 +31,14 @@ for i = 1:length(file_name_list)
     end
 
     [edges, normalized_counts] = modeDensity(eigen_values);
+    % --- Verification Step ---
+    bin_widths = diff(edges); % Calculate the width of each bin (Length N)
+    num_bins = length(bin_widths);
+    num_counts = length(normalized_counts);
+    counts_for_bins = normalized_counts(1:num_bins); 
+    integral_approx = sum(counts_for_bins .* bin_widths);
+    fprintf('Area Under PDF = %.6f\n', integral_approx);
+    % --- End Verification Step ---
     [~, marker_color] = normVarColor(pressure_list, P, 1);
 
     plot(edges, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', sprintf('$ P = %.3f $', P));

@@ -24,6 +24,16 @@ for i = 1:length(pressure_list)
         Ly = dataPressureDamping.Ly(1);
 
         [edges, normalized_counts] = modeDensity(abs(imag(eigenValues)));
+
+        % --- Verification Step ---
+        bin_widths = diff(edges); % Calculate the width of each bin (Length N)
+        num_bins = length(bin_widths);
+        num_counts = length(normalized_counts);
+        counts_for_bins = normalized_counts(1:num_bins); 
+        integral_approx = sum(counts_for_bins .* bin_widths);
+        fprintf('Area Under PDF = %.6f\n', integral_approx);
+        % --- End Verification Step ---
+        
         if length(pressure_list) == 1
             [~, marker_color] = normVarColor(damping_list, damping_constant, 1);
         else
