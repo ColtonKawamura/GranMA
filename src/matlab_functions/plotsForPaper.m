@@ -63,5 +63,17 @@ plotPhaseScatter(data, gammaValues)
 %% 2D Stitched Energy Loss Theory
 gammaValues = [ .3 , .5, .7]
 plotEnergyTheory(data, gammaValues)
-slopeLine('loglog' ,-2/3, [.02,1], .5E-11, 'TextLocation', [.14,1E-12])
-slopeLine('loglog' ,-2/3, [.02,1], .2E-15, 'TextLocation', [.14,1E-16])
+slopeLine('loglog' ,-2/3, [.02,1], 2E-4, 'TextLocation', [.14,1E-4])
+slopeLine('loglog' ,-2/3, [.02,1], 3E-6, 'TextLocation', [.14,1E-6])
+
+
+% Sandbox
+filteredData = filterData(data, 'gamma', .1 , 'pressure', 0.1, 'omega', .1, 'seed', 1);
+meanPerpAmp = mean(filteredData.amplitude_vector_y{1}/(filteredData.pressure/100))
+deltaAmpY = meanPhaseDev(filteredData.initial_distance_from_oscillation_output_y_fft{1}, filteredData.amplitude_vector_y{1}/(filteredData.pressure/100), 1)
+
+
+
+filteredData = filterData(data, 'gamma', .1 , 'pressure', 0.001, 'omega', 1, 'seed', 1);
+meanPerpAmp = mean(filteredData.amplitude_vector_y{1}/(filteredData.pressure/100))
+deltaAmpY = meanPhaseDev(filteredData.initial_distance_from_oscillation_output_y_fft{1}, filteredData.amplitude_vector_y{1}/(filteredData.pressure/100), 1)

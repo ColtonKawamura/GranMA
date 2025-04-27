@@ -68,11 +68,11 @@ function [mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] 
         y_perp = filtered_data.amplitude_vector_x{1}(:); % Extract & ensure column
     else
         if options.z
-            x_perp = filtered_data.initial_distance_from_oscillation_output_y_fft{1}(:); % Extract & ensure column
-            y_perp = filtered_data.amplitude_vector_y{1}(:); % Extract & ensure column
-        else
             x_perp = filtered_data.initial_distance_from_oscillation_output_z_fft{1}(:); % Extract & ensure column
             y_perp = filtered_data.amplitude_vector_z{1}(:); % Extract & ensure column
+        else
+            x_perp = filtered_data.initial_distance_from_oscillation_output_y_fft{1}(:); % Extract & ensure column
+            y_perp = filtered_data.amplitude_vector_y{1}(:); % Extract & ensure column
         end
     end
 
