@@ -34,7 +34,7 @@ fileNameList = [
     "in/2d_tile_20by20/40by40/2D_N1600_P0.001_Width40_Seed1.mat"
 ];
 plotModeDensityPDF(fileNameList, true)
-slopeLine('loglog' ,1.2, [.08,1.3], .08, 'TextLocation', [.5, .07])
+slopeLine('loglog' ,1, [.08,1.3], .08, 'TextLocation', [.5, .07])
 slopeLine('loglog' ,0, [.1,1], .4, 'TextLocation', [.4, .5])
 
 % 100 by 20

@@ -7,7 +7,7 @@ function plotEnergyTheory(data, gammaValues)
     % end
     ax_energy = figure;
     xlabel('$  \hat{\omega} \hat{\gamma} $', "FontSize", 20, "Interpreter", "latex");
-    ylabel('$  \frac{ \left( 2 \overline{A}_\perp^2 +4 \overline{A}_\perp \sigma_{A,\perp} \right) \left( 1 - \cos\overline{\sigma}_{\Delta \phi_{ij}} \right)}{\hat{\omega}^2}\left({\frac{\overline{A}_{\perp}}{\overline{A_{\parallel}}}}\right)^2 $', "FontSize", 20, "Interpreter", "latex");
+    ylabel('$  \frac{ 2\left( 1 +2  \sigma_{A,\perp} / \overline{A}_\perp\right) \left( 1 - \cos\overline{\sigma}_{\Delta \phi_{ij}} \right)}{\hat{\omega}^2}\left({\frac{\overline{A}_{\perp}}{\overline{A_{\parallel}}}}\right)^2 $', "FontSize", 20, "Interpreter", "latex");
     set(gca, 'YScale', 'log')
     set(gca, 'XScale', 'log')
     grid on;
@@ -45,8 +45,8 @@ function plotEnergyTheory(data, gammaValues)
                     deltaAmpY = meanPhaseDev(seedData.initial_distance_from_oscillation_output_y_fft{1}, seedData.amplitude_vector_y{1}/(pressureValue/100), 1);
                     phaseScatter = 1-cos(plotPhase(seedData, 'plot', false));
                     ampRatio = plotAmp(seedData, 'plot', false);
-                    meanPerpAmp = mean(seedData.amplitude_vector_y{1}/(pressureValue/100)); % normalized by driving amplitude just like in plotMeanField
-                    energyLoss = (2*meanPerpAmp^2+4*meanPerpAmp*deltaAmpY)*phaseScatter*ampRatio.^2/seedData.omega^2;
+                    meanPerpAmp = mean(seedData.amplitude_vector_y{1}); % normalized by driving amplitude just like in plotMeanField
+                    energyLoss = (2+4*deltaAmpY/meanPerpAmp)*phaseScatter*ampRatio.^2/seedData.omega^2;
                     energyLossList = [energyLossList, energyLoss];
                 end
                 meanEnergyLossList= [meanEnergyLossList, mean(energyLossList)];
