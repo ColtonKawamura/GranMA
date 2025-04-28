@@ -55,7 +55,7 @@ function plotEigenmodeDamped(x0, y0, eigen_vectors, mode_to_plot, options)
     quiver(x0, y0, dx_abs, dy_abs, 0.5, 'g', 'LineWidth', 1.5);   % Green for magnitude
     % scatter(x0, y0, 100 * mode_abs(1:2:end), 'g', 'filled')
 
-    plot(x0, y0, 'ko', 'MarkerSize', 4, 'MarkerFaceColor', 'k');
+    % plot(x0, y0, 'ko', 'MarkerSize', 4, 'MarkerFaceColor', 'k');
 
     title(['\textbf{Eigenmode } $', num2str(mode_to_plot), '$'], 'Interpreter', 'latex');
     xlabel('$x$ position', 'Interpreter', 'latex');
