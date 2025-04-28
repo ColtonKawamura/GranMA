@@ -53,6 +53,7 @@ function plotEigenmodeDamped(x0, y0, eigen_vectors, mode_to_plot, options)
     quiver(x0, y0, dx_real, dy_real, 0.5, 'b', 'LineWidth', 1.5); % Blue for real part
     quiver(x0, y0, dx_imag, dy_imag, 0.5, 'r', 'LineWidth', 1.5); % Red for imaginary part
     quiver(x0, y0, dx_abs, dy_abs, 0.5, 'g', 'LineWidth', 1.5);   % Green for magnitude
+    % scatter(x0, y0, 100 * mode_abs(1:2:end), 'g', 'filled')
 
     plot(x0, y0, 'ko', 'MarkerSize', 4, 'MarkerFaceColor', 'k');
 
