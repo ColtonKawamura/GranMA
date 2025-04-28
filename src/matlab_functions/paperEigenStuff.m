@@ -19,7 +19,7 @@ slopeLine('loglog' ,4, [.031,.15], 1.3, 'TextLocation', [.075, 1])
 
 %% Damped Eigen Vectors
     load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
-    plotData = filterData(outData, 'pressure', .001, 'damping', .1)
+    plotData = filterData(outData, 'pressure', .1, 'damping', .1)
     x = plotData.positions{1}(:, 1);
     y = plotData.positions{1}(:, 2);
     eigenVectors = plotData.eigenVectors{1};
