@@ -45,7 +45,8 @@ function plotEnergyTheory(data, gammaValues)
                     deltaAmpY = meanPhaseDev(seedData.initial_distance_from_oscillation_output_y_fft{1}, seedData.amplitude_vector_y{1}/(pressureValue/100), 1);
                     phaseScatter = 1-cos(plotPhase(seedData, 'plot', false));
                     ampRatio = plotAmp(seedData, 'plot', false);
-                    meanPerpAmp = mean(seedData.amplitude_vector_y{1});
+                    meanPerpAmp = mean(abs(seedData.amplitude_vector_y{1})/(pressureValue/100));
+                    deltaAmpY/meanPerpAmp
                     energyLoss = (2+4*deltaAmpY/meanPerpAmp)*phaseScatter*ampRatio.^2/seedData.omega^2;
                     energyLossList = [energyLossList, energyLoss];
                 end

@@ -33,11 +33,9 @@ function mean_stdevs = meanPhaseDev(x_values, y_values, bin_width)
         end
     end
     
-    % Calculate the mean of the standard deviations, ignoring NaNs
     mean_stdevs = mean(bin_stddevs(~isnan(bin_stddevs)));
     
-    % If all bins were empty or resulted in NaN std dev, return NaN or 0 as appropriate
+    % If all bins were empty or resulted in NaN, set as NaN
     if isempty(mean_stdevs)
-        mean_stdevs = NaN; % Or potentially 0, depending on desired behavior
-    end
+        mean_stdevs = NaN;
 end

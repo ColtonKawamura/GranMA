@@ -19,12 +19,13 @@ slopeLine('loglog' ,4, [.031,.15], 1.3, 'TextLocation', [.075, 1])
 
 %% Damped Eigen Vectors
     load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
+    load("out/junkyard/2D_damped_eigenstuff_N14_4.666667e+00by4_K100_M1.mat", "outData"); % Small packing
     plotData = filterData(outData, 'pressure', .1, 'damping', .1)
     x = plotData.positions{1}(:, 1);
     y = plotData.positions{1}(:, 2);
     eigenVectors = plotData.eigenVectors{1};
-    modeToPlot = 2;
-    plotEigenmodeDamped(x, y, eigenVectors, modeToPlot);
+    modeToPlot = 1;
+    plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
 
 %% UnDamped Mode Density PDF
 % 40 by 40
@@ -48,7 +49,8 @@ slopeLine('loglog' ,1.2, [.08,1.3], .08, 'TextLocation', [.5, .07])
 slopeLine('loglog' ,0, [.1,1], .4, 'TextLocation', [.4, .5])
 
 %% Undamped - Plot Eigen Vectors
-load("in/2d_tile_20by20/tiles/2D_N400_P0.1_Width20_Seed1.mat"); 
+load("in/2d_tile_20by20/40by40/2D_N1600_P0.1_Width40_Seed1.mat"); 
+load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
 % ---- Maybe point where needs own function ------
 positions = [x',y']; 
 radii = Dn/2;  
