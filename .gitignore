@@ -32,3 +32,4 @@ out/simulation_3d
 myenv/
 src/simMD.jl
 archive
+out/junkyard

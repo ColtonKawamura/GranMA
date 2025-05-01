@@ -1,7 +1,6 @@
 function processEigenModesDampedPara(in_path, out_path, dampingConstants)
 
 % pressures = ["0.001", "0.01", "0.1"];
-% out_path = "out/"
 % dampingConstants = [1, 0.1, 0.01, 0.001];
 % processEigenModesDamped("in/2d_eigen_mode_test", "out/2d_damped_eigenStuff", [1, 0.1, 0.01, 0.001]);
 % processEigenModesDamped("in/2d_damped_eigen_small", "out/junkyard", [1, 0.1, 0.01, 0.001]);
@@ -43,7 +42,7 @@ parfor i = 1:numFiles
     loadedVars = load(filename, 'x', 'y', 'Dn', 'K', 'Ly', 'Lx', 'P', 'N');
 
     positions = [loadedVars.x', loadedVars.y'];
-    radii = loadedVars.Dn ./ 2;
+    radii = loadedVars.Dn' / 2;
     [positions, radii] = cleanRats(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx);
     mass = 1;
 
@@ -52,8 +51,8 @@ parfor i = 1:numFiles
         dampingConstant = dampingConstants(j);
         fprintf('CPU %d processing pressure %f with damping %d \n', i, loadedVars.P, dampingConstant);
 
-        [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx, dampingConstant, mass);
-        [eigenVectors_j, eigenValues_j] = polyeig(matSpring, matDamp, matMass);
+        [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx, dampingConstant, mass);
+        [eigenVectors_j, eigenValues_j] = polyeig(Hessian, matDamp, matMass);
 
         % Store outData for this (i, j) pair in a temporary struct
         data_j = struct();
@@ -105,7 +104,7 @@ if ~isempty(first_valid_idx)
     Ly_save = outData.Ly(first_valid_idx);
     K_save = 100; % Placeholder - adjust as needed if K varies and needs to be stored/retrieved
     mass_save = 1;
-    filename_output = sprintf("2D_damped_eigenstuff_N%d_%dby%d_K%d_M%d.mat", N_save, Lx_save, round(Ly_save), K_save, mass_save);
+    filename_output = sprintf("2D_damped_eigenstuff_N%d_%dby%d_K%d_M%d.mat", N_save, round(Lx_save), round(Ly_save), K_save, mass_save);
 else
     error('No valid data found to save.');
 end

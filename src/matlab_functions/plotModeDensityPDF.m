@@ -22,8 +22,8 @@ figure
 for i = 1:length(file_name_list)
     file_name = file_name_list(i);
     load(file_name)
-    positions = [x',y'];  % Assuming x, y are in the loaded .mat file
-    radii = Dn./2;  % Assuming Dn is in the loaded .mat file
+    positions = [x',y'];  
+    radii = Dn./2;  
 
     if process_data == true
         Hessian = hess2d(positions, radii, K, Ly, Lx);

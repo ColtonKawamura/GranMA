@@ -6,8 +6,8 @@ function [positions, radii] = cleanRats(positions, radii, K, Ly, Lx)
     % Initialize the Hessian matrix
     Zn = zeros(N,1);
     % ID the wall particles
-    left_wall_list = (positions(:,1)<radii');
-    right_wall_list = (positions(:,1)>Lx-radii');
+    left_wall_list = (positions(:,1)<radii);
+    right_wall_list = (positions(:,1)>Lx-radii);
     Zn(left_wall_list|right_wall_list) = 2;
     %% Clean the rattlers
     % Count the number of contatns to clean the rattlers 
@@ -19,7 +19,6 @@ function [positions, radii] = cleanRats(positions, radii, K, Ly, Lx)
             
             % Apply periodic boundary conditions in the y-direction
             dy = dy - round(dy / Ly) * Ly;
-            
             r = sqrt(dx^2 + dy^2);  % Euclidean distance
             
             % Compute the overlap distance (if any)

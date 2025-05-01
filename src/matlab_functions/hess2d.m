@@ -11,8 +11,8 @@ function Hessian = hess2d(positions, radii, k, L_y, Lx)
 
     N = size(positions,1);
     Zn = zeros(N,1);
-    left_wall_list = (positions(:,1)<radii');
-    right_wall_list = (positions(:,1)>Lx-radii');
+    left_wall_list = (positions(:,1)<radii);
+    right_wall_list = (positions(:,1)>Lx-radii);
     Zn(left_wall_list|right_wall_list) = 2;
     Hessian = zeros(2 * N, 2 * N);
 
@@ -25,8 +25,7 @@ function Hessian = hess2d(positions, radii, k, L_y, Lx)
             
             % Apply periodic boundary conditions in the y-direction
             dy = dy - round(dy / L_y) * L_y;
-            
-            r = sqrt(dx^2 + dy^2);  % Euclidean distance
+            r = sqrt(dx^2 + dy^2);
             
             % Compute the overlap distance (if any)
             overlap = radii(i) + radii(j) - r;

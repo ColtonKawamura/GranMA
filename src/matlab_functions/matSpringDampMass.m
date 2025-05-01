@@ -8,12 +8,12 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
     %
     % Returns:
     % Hessian: 2N x 2N Hessian matrix (second derivatives of the potential)
-    k =1;
+    % k =1;
     % damping_constant = 1;
     N = size(positions,1);
     Zn = zeros(N,1);
-    left_wall_list = (positions(:,1)<radii');
-    right_wall_list = (positions(:,1)>Lx-radii');
+    left_wall_list = (positions(:,1)<radii);
+    right_wall_list = (positions(:,1)>Lx-radii);
     Zn(left_wall_list|right_wall_list) = 2;
     matSpring = zeros(2 * N, 2 * N);
     matDamp = zeros(2 * N, 2 * N);
@@ -21,26 +21,27 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
     % Loop over all pairs of particles
     for i = 1:N
         for j = i+1:N
-            % Compute the distance vector and magnitude
+
+            % distnaces 
             dx = positions(i, 1) - positions(j, 1);
             dy = positions(i, 2) - positions(j, 2);
             
-            % Apply periodic boundary conditions in the y-direction
+            % Aapply periodic boundary conditions
             dy = dy - round(dy / L_y) * L_y;
-            dx = dx - round(dx / Lx) * Lx;
-            r = sqrt(dx^2 + dy^2);  % Euclidean distance
+            r = sqrt(dx^2 + dy^2); 
             
-            % Compute the overlap distance (if any)
             overlap = radii(i) + radii(j) - r;
             
-            if overlap > 0  % Particles are in contact
+            if overlap > 0 
+
+                % keep tally of contacts for each partcile
                 Zn(i) = Zn(i)+1;
                 Zn(j) = Zn(j)+1;
 
                 % Compute elements of the Hessian for this pair
                 Kxx = k * ((dx^2 / r^2));
                 Kyy = k * ((dy^2 / r^2));
-                Kxy = k * (dx * dy / r^2);
+                Kxy = k * (-dx * dy / r^2); % same as Kyx
                 
                 % Damping Matrix
                 Dxx = 1;

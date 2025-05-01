@@ -35,8 +35,8 @@ function ampRatio = plotAmp(data, options)
         hold on
         set(gca, 'YScale', 'log')
         grid on
-        xlabel("$ x $", "Interpreter", 'latex', "FontSize", 15)
-        ylabel("$ A(x) $", "Interpreter", 'latex', "FontSize", 15)
+        xlabel("$ x $", "Interpreter", 'latex', "FontSize", 20)
+        ylabel("$ A(x) $", "Interpreter", 'latex', "FontSize", 20)
         set(get(gca, 'ylabel'), 'rotation', 0);
         box on
         hold on 
@@ -62,7 +62,8 @@ function ampRatio = plotAmp(data, options)
         plot(xPara, exp(yInterecept_xAmp + slopeAmpX .* xPara), 'HandleVisibility', 'off')
         set(gca, 'YScale', 'log')
         grid on
-        legend('show', 'Location', 'northeast', 'Interpreter', 'latex');
+        legend('show', 'Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 20);
+        title(sprintf("$\\hat{P}$: %g, $\\hat{\\gamma}$: %g, $\\hat{\\omega}$: %g", data.pressure(1), data.gamma(1), data.omega(1)), 'Interpreter', 'latex','FontSize', 20);
     end
 
     ampRatio = exp(yintercept_yAmp) / exp(yInterecept_xAmp);

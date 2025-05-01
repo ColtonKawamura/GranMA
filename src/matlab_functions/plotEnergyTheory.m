@@ -42,12 +42,18 @@ function plotEnergyTheory(data, gammaValues)
                         fprintf('Empty y-phase vector for: Pressure %f OmegaGamma %f seed %d\n', pressureValue, omegaGammaValue, seedValue);
                         continue
                     end
-                    deltaAmpY = meanPhaseDev(seedData.initial_distance_from_oscillation_output_y_fft{1}, seedData.amplitude_vector_y{1}/(pressureValue/100), 1);
+                    %  -----------------------TESTING-----------------------
+                    % deltaAmpY = meanPhaseDev(seedData.initial_distance_from_oscillation_output_y_fft{1}, seedData.amplitude_vector_y{1}/(pressureValue/100), 1) % this was using the mean phase deviation
+                    pressureValue
+                    deltaAmpY = meanDistNeighbor(seedData.initial_distance_from_oscillation_output_y_fft{1}, seedData.amplitude_vector_y{1}/(pressureValue/100));
+                    if pressureValue == .1 || .001 && deltaAmpY > 0.4
+                        plotAmp(seedData,"plot", true);
+                    end
+                    %  -----------------------TESTING-----------------------
                     phaseScatter = 1-cos(plotPhase(seedData, 'plot', false));
                     ampRatio = plotAmp(seedData, 'plot', false);
                     meanPerpAmp = mean(abs(seedData.amplitude_vector_y{1})/(pressureValue/100));
-                    deltaAmpY/meanPerpAmp
-                    energyLoss = (2+4*deltaAmpY/meanPerpAmp)*phaseScatter*ampRatio.^2/seedData.omega^2;
+                    energyLoss = (2+4*deltaAmpY)*phaseScatter*ampRatio.^2/seedData.omega^2;
                     energyLossList = [energyLossList, energyLoss];
                 end
                 meanEnergyLossList= [meanEnergyLossList, mean(energyLossList)];

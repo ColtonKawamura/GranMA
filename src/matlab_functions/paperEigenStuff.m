@@ -1,7 +1,8 @@
 % Damp
 %% Damped Processing
-% processEigenModesDamped("in/2d_tile_20by20/100by20/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01, 0.001])
-processEigenModesDampedPara("in/2d_tile_20by20/tiles/40by40/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01])
+processEigenModesDamped("in/2d_tile_20by20/100by20/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01, 0.001])
+processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01])
+
 
 %% Damped Mode Density PDF
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1600_40by56_K100_M1.mat", "outData")
@@ -12,14 +13,18 @@ plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
 slopeLine('loglog' ,1, [.01,.1], 2.5, 'TextLocation', [.03, 3.5])
 slopeLine('loglog' ,4, [.031,.15], 1.3, 'TextLocation', [.075, 1])
 
+%  40 by 40 undamped test
+slopeLine('loglog' ,1, [.025,.25], .62, 'TextLocation', [.08, 1])
+slopeLine('loglog' ,4, [.1,.25], .15, 'TextLocation', [.2, .15])
+
 % 100 by 28
 plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
 slopeLine('loglog' ,1, [.01,.1], 2.5, 'TextLocation', [.03, 3.5])
 slopeLine('loglog' ,4, [.031,.15], 1.3, 'TextLocation', [.075, 1])
 
+
 %% Damped Eigen Vectors
     load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
-    load("out/junkyard/2D_damped_eigenstuff_N14_4.666667e+00by4_K100_M1.mat", "outData"); % Small packing
     plotData = filterData(outData, 'pressure', .1, 'damping', .1)
     x = plotData.positions{1}(:, 1);
     y = plotData.positions{1}(:, 2);
@@ -31,6 +36,7 @@ slopeLine('loglog' ,4, [.031,.15], 1.3, 'TextLocation', [.075, 1])
 % 40 by 40
 fileNameList = [
     "in/2d_tile_20by20/40by40/2D_N1600_P0.1_Width40_Seed1.mat",
+    "in/2d_tile_20by20/40by40/2D_N1600_P0.05_Width40_Seed1.mat",
     "in/2d_tile_20by20/40by40/2D_N1600_P0.01_Width40_Seed1.mat",
     "in/2d_tile_20by20/40by40/2D_N1600_P0.001_Width40_Seed1.mat"
 ];
@@ -50,7 +56,7 @@ slopeLine('loglog' ,0, [.1,1], .4, 'TextLocation', [.4, .5])
 
 %% Undamped - Plot Eigen Vectors
 load("in/2d_tile_20by20/40by40/2D_N1600_P0.1_Width40_Seed1.mat"); 
-load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
+load("out/junkyard/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat") % test - damped algo with undamped data
 % ---- Maybe point where needs own function ------
 positions = [x',y']; 
 radii = Dn/2;  
@@ -67,3 +73,51 @@ end
 
  % Gaussian
  sim2dGauss(100, 1, .0001, 1, 5000, 0.1, 10, 1, "in/2d_5wide_1000long/", "out/junk_yard")
+
+
+
+%  Small Packing for Debugging
+%  Process the small packing
+processEigenModesDampedPara("in/2d_damped_eigen_small/", "out/junkyard/", [0])
+load("out/junkyard/2D_damped_eigenstuff_N14_5by4_K100_M1.mat", "outData"); % Small packing
+plotData = filterData(outData, 'pressure', .1, 'damping',0)
+x = plotData.positions{1}(:, 1);
+y = plotData.positions{1}(:, 2);
+eigenVectors = plotData.eigenVectors{1};
+modeToPlot = 1;
+plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
+
+% Trying damped with just the spring matrix
+load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
+positions = [x',y']; 
+radii = Dn'/2;  
+[Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, 0,1 );
+[eigenVectors, eigenValues] = polyeig(Hessian, matDamp, matMass);
+x = positions(:, 1);
+y = positions(:, 2);
+modeToPlot = 1;
+plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
+
+% But if I just do the Hessian matrix, it works
+load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
+positions = [x',y']; 
+radii = Dn'/2;  
+[Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, 0,1 );
+[eigenVectors, eigenValues ] = eig(Hessian);
+x = positions(:, 1);
+y = positions(:, 2);
+modeToPlot = 1;
+plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
+
+
+
+% Undamped
+load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
+positions = [x',y']; 
+radii = Dn'/2;  
+Hessian = hess2d(positions, radii, K, Ly, Lx);
+[eigenVectors, eigenValues ] = eig(Hessian);
+x = positions(:, 1);
+y = positions(:, 2);
+modeToPlot = 1;
+plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
