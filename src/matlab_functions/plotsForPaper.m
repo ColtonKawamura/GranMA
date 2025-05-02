@@ -41,6 +41,11 @@ gamma_value = .2;
 plotAttenuation(data, gamma_value);
 plotWavespeed(data, gamma_value);
 
+% Master Curve
+gamma_value = .00001;
+plotAttenuationWithPressure(data, gamma_value);
+slopeLine('loglog' ,.5, [1,1E4], 3, 'TextLocation', [10, 3])
+slopeLine('loglog' ,.25, [1E2,1E6], 15, 'TextLocation', [2E4, 24])
 %% Mean Field
 filteredData = filterData(data, 'gamma', .1 , 'pressure', 0.001, 'omega', .1, 'seed', 1);
 [mean_field_amp, mean_field_phase, prime_field_amp, prime_field_phase] = plotMeanField(filteredData)
