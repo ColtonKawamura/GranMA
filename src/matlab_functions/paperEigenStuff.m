@@ -93,23 +93,11 @@ positions = [x',y'];
 radii = Dn'/2;  
 [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, 0,1 );
 [eigenVectors, eigenValues] = polyeig(Hessian, matDamp, matMass);
+% [eigenVectors, eigenValues ] = eig(Hessian); % works with eig()
 x = positions(:, 1);
 y = positions(:, 2);
 modeToPlot = 1;
 plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
-
-% But if I just do the Hessian matrix, it works
-load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
-positions = [x',y']; 
-radii = Dn'/2;  
-[Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, 0,1 );
-[eigenVectors, eigenValues ] = eig(Hessian);
-x = positions(:, 1);
-y = positions(:, 2);
-modeToPlot = 1;
-plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
-
-
 
 % Undamped
 load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")

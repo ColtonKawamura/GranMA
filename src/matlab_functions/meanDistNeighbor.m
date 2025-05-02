@@ -20,7 +20,7 @@ function meanScatter = meanDistNeighbor(x, y)
         deltaAngles = [deltaAngles, pointAngles(i+1) - pointAngles(i)]; % angles between the points
         deltaAngles = abs(deltaAngles); % normalize by (pi/2) since largest angle is pi/2; this will give us a value between 0 and 1
     end
-    meanDeltaAngle = mean(deltaAngles)*2 % mean angle between points
+    meanDeltaAngle = mean(deltaAngles)*2; % mean angle between points
     meanDist = mean(distance); 
     % meanScatter = meanDist * meanDeltaAngle; % mean distance between points
     meanScatter = meanDeltaAngle;
