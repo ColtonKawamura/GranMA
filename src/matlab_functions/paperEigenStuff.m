@@ -63,7 +63,7 @@ radii = Dn/2;
 Hessian = hess2d(positions, radii', K, Ly, Lx);
 [eigenVectors, eigenValues ] = eig(Hessian);
 % -------------------------------------
-modesToPlot = [1, 2, 3, 4];
+modesToPlot = 1:10;
 for i = 1:length(modesToPlot)
     modeToPlot = modesToPlot(i);
     plotEigenmode(x', y', eigenVectors, modeToPlot);
@@ -78,22 +78,22 @@ end
 
 %  Small Packing for Debugging
 %  Process the small packing
-processEigenModesDampedPara("in/2d_damped_eigen_small/", "out/junkyard/", [0])
+% processEigenModesDampedPara("in/2d_damped_eigen_small/", "out/junkyard/", [0])
 load("out/junkyard/2D_damped_eigenstuff_N14_5by4_K100_M1.mat", "outData"); % Small packing
 plotData = filterData(outData, 'pressure', .1, 'damping',0)
 x = plotData.positions{1}(:, 1);
 y = plotData.positions{1}(:, 2);
 eigenVectors = plotData.eigenVectors{1};
 modeToPlot = 1;
-plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
+plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
 
 % Trying damped with just the spring matrix
 load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
 positions = [x',y']; 
 radii = Dn'/2;  
 [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, 0,1 );
-[eigenVectors, eigenValues] = polyeig(Hessian, matDamp, matMass);
-% [eigenVectors, eigenValues ] = eig(Hessian); % works with eig()
+% [eigenVectors, eigenValues] = polyeig(Hessian, matDamp, matMass);
+[eigenVectors, eigenValues ] = eig(Hessian, matMass);
 x = positions(:, 1);
 y = positions(:, 2);
 modeToPlot = 1;
