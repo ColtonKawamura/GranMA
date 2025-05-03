@@ -38,10 +38,9 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
                 Zn(i) = Zn(i)+1;
                 Zn(j) = Zn(j)+1;
 
-                % Compute elements of the Hessian for this pair
                 Kxx = k * ((dx^2 / r^2));
                 Kyy = k * ((dy^2 / r^2));
-                Kxy = k * (-dx * dy / r^2); % same as Kyx
+                Kxy = k * (dx * dy / r^2); % same as Kyx
                 
                 % Damping Matrix
                 Dxx = 1;
