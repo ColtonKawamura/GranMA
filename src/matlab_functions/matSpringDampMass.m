@@ -25,7 +25,7 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
             % distnaces 
             dx = positions(i, 1) - positions(j, 1);
             dy = positions(i, 2) - positions(j, 2);
-            
+
             % Aapply periodic boundary conditions
             dy = dy - round(dy / L_y) * L_y;
             r = sqrt(dx^2 + dy^2); 
@@ -40,7 +40,7 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
 
                 Kxx = k * ((dx^2 / r^2));
                 Kyy = k * ((dy^2 / r^2));
-                Kxy = k * (dx * dy / r^2); % same as Kyx
+                Kxy = k * (-dx * dy / r^2); % same as Kyx
                 
                 % Damping Matrix
                 Dxx = 1;

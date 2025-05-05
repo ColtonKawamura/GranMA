@@ -78,22 +78,22 @@ end
 
 %  Small Packing for Debugging
 %  Process the small packing
-% processEigenModesDampedPara("in/2d_damped_eigen_small/", "out/junkyard/", [0])
+processEigenModesDampedPara("in/2d_damped_eigen_small/", "out/junkyard/", [0])
 load("out/junkyard/2D_damped_eigenstuff_N14_5by4_K100_M1.mat", "outData"); % Small packing
 plotData = filterData(outData, 'pressure', .1, 'damping',0)
 x = plotData.positions{1}(:, 1);
 y = plotData.positions{1}(:, 2);
 eigenVectors = plotData.eigenVectors{1};
 modeToPlot = 1;
-plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
+plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
 
 % Trying damped with just the spring matrix
 load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
 positions = [x',y']; 
 radii = Dn'/2;  
 [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, 0,1 );
-% [eigenVectors, eigenValues] = polyeig(Hessian, matDamp, matMass);
-[eigenVectors, eigenValues ] = eig(Hessian, matMass);
+[eigenVectors, eigenValues] = polyeig(Hessian, matDamp, matMass);
+% [eigenVectors, eigenValues ] = eig(Hessian);
 x = positions(:, 1);
 y = positions(:, 2);
 modeToPlot = 1;
@@ -109,3 +109,42 @@ x = positions(:, 1);
 y = positions(:, 2);
 modeToPlot = 1;
 plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
+
+%% damped sandbox
+matMass = eye(2)
+matDamp = [1 -1; -1 1]
+% matDamp = zeros(2)
+matSpring = [2 -1; -1 2]
+
+[eigVec, eigVal] = eig(matSpring, matMass)
+[polyVec, polyVal] = polyeig(matSpring, matDamp, matMass)
+
+abs(polyVec(:,4)) % matches mode from eig
+abs(polyVec(:,2)) % does not match mode from eig
+
+atan2(imag(polyVec(1,4),real(polyVec(1,4))))
+
+
+% Keeping one of the two conjugate pair eigenValues
+keep = imag(polyVal) >0
+shapes = polyVec(:,keep) % correspoding eigenVectors
+
+for k = 1:size(shapes,2) % go through each column
+    [~, idx]   = max(abs(shapes(:,k))) % get the largest eigenvector this column
+    % normalize mode "k" by the largest, turns it into a unit phasor
+    phase      = shapes(idx,k) / abs(shapes(idx,k))
+    shapes(:,k)= shapes(:,k) / phase        % rotate all the eigenvectors by the same amount
+end
+
+% 3. take the real part
+shapes = real(shapes)
+
+
+eigenValueKeep = imag(eigenValues) > 0; % keep the positive eigenvalues
+eigenVectors = eigenVectors(:, eigenValueKeep); % keep the positive eigenvalues
+for k = 1:size(eigenVectors,2) % go through each column (mode)
+    [~, idx]   = max(abs(eigenVectors(:,k))); % get the largest eigenvector this column
+    % normalize mode "k" by the largest, turns it into a unit phasor
+    unitPhasor =  eigenVectors(idx,k) / abs(eigenVectors(idx,k));
+    eigenVectors(:,k)= eigenVectors(:,k) / unitPhasor; % rotate all the eigenvectors by the same amount
+end

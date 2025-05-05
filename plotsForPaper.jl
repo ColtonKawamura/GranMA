@@ -88,6 +88,10 @@ saveData2dToMat(simulation_data, "out/processed/2d_K100_80kby40.mat") # save dat
 simulation_data = load_data("out/processed/2d_bi_K100_W5.jld2")
 saveData2dToMat(simulation_data, "out/processed/2d_bi_K100_W5.mat") # save data to matlab format
 
+# Shear Conversion
+simulation_data = load_data("out/processed/2d_shear_80kby40.jld2")
+saveData2dToMat(simulation_data, "out/processed/2d_shear_80kby40.mat") # save data to matlab format
+
 # Compression Attenuation and Wavespeed
     gamma_value = .5
     plot_ωγ_attenuation_2d(simulation_data, gamma_value, 1.2)

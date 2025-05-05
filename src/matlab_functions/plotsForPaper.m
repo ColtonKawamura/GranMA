@@ -73,3 +73,5 @@ slopeLine('loglog' ,-2/3, [.02,1], 5E-3, 'TextLocation', [.14,2.5E-3])
 
 
 % Sandbox
+%% Shear Data
+data = load("out/processed/2d_shear_80kby40.mat")
