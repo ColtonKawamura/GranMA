@@ -26,7 +26,7 @@ function plotEigenmode(x0, y0, eigenVectors, modeToPlot, options)
 
     if options.damped
         % grab the real, imaginary, and absolute components of the mode
-        mode_real = real(modeVector);
+        mode_real = modeVector;
         % mode_imag = imag(modeVector);
         % mode_abs = abs(modeVector);
     else
