@@ -26,8 +26,6 @@ for i = 1:length(pressure_list)
         Ly = dataPressureDamping.Ly(1);
 
         [edges, normalized_counts] = modeDensity(abs(imag(eigenValues)), "damped",true);
-        whos edges
-        whos normalized_counts
         % --- Verification Step ---
         bin_widths = diff(edges); % Calculate the width of each bin (Length N)
         num_bins = length(bin_widths);

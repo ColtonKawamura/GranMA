@@ -1,7 +1,7 @@
 % Damp
 %% Damped Processing
-processEigenModesDamped("in/2d_tile_20by20/100by20/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01, 0.001])
-processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01])
+% processEigenModesDamped("in/2d_tile_20by20/100by20/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01, 0.001])
+% processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01])
 
 
 %% Damped Mode Density PDF
@@ -13,14 +13,10 @@ plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
 slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
 slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 
-%  40 by 40 undamped test
-slopeLine('loglog' ,1, [.025,.25], .62, 'TextLocation', [.08, 1])
-slopeLine('loglog' ,4, [.1,.25], .15, 'TextLocation', [.2, .15])
-
 % 100 by 28
 plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
-slopeLine('loglog' ,1, [.01,.1], 2.5, 'TextLocation', [.03, 3.5])
-slopeLine('loglog' ,4, [.031,.15], 1.3, 'TextLocation', [.075, 1])
+slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
+slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 
 
 %% Damped Eigen Vectors
