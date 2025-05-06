@@ -20,6 +20,8 @@ for i = 1:length(pressure_list)
         damping_constant = damping_list(j);
         dataPressureDamping = filterData(data, 'pressure', pressure,  'damping', damping_constant);
         eigenValues = dataPressureDamping.eigenValues{1};
+        keepIdx = imag(eigenValues) > 0; % keep the positive eigenvalues
+        % eigenValues = abs(imag(eigenValues(keepIdx))) % imag part carries the frequency, abs() because QZ sovler does weird things
         Lx = dataPressureDamping.Lx(1);
         Ly = dataPressureDamping.Ly(1);
 
