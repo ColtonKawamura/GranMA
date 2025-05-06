@@ -25,8 +25,9 @@ for i = 1:length(pressure_list)
         Lx = dataPressureDamping.Lx(1);
         Ly = dataPressureDamping.Ly(1);
 
-        [edges, normalized_counts] = modeDensity(abs(imag(eigenValues)));
-
+        [edges, normalized_counts] = modeDensity(abs(imag(eigenValues)), "damped",true);
+        whos edges
+        whos normalized_counts
         % --- Verification Step ---
         bin_widths = diff(edges); % Calculate the width of each bin (Length N)
         num_bins = length(bin_widths);
@@ -42,7 +43,8 @@ for i = 1:length(pressure_list)
             [~, marker_color] = normVarColor(pressure_list, pressure, 1);
         end
 
-        plot(edges, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color);
+        binCenters = sqrt( edges(1:end-1) .* edges(2:end) ); 
+        plot(binCenters, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color);
         xlabel('eigen frequencies (edges)', 'Interpreter', 'latex', 'FontSize', 20)
         ylabel('counts', 'Interpreter', 'latex', 'FontSize', 20)
         % legend('show', 'Interpreter', 'latex');

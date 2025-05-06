@@ -10,8 +10,8 @@ load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1891_100by28_K100_M1.mat", 
 
 % 40 by 40
 plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
-slopeLine('loglog' ,1, [.01,.1], 2.5, 'TextLocation', [.03, 3.5])
-slopeLine('loglog' ,4, [.031,.15], 1.3, 'TextLocation', [.075, 1])
+slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
+slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 
 %  40 by 40 undamped test
 slopeLine('loglog' ,1, [.025,.25], .62, 'TextLocation', [.08, 1])
@@ -42,8 +42,8 @@ fileNameList = [
     "in/2d_tile_20by20/40by40/2D_N1600_P0.001_Width40_Seed1.mat"
 ];
 plotModeDensityPDF(fileNameList, true)
-slopeLine('loglog' ,1, [.08,1.3], .08, 'TextLocation', [.5, .07])
-slopeLine('loglog' ,0, [.1,1], .4, 'TextLocation', [.4, .5])
+slopeLine('loglog' ,1, [.8,13], .008, 'TextLocation', [5, .007])
+slopeLine('loglog' ,0, [1,10], .04, 'TextLocation', [4, .05])
 
 % 100 by 20
 fileNameList = [

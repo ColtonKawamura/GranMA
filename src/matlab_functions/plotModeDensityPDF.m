@@ -23,7 +23,8 @@ for i = 1:length(file_name_list)
     file_name = file_name_list(i);
     load(file_name)
     positions = [x',y'];  
-    radii = Dn./2;  
+    radii = Dn./2;
+    [positions, radii] = cleanRats(positions, radii, K, Ly, Lx);
 
     if process_data == true
         Hessian = hess2d(positions, radii, K, Ly, Lx);
@@ -41,7 +42,8 @@ for i = 1:length(file_name_list)
     % --- End Verification Step ---
     [~, marker_color] = normVarColor(pressure_list, P, 1);
 
-    plot(edges, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', sprintf('$ P = %.3f $', P));
+    binCenters = sqrt( edges(1:end-1) .* edges(2:end) ); 
+    plot(binCenters, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', sprintf('$ P = %.3f $', P));
     xlabel('eigen frequencies (edges)', 'Interpreter', 'latex', 'FontSize', 20)
     ylabel('counts', 'Interpreter', 'latex', 'FontSize', 20)
     legend('show', 'Interpreter', 'latex');
