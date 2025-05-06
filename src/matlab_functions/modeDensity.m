@@ -1,4 +1,6 @@
 function [edges, normalized_counts] = modeDensity(eigen_values)
+    
+    arguments
     [s1, s2] = size(eigen_values);
     if s1 == 1 || s2 == 1
         eigen_values_diag = eigen_values; % this is for the struct (damped flow)

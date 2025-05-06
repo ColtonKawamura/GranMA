@@ -25,7 +25,8 @@ slopeLine('loglog' ,4, [.031,.15], 1.3, 'TextLocation', [.075, 1])
 
 %% Damped Eigen Vectors
     load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
-    plotData = filterData(outData, 'pressure', .1, 'damping', .1)
+    outData = orderPolyEig(outData);
+    plotData = filterData(outData, 'pressure', .1, 'damping', .001)
     x = plotData.positions{1}(:, 1);
     y = plotData.positions{1}(:, 2);
     eigenVectors = plotData.eigenVectors{1};
@@ -78,25 +79,39 @@ end
 
 %  Small Packing for Debugging
 %  Process the small packing
-processEigenModesDampedPara("in/2d_damped_eigen_small/", "out/junkyard/", [0])
+% processEigenModesDampedPara("in/2d_damped_eigen_small/", "out/junkyard/", [0])
 load("out/junkyard/2D_damped_eigenstuff_N14_5by4_K100_M1.mat", "outData"); % Small packing
+outData = orderPolyEig(outData);
 plotData = filterData(outData, 'pressure', .1, 'damping',0)
+% [~, idx] = sort(abs(imag(plotData.eigenValues{1})));
+% plotData.eigenVectors{1} = plotData.eigenVectors{1}(:, idx);
 x = plotData.positions{1}(:, 1);
 y = plotData.positions{1}(:, 2);
 eigenVectors = plotData.eigenVectors{1};
 modeToPlot = 1;
 plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
 
-% Trying damped with just the spring matrix
+% This verifies that the spring matrix is correct
+% It does what processEigenModesDamped does when you do matSpringDampMass
 load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
 positions = [x',y']; 
 radii = Dn'/2;  
 [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, 0,1 );
 [eigenVectors, eigenValues] = polyeig(Hessian, matDamp, matMass);
-% [eigenVectors, eigenValues ] = eig(Hessian);
+% [eigenVectors, eigenValues ] = eig(Hessian); % this plots correct
+% sort the eigenValues and eigenVectors
+[~, idx] = sort(abs(imag(eigenValues)));
+eigenVectors = eigenVectors(:, idx);
+
 x = positions(:, 1);
 y = positions(:, 2);
 modeToPlot = 1;
+modesToPlot = 1:size(eigenVectors,2);
+for i = 1:length(modesToPlot)
+    modeToPlot = modesToPlot(i);
+    plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
+    input('Press Enter to continue...');
+end
 plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
 
 % Undamped
@@ -112,17 +127,15 @@ plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
 
 %% damped sandbox
 matMass = eye(2)
-matDamp = [1 -1; -1 1]
-% matDamp = zeros(2)
+% matDamp = [1 -1; -1 1]
+matDamp = zeros(2)
 matSpring = [2 -1; -1 2]
 
 [eigVec, eigVal] = eig(matSpring, matMass)
 [polyVec, polyVal] = polyeig(matSpring, matDamp, matMass)
 
-abs(polyVec(:,4)) % matches mode from eig
-abs(polyVec(:,2)) % does not match mode from eig
 
-atan2(imag(polyVec(1,4),real(polyVec(1,4))))
+% atan2(imag(polyVec(1,4),real(polyVec(1,4))))
 
 
 % Keeping one of the two conjugate pair eigenValues
@@ -140,11 +153,9 @@ end
 shapes = real(shapes)
 
 
-eigenValueKeep = imag(eigenValues) > 0; % keep the positive eigenvalues
-eigenVectors = eigenVectors(:, eigenValueKeep); % keep the positive eigenvalues
-for k = 1:size(eigenVectors,2) % go through each column (mode)
-    [~, idx]   = max(abs(eigenVectors(:,k))); % get the largest eigenvector this column
-    % normalize mode "k" by the largest, turns it into a unit phasor
-    unitPhasor =  eigenVectors(idx,k) / abs(eigenVectors(idx,k));
-    eigenVectors(:,k)= eigenVectors(:,k) / unitPhasor; % rotate all the eigenvectors by the same amount
-end
+modeVector = eigenVectors(:,1);
+% This is what is in plotEigenmode
+[~, idx]   = max(abs(modeVector)); % get the largest eigenvector this column
+% Turn largest eigenvector into a unit phasor
+unitPhasor =  modeVector(idx) / abs(modeVector(idx))
+modeVector= modeVector(:) / unitPhasor % rotate all the eigenvectors by the same amount
