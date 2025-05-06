@@ -36,8 +36,8 @@ function plotEigenmode(x0, y0, eigenVectors, modeToPlot, options)
 
 
     if options.damped
-        dx_real = modeVector(1:2:end); % starts at 1, goes to end, increments by 2 aka only grabs the odd indices
-        dy_real = modeVector(2:2:end); % starts at 2, goes to end, increments by 2 aka only grabs the even indices% 
+        dx_real = real(modeVector(1:2:end)); % starts at 1, goes to end, increments by 2 aka only grabs the odd indices
+        dy_real = real(modeVector(2:2:end)); % starts at 2, goes to end, increments by 2 aka only grabs the even indices% 
         % dx_imag = mode_imag(1:2:end);
         % dy_imag = mode_imag(2:2:end);
         % dx_abs = mode_abs(1:2:end);
