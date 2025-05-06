@@ -45,7 +45,7 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
                 % Damping Matrix
                 Dxx = 1;
                 Dyy = 1;
-                Dxy = 1;
+                Dxy = -1;
 
                 % Indices in the global Hessian matrix
                 idx_i = 2 * i - 1;  % x-index for particle i
