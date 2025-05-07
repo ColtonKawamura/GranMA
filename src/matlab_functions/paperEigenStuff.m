@@ -1,7 +1,7 @@
 % Damp
 %% Damped Processing
-% processEigenModesDamped("in/2d_tile_20by20/100by20/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01, 0.001])
-% processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01])
+processEigenModesDamped("in/2d_tile_20by20/100by20/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01, 0.001])
+processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/", [1,.75,.5,.25, 0.1, 0.01])
 
 
 %% Damped Mode Density PDF
@@ -9,7 +9,7 @@ load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1600_40by56_K100_M1.mat", "
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1891_100by28_K100_M1.mat", "outData")
 
 % 40 by 40
-plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
+plotDampedModeDensityPDF(outData, [.2, .01, .001], [.001])
 slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
 slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 
@@ -33,8 +33,11 @@ slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 % 40 by 40
 fileNameList = [
     "in/2d_tile_20by20/40by40/2D_N1600_P0.1_Width40_Seed1.mat",
+    "in/2d_tile_20by20/40by40/2D_N1600_P0.075_Width40_Seed1.mat",
     "in/2d_tile_20by20/40by40/2D_N1600_P0.05_Width40_Seed1.mat",
+    "in/2d_tile_20by20/40by40/2D_N1600_P0.025_Width40_Seed1.mat",
     "in/2d_tile_20by20/40by40/2D_N1600_P0.01_Width40_Seed1.mat",
+    "in/2d_tile_20by20/40by40/2D_N1600_P0.005_Width40_Seed1.mat",
     "in/2d_tile_20by20/40by40/2D_N1600_P0.001_Width40_Seed1.mat"
 ];
 plotModeDensityPDF(fileNameList, true)
@@ -120,6 +123,21 @@ x = positions(:, 1);
 y = positions(:, 2);
 modeToPlot = 1;
 plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
+
+%% Damped Imaginay vs Real Eigenvalues
+load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
+outData = orderPolyEig(outData);
+plotData = filterData(outData, 'pressure', .1, 'damping', .001)
+x = plotData.positions{1}(:, 1);
+y = plotData.positions{1}(:, 2);
+realEigenValues = real(plotData.eigenValues{1});
+imagEigenValues = imag(plotData.eigenValues{1});
+scatter(imagEigenValues, -realEigenValues, 20, realEigenValues, 'filled')
+set(gca, 'XScale', 'log')
+set(gca, 'YScale', 'log')
+grid on
+box on
+slopeLine('loglog' ,2, [1E-1,], 1E-3, 'TextLocation', [8E-4, 1])
 
 %% damped sandbox
 matMass = eye(2)
