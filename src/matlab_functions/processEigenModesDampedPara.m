@@ -1,10 +1,15 @@
-function processEigenModesDampedPara(in_path, out_path, dampingConstants)
+function processEigenModesDampedPara(in_path, out_path, dampingConstants, options)
 
 % pressures = ["0.001", "0.01", "0.1"];
 % dampingConstants = [1, 0.1, 0.01, 0.001];
 % processEigenModesDamped("in/2d_eigen_mode_test", "out/2d_damped_eigenStuff", [1, 0.1, 0.01, 0.001]);
 % processEigenModesDamped("in/2d_damped_eigen_small", "out/junkyard", [1, 0.1, 0.01, 0.001]);
-
+arguments
+    in_path (1,1) string
+    out_path (1,1) string
+    dampingConstants (1,:) double
+    options.periodic (1,1) logical = false
+end
 filenameList = dir(fullfile(in_path, '*.mat'));
 numFiles = length(filenameList);
 numDamping = length(dampingConstants);
@@ -51,7 +56,12 @@ parfor i = 1:numFiles
         dampingConstant = dampingConstants(j);
         fprintf('CPU %d processing pressure %f with damping %d \n', i, loadedVars.P, dampingConstant);
 
-        [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx, dampingConstant, mass);
+        if options.periodic
+            [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx, dampingConstant, mass, "periodic", true);
+        else
+            [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx, dampingConstant, mass);
+        end
+
         [eigenVectors_j, eigenValues_j] = polyeig(Hessian, matDamp, matMass);
 
         % Store outData for this (i, j) pair in a temporary struct

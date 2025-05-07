@@ -1,4 +1,4 @@
-function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, Ly, Lx, damping_constant, mass)
+function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, Ly, Lx, damping_constant, mass, options)
     % Computes the Hessian matrix for a 2D granular packing with Hooke's force law.
     %
     % positions: Nx2 matrix, where each row is [x, y] for a particle
@@ -10,6 +10,17 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
     % Hessian: 2N x 2N Hessian matrix (second derivatives of the potential)
     % k =1;
     % damping_constant = 1;
+    arguments
+        positions (:,2) double {mustBeReal}
+        radii (1,:) double {mustBeReal}
+        k (1,1) double {mustBeReal} = 1
+        Ly (1,1) double {mustBeReal} = 1
+        Lx (1,1) double {mustBeReal} = 1
+        damping_constant (1,1) double {mustBeReal} = 1
+        mass (1,1) double {mustBeReal} = 1
+        options.periodic (1,1) logical = false
+    end
+
     N = size(positions,1);
     Zn = zeros(N,1);
     left_wall_list = (positions(:,1)<radii);
@@ -27,8 +38,10 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
             dy = positions(i, 2) - positions(j, 2);
 
             % Aapply periodic boundary conditions
-            dy = dy - round(dy / Ly) * Ly;
-            dx= dx - round(dx / Lx) * Lx;
+            if options.periodic
+                dy = dy - round(dy / Ly) * Ly;
+                dx= dx - round(dx / Lx) * Lx;
+            end
             r = sqrt(dx^2 + dy^2); 
             
             overlap = radii(i) + radii(j) - r;
@@ -101,12 +114,14 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
             end
         end
     end
-    for i = 1:N % go throuch each particle 
-        if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
-            idx_i = 2 * i - 1;  % x index for particle i
-            idy_i = 2 * i;  % y index for particle i
-            matSpring(idx_i, idx_i) = matSpring(idx_i, idx_i) + k;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
-            matSpring(idy_i, idy_i) = matSpring(idy_i, idy_i) + k;  % same for y-coordinate diagonal
+    if options.periodic
+        for i = 1:N % go throuch each particle 
+            if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
+                idx_i = 2 * i - 1;  % x index for particle i
+                idy_i = 2 * i;  % y index for particle i
+                matSpring(idx_i, idx_i) = matSpring(idx_i, idx_i) + k;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
+                matSpring(idy_i, idy_i) = matSpring(idy_i, idy_i) + k;  % same for y-coordinate diagonal
+            end
         end
     end
     matMass = mass*eye(2*N);

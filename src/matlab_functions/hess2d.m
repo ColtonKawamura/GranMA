@@ -1,4 +1,4 @@
-function Hessian = hess2d(positions, radii, k, Ly, Lx)
+function Hessian = hess2d(positions, radii, k, Ly, Lx, options)
     % Computes the Hessian matrix for a 2D granular packing with Hooke's force law.
     %
     % positions: Nx2 matrix, where each row is [x, y] for a particle
@@ -8,6 +8,15 @@ function Hessian = hess2d(positions, radii, k, Ly, Lx)
     %
     % Returns:
     % Hessian: 2N x 2N Hessian matrix (second derivatives of the potential)
+
+    arguments
+        positions (:,2) double {mustBeReal}
+        radii (1,:) double {mustBeReal}
+        k (1,1) double {mustBeReal} = 1
+        Ly (1,1) double {mustBeReal} = 1
+        Lx (1,1) double {mustBeReal} = 1
+        options.periodic (1,1) logical = false
+    end
 
     N = size(positions,1);
     Zn = zeros(N,1);
@@ -24,8 +33,11 @@ function Hessian = hess2d(positions, radii, k, Ly, Lx)
             dy = positions(i, 2) - positions(j, 2);
             
             % Apply periodic boundary conditions in the y-direction
-            dy = dy - round(dy / Ly) * Ly;
-            dx = dx - round(dx / Lx) * Lx;
+            if options.periodic
+                dy = dy - round(dy / Ly) * Ly;
+                dx = dx - round(dx / Lx) * Lx;
+            end
+
             r = sqrt(dx^2 + dy^2);
             
             % Compute the overlap distance (if any)
@@ -76,12 +88,15 @@ function Hessian = hess2d(positions, radii, k, Ly, Lx)
             end
         end
     end
-    for i = 1:N % go throuch each particle 
-        if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
-            idx_i = 2 * i - 1;  % x index for particle i
-            idy_i = 2 * i;  % y index for particle i
-            Hessian(idx_i, idx_i) = Hessian(idx_i, idx_i) + k;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
-            Hessian(idy_i, idy_i) = Hessian(idy_i, idy_i) + k;  % same for y-coordinate diagonal
+    if options.periodic
+        % Add the wall forces to the Hessian matrix
+        for i = 1:N % go throuch each particle 
+            if left_wall_list(i) || right_wall_list(i) % if the particle is either left or right wall
+                idx_i = 2 * i - 1;  % x index for particle i
+                idy_i = 2 * i;  % y index for particle i
+                Hessian(idx_i, idx_i) = Hessian(idx_i, idx_i) + k;  % Add K to the x-coordinate diagonal Row ix_n = n and column ix_n = n correspond to the second derivative of the potential energy with respect to the x-coordinate of particle n
+                Hessian(idy_i, idy_i) = Hessian(idy_i, idy_i) + k;  % same for y-coordinate diagonal
+            end
         end
     end
 end
