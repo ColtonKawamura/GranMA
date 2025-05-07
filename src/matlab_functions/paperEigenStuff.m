@@ -9,9 +9,9 @@ load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1600_40by56_K100_M1.mat", "
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1891_100by28_K100_M1.mat", "outData")
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData")
 % 40 by 40
-plotDampedModeDensityPDF(outData, [ 0.2, .15, .1, .05, .01, .005, .001], [.001])
-slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
-slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
+plotDampedModeDensityPDF(outData, [ 0.2, .1, .05, .01, .005, .001], [.001])
+slopeLine('loglog' ,0, [1,10], .045, 'TextLocation', [5, .05])
+slopeLine('loglog' ,1, [1,15], .009, 'TextLocation', [7.5, .01])
 
 % 100 by 28
 plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
