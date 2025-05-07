@@ -1,10 +1,10 @@
-function Hessian = hess2d(positions, radii, k, L_y, Lx)
+function Hessian = hess2d(positions, radii, k, Ly, Lx)
     % Computes the Hessian matrix for a 2D granular packing with Hooke's force law.
     %
     % positions: Nx2 matrix, where each row is [x, y] for a particle
     % radii: N-vector, radius of each particle
     % k: Hooke's spring constant
-    % L_y: Length of the box in the y-direction (for periodic boundary conditions)
+    % Ly: Length of the box in the y-direction (for periodic boundary conditions)
     %
     % Returns:
     % Hessian: 2N x 2N Hessian matrix (second derivatives of the potential)
@@ -24,7 +24,8 @@ function Hessian = hess2d(positions, radii, k, L_y, Lx)
             dy = positions(i, 2) - positions(j, 2);
             
             % Apply periodic boundary conditions in the y-direction
-            dy = dy - round(dy / L_y) * L_y;
+            dy = dy - round(dy / Ly) * Ly;
+            dx = dx - round(dx / Lx) * Lx;
             r = sqrt(dx^2 + dy^2);
             
             % Compute the overlap distance (if any)
