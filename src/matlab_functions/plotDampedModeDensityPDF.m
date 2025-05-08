@@ -43,7 +43,8 @@ for i = 1:length(pressure_list)
 
         binCenters = sqrt( edges(1:end-1) .* edges(2:end) ); 
         pressureLabel = sprintf('$ %.4f, %.4f $', dataPressureDamping.pressure, dataPressureDamping.damping); 
-        plot(binCenters, normalized_counts, '-o', 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+        markerSize = exp(dataPressureDamping.damping/max(damping_list))*3;
+        plot(binCenters, normalized_counts, '-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
         xlabel('eigen frequencies (edges)', 'Interpreter', 'latex', 'FontSize', 20)
         ylabel('counts', 'Interpreter', 'latex', 'FontSize', 20)
          title(sprintf('$L_x$ by $L_y$: %.2f by %.2f', Lx, Ly), 'Interpreter', 'latex', 'FontSize', 16);

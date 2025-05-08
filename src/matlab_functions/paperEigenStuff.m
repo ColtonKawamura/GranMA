@@ -4,11 +4,13 @@ processEigenModesDamped("in/2d_tile_20by20/100by20/", "out/2d_damped_eigenStuff/
 processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/", [1,.75,.5,.25, 0.1, 0.01])
 processEigenModesDampedPara("in/2d_lattice/", "out/2d_damped_eigenStuff/", [1,.75,.5,.25, 0.1, 0.01,.001, 0])
 
-%% Damped Mode Density PDF
+%% Damped Mode Data
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1600_40by56_K100_M1.mat", "outData")
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1891_100by28_K100_M1.mat", "outData")
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData") % large parameter sweep
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N900_60by52_K100_M1.mat", "outData") % Lattice Packing
+
+%% Damped Mode Density PDF
 % 40 by 40
 plotDampedModeDensityPDF(outData, [ 0.2, .1, .05, .01, .005, .001], [.001])
 slopeLine('loglog' ,0, [1,10], .045, 'TextLocation', [5, .05])
@@ -19,7 +21,8 @@ plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
 slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
 slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 
-
+plotDampedModeDensityPDF(outData, [ 0.2], [1, .01])
+plotDampedModeDensityPDF(outData, [ 0.2, .001], [1, .001])
 %% Damped Eigen Vectors
     load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
     outData = orderPolyEig(outData);
@@ -29,7 +32,12 @@ slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
     eigenVectors = plotData.eigenVectors{1};
     modeToPlot = 1;
     plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
-
+    % for i = 1:10
+    %     modeToPlot = i;
+    %     plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
+    %     input('Press Enter to continue...');
+    % end
+    
 %% UnDamped Mode Density PDF
 % 40 by 40
 fileNameList = [
