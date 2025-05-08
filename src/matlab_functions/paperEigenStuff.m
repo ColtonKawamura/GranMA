@@ -2,12 +2,13 @@
 %% Damped Processing
 processEigenModesDamped("in/2d_tile_20by20/100by20/", "out/2d_damped_eigenStuff/", [1, 0.1, 0.01, 0.001])
 processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/", [1,.75,.5,.25, 0.1, 0.01])
-
+processEigenModesDampedPara("in/2d_lattice/", "out/2d_damped_eigenStuff/", [1,.75,.5,.25, 0.1, 0.01,.001, 0])
 
 %% Damped Mode Density PDF
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1600_40by56_K100_M1.mat", "outData")
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1891_100by28_K100_M1.mat", "outData")
-load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData")
+load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData") % large parameter sweep
+load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N900_60by52_K100_M1.mat", "outData") % Lattice Packing
 % 40 by 40
 plotDampedModeDensityPDF(outData, [ 0.2, .1, .05, .01, .005, .001], [.001])
 slopeLine('loglog' ,0, [1,10], .045, 'TextLocation', [5, .05])
@@ -69,70 +70,27 @@ for i = 1:length(modesToPlot)
     input('Press Enter to continue...');
 end
 
-
-%  Small Packing for Debugging
-%  Process the small packing
-% processEigenModesDampedPara("in/2d_damped_eigen_small/", "out/junkyard/", [0])
-% load("out/junkyard/2D_damped_eigenstuff_N14_5by4_K100_M1.mat", "outData"); % Small packing
-% outData = orderPolyEig(outData);
-% plotData = filterData(outData, 'pressure', .1, 'damping',0)
-% % [~, idx] = sort(abs(imag(plotData.eigenValues{1})));
-% % plotData.eigenVectors{1} = plotData.eigenVectors{1}(:, idx);
-% x = plotData.positions{1}(:, 1);
-% y = plotData.positions{1}(:, 2);
-% eigenVectors = plotData.eigenVectors{1};
-% modeToPlot = 1;
-% plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
-
-% % This verifies that the spring matrix is correct
-% % It does what processEigenModesDamped does when you do matSpringDampMass
-% load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
-% positions = [x',y']; 
-% radii = Dn'/2;  
-% [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, K, Ly, Lx, 0,1 );
-% [eigenVectors, eigenValues] = polyeig(Hessian, matDamp, matMass);
-% % [eigenVectors, eigenValues ] = eig(Hessian); % this plots correct
-% % sort the eigenValues and eigenVectors
-% [~, idx] = sort(abs(imag(eigenValues)));
-% eigenVectors = eigenVectors(:, idx);
-
-% x = positions(:, 1);
-% y = positions(:, 2);
-% modeToPlot = 1;
-% modesToPlot = 1:size(eigenVectors,2);
-% for i = 1:length(modesToPlot)
-%     modeToPlot = modesToPlot(i);
-%     plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
-%     input('Press Enter to continue...');
-% end
-% plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', true);
-
-% % Undamped
-% load("in/2d_damped_eigen_small/2D_N14_P0.1_Width3_Seed1.mat")
-% positions = [x',y']; 
-% radii = Dn'/2;  
-% Hessian = hess2d(positions, radii, K, Ly, Lx);
-% [eigenVectors, eigenValues ] = eig(Hessian);
-% x = positions(:, 1);
-% y = positions(:, 2);
-% modeToPlot = 1;
-% plotEigenmode(x, y, eigenVectors, modeToPlot, 'damped', false);
-
-%% Damped Imaginay vs Real Eigenvalues
+%% Damped Imaginary vs Real Eigenvalues
 load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
 outData = orderPolyEig(outData);
-plotData = filterData(outData, 'pressure', .1, 'damping', .001)
-realEigenValues = real(plotData.eigenValues{1});
-imagEigenValues = imag(plotData.eigenValues{1});
-scatter(imagEigenValues, -realEigenValues, 20, realEigenValues, 'filled')
-set(gca, 'XScale', 'log')
-set(gca, 'YScale', 'log')
-grid on
-box on
-slopeLine('loglog' ,2, [5E-2,1E-1], 2E-4, 'TextLocation', [7E-2, 1.5E-4])
-slopeLine('loglog' ,.5, [1E-1,5E-1], 7E-4, 'TextLocation', [3E-1, 6E-4])
-slopeLine('loglog' ,.8, [5E-1,2], 1.5E-3, 'TextLocation', [1, 1E-3])
 
+% High pressure low damping
+plotData = filterData(outData, 'pressure', .1, 'damping', .001)
+plotRealImagEigenValues(plotData);
+slopeLine('loglog' ,2, [1,3], 2E-3, 'TextLocation', [1.4, 2E-3])
+slopeLine('loglog' ,.75, [3,24], 2E-2, 'TextLocation', [7, 3E-2])
+
+% High pressure high damping
+plotData = filterData(outData, 'pressure', .1, 'damping', .5)
+plotRealImagEigenValues(plotData);
+slopeLine('loglog' ,2, [1,3], 6E-2, 'TextLocation', [1.4, 6E-2])
+slopeLine('loglog' ,1, [3,24], 6E-1, 'TextLocation', [7, 3E-1])
+
+% low pressure high damping
+plotData = filterData(outData, 'pressure', .001, 'damping', .5)
+plotRealImagEigenValues(plotData);
+slopeLine('loglog' ,.25, [1,3], 6E-1, 'TextLocation', [1.4, 2E-1])
+slopeLine('loglog' ,1, [3,24], 6E-1, 'TextLocation', [7, 3E-1])
 %% damped sandbox
 matMass = eye(2)
 % matDamp = [1 -1; -1 1]
