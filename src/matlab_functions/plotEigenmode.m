@@ -58,15 +58,18 @@ function plotEigenmode(x0, y0, eigenVectors, modeToPlot, options)
     % scatter(x0, y0, 100 * mode_abs(1:2:end), 'g', 'filled')
     % plot(x0, y0, 'ko', 'MarkerSize', 4, 'MarkerFaceColor', 'k');
 
-    title(['\textbf{Eigenmode } $', num2str(modeToPlot), '$'], 'Interpreter', 'latex');
-    xlabel('$x$ position', 'Interpreter', 'latex');
-    ylabel('$y$ position', 'Interpreter', 'latex');
+    title(['\textbf{Eigenmode } $', num2str(modeToPlot), '$'], 'Interpreter', 'latex', 'FontSize', 15);
+    xlabel('$x$ position', 'Interpreter', 'latex', 'FontSize', 15);
+    ylabel('$y$ position', 'Interpreter', 'latex', 'FontSize', 15);
     set(gca, 'TickLabelInterpreter', 'latex');
     if options.damped
         % legend({'Real', 'Imaginary', 'Magnitude'},'Interpreter', 'latex', 'Location', 'best');
+        legend({'Real'},'Interpreter', 'latex', 'Location', 'best', 'FontSize', 15);    
     else
-        legend({'Real'},'Interpreter', 'latex', 'Location', 'best');
+        legend({'Real'},'Interpreter', 'latex', 'Location', 'best', 'FontSize', 15);    
     end
     axis equal;
     grid on;
+    ax = gca;
+    ax.FontSize = 15;
 end
