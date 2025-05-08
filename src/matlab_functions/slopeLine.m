@@ -71,4 +71,5 @@ function slopeLine(type, slope, x_bounds, y_center, options)
         'HorizontalAlignment', horz_align, 'VerticalAlignment', vert_align, ...
         'FontSize', 14, 'Interpreter', 'latex');
 
+    plotedit on
 end
