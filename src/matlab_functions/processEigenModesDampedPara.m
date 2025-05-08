@@ -120,6 +120,8 @@ else
 end
 
 save_path = fullfile(out_path, filename_output);
+% Remove unneeded index fields before saving
+outData = rmfield(outData, {'source_file_index', 'damping_index'});
 save(save_path, 'outData', '-v7.3');
 fprintf("Saved %d outData to: %s\n", numTotalCombinations, save_path);
 
