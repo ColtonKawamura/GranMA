@@ -1,4 +1,4 @@
-function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, Ly, Lx, damping_constant, mass, options)
+function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, Ly, Lx, damping_constant, options)
     % Computes the Hessian matrix for a 2D granular packing with Hooke's force law.
     %
     % positions: Nx2 matrix, where each row is [x, y] for a particle
@@ -13,14 +13,14 @@ function [matSpring, matDamp, matMass] = matSpringDampMass(positions, radii, k, 
     arguments
         positions (:,2) double {mustBeReal}
         radii (1,:) double {mustBeReal}
-        k (1,1) double {mustBeReal} = 1
         Ly (1,1) double {mustBeReal} = 1
         Lx (1,1) double {mustBeReal} = 1
         damping_constant (1,1) double {mustBeReal} = 1
-        mass (1,1) double {mustBeReal} = 1
         options.periodic (1,1) logical = false
     end
 
+    k = 1; % this is a non-dimensional 
+    mass = 1;
     N = size(positions,1);
     Zn = zeros(N,1);
     left_wall_list = (positions(:,1)<radii);
