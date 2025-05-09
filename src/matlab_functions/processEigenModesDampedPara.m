@@ -49,7 +49,6 @@ parfor i = 1:numFiles
     positions = [loadedVars.x', loadedVars.y'];
     radii = loadedVars.Dn' / 2;
     [positions, radii] = cleanRats(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx);
-    mass = 1;
 
     % Inner loop (serial)
     for j = 1:numDamping
@@ -57,9 +56,9 @@ parfor i = 1:numFiles
         fprintf('CPU %d processing pressure %f with damping %d \n', i, loadedVars.P, dampingConstant);
 
         if options.periodic
-            [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx, dampingConstant, mass, "periodic", true);
+            [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.Ly, loadedVars.Lx, dampingConstant, "periodic", true);
         else
-            [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.K, loadedVars.Ly, loadedVars.Lx, dampingConstant, mass);
+            [Hessian, matDamp, matMass] = matSpringDampMass(positions, radii, loadedVars.Ly, loadedVars.Lx, dampingConstant);
         end
 
         [eigenVectors_j, eigenValues_j] = polyeig(Hessian, matDamp, matMass);
