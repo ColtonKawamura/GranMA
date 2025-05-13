@@ -24,12 +24,11 @@ for i = 1:length(pressure_list)
         eigenValues = dataPressureDamping.eigenValues{1};
         keepIdx = imag(eigenValues) > 0; % keep the positive eigenvalues
         dataPressureDamping.pressure
-        sum(keepIdx)
-        % eigenValues = abs(imag(eigenValues(keepIdx))) % imag part carries the frequency, abs() because QZ sovler does weird things
+        eigenFreqs = abs(imag(eigenValues(keepIdx))); % imag part carries the frequency, abs() because QZ sovler does weird things
         Lx = dataPressureDamping.Lx(1);
         Ly = dataPressureDamping.Ly(1);
 
-        [edges, normalized_counts] = modeDensity(abs(imag(eigenValues)), "damped",true);
+        [edges, normalized_counts] = modeDensity(eigenFreqs, "damped",true);
 
         % --- Verification Step ---
         bin_widths = diff(edges); % Calculate the width of each bin (Length N)
