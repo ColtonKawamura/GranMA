@@ -1,4 +1,13 @@
-function plotRealImagEigenValues(plotData, pressure_list, damping_list)
+function plotRealImagEigenValues(plotData, pressure_list, damping_list, options)
+
+    arguments
+        plotData % data structure containing eigenvalues and other properties
+        pressure_list (1,:) double % list of pressures to plot
+        damping_list (1,:) double % list of damping constants to plot
+        options.loglog (1,1) logical = false % whether to use log scale for the axes
+        options.semilogx (1,1) logical = false % whether to use semi-log scale for x-axis
+        options.semilogy (1,1) logical = false % whether to use semi-log scale for y-axis
+    end
 
     figure
     for i = 1:length(pressure_list)
@@ -32,6 +41,13 @@ function plotRealImagEigenValues(plotData, pressure_list, damping_list)
             pressureLabel = sprintf('$ %.4f, %.4f $', dataPressureDamping.pressure, dataPressureDamping.damping); 
 
             plot(realEigenValues, imagEigenValues, 'o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+            if options.loglog
+                set(gca, 'XScale', 'log', 'YScale', 'log');
+            elseif options.semilogx
+                set(gca, 'XScale', 'log');
+            elseif options.semilogy
+                set(gca, 'YScale', 'log');
+            end
             % plot(imagEigenValues, realEigenValues, 'o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
             xlabel('Re$(\lambda)$', 'Interpreter', 'latex', 'FontSize', 20)
             ylabel('Im$(\lambda)$', 'Interpreter', 'latex', 'FontSize', 20)
