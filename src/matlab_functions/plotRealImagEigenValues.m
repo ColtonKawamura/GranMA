@@ -9,9 +9,9 @@ function plotRealImagEigenValues(plotData, pressure_list, damping_list)
             dataPressureDamping = filterData(plotData, 'pressure', pressure,  'damping', damping_constant);
             realEigenValues = real(dataPressureDamping.eigenValues{1});
             imagEigenValues = imag(dataPressureDamping.eigenValues{1});
-            % keepIdx = imagEigenValues >= 0; % keep the positive eigenvalues
-            % realEigenValues = realEigenValues(keepIdx); % imag part carries the frequency, abs() because QZ sovler does weird things
-            % imagEigenValues = imagEigenValues(keepIdx);
+            keepIdx = imagEigenValues >= 0; % keep the positive eigenvalues
+            realEigenValues = realEigenValues(keepIdx); % imag part carries the frequency, abs() because QZ sovler does weird things
+            imagEigenValues = imagEigenValues(keepIdx);
             
             Lx = dataPressureDamping.Lx(1);
             Ly = dataPressureDamping.Ly(1);
@@ -31,9 +31,8 @@ function plotRealImagEigenValues(plotData, pressure_list, damping_list)
 
             pressureLabel = sprintf('$ %.4f, %.4f $', dataPressureDamping.pressure, dataPressureDamping.damping); 
 
-            % scatter(-realEigenValues, imagEigenValues, 20, realEigenValues, 'filled')
-            plot(realEigenValues, imagEigenValues , 'o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-            % plot(imagEigenValues, -realEigenValues,'-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+            plot(realEigenValues, imagEigenValues, 'o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+            % plot(imagEigenValues, realEigenValues, 'o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
             xlabel('Re$(\lambda)$', 'Interpreter', 'latex', 'FontSize', 20)
             ylabel('Im$(\lambda)$', 'Interpreter', 'latex', 'FontSize', 20)
             hold on
