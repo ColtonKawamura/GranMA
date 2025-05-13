@@ -4,30 +4,18 @@
 % processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/", [1,.75,.5,.25, 0.1, 0.01])
 % processEigenModesDampedPara("in/2d_lattice/", "out/2d_damped_eigenStuff/", [1,.75,.5,.25, 0.1, 0.01,.001, 0])
 % processEigenModesDampedPara("in/2d_lattice/", "out/2d_damped_eigenStuff/", [10, 7.5, 5, 2.5],"periodic", true)
-processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/staging/", [3, 3.5,4],"periodic", true)
+% processEigenModesDampedPara("in/2d_tile_20by20/40by40/", "out/2d_damped_eigenStuff/staging/", [],"periodic", true)
 
 %% Damped Mode Data
-load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1891_100by28_K100_M1.mat", "outData")
-load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N900_60by52_K100_M1.mat", "outData") % Lattice Packing
-load("out/2d_damped_eigenStuff/staging/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat") % This is the new one between 2 and 5
-load("out/2d_damped_eigenStuff/combinedData/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData") % combined file
+load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat") 
 
 %% Damped Mode Density PDF
 % 40 by 40
-plotDampedModeDensityPDF(outData, [ 0.2, .001], [2,2.5, 3,3.5])
-slopeLine('loglog' ,0, [1,10], .045, 'TextLocation', [5, .05])
-slopeLine('loglog' ,1, [1,15], .009, 'TextLocation', [7.5, .01])
-
-% 100 by 28
-plotDampedModeDensityPDF(outData, [.2, .01, .001], [.1])
+plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [1])
 slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
 slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
+slopeLine('loglog' ,1/4, [5,1E3], 1, 'TextLocation', [100, .6]) % for the collapse
 
-% lattice
-plotDampedModeDensityPDF(outData, [ 0.2], [1, .01])
-
-plotDampedModeDensityPDF(outData, [ 0.2, .001], [1, .001])
-plotDampedModeDensityPDF(outData, [ .01, .005], [1, .001])
 %% Damped Eigen Vectors
     load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
     outData = orderPolyEig(outData);
@@ -84,7 +72,6 @@ for i = 1:length(modesToPlot)
 end
 
 %% Damped Imaginary vs Real Eigenvalues
-load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat", "outData"); 
 outData = orderPolyEig(outData);
 
 % High pressure low damping
