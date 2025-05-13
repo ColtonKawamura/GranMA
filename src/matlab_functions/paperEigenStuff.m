@@ -11,7 +11,7 @@ load("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N1483_40by56_K100_M1.mat")
 
 %% Damped Mode Density PDF
 % 40 by 40
-plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [1])
+plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.25])
 slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
 slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 slopeLine('loglog' ,1/4, [5,1E3], 1, 'TextLocation', [100, .6]) % for the collapse
@@ -75,13 +75,12 @@ end
 outData = orderPolyEig(outData);
 
 % High pressure low damping
-plotData = filterData(outData, 'pressure', .1, 'damping', .001)
-plotRealImagEigenValues(plotData);
+plotRealImagEigenValues(outData, [.001, .01, .1, .5], [.05]);
 slopeLine('loglog' ,2, [1,3], 2E-3, 'TextLocation', [1.4, 2E-3])
 slopeLine('loglog' ,.75, [3,24], 2E-2, 'TextLocation', [7, 3E-2])
 
 % High pressure high damping
-plotData = filterData(outData, 'pressure', .1, 'damping', .5)
+plotData = filterData(outData, 'pressure', .1, 'damping', .05)
 plotRealImagEigenValues(plotData);
 slopeLine('loglog' ,2, [1,3], 6E-2, 'TextLocation', [1.4, 6E-2])
 slopeLine('loglog' ,1, [3,24], 6E-1, 'TextLocation', [7, 3E-1])
@@ -91,37 +90,12 @@ plotData = filterData(outData, 'pressure', .001, 'damping', .5)
 plotRealImagEigenValues(plotData);
 slopeLine('loglog' ,.25, [1,3], 6E-1, 'TextLocation', [1.4, 2E-1])
 slopeLine('loglog' ,1, [3,24], 6E-1, 'TextLocation', [7, 3E-1])
-%% damped sandbox
-matMass = eye(2)
-% matDamp = [1 -1; -1 1]
-matDamp = zeros(2)
-matSpring = [2 -1; -1 2]
 
-[eigVec, eigVal] = eig(matSpring, matMass)
-[polyVec, polyVal] = polyeig(matSpring, matDamp, matMass)
+%% SandBox
 
-
-% atan2(imag(polyVec(1,4),real(polyVec(1,4))))
-
-
-% Keeping one of the two conjugate pair eigenValues
-keep = imag(polyVal) >0
-shapes = polyVec(:,keep) % correspoding eigenVectors
-
-for k = 1:size(shapes,2) % go through each column
-    [~, idx]   = max(abs(shapes(:,k))) % get the largest eigenvector this column
-    % normalize mode "k" by the largest, turns it into a unit phasor
-    phase      = shapes(idx,k) / abs(shapes(idx,k))
-    shapes(:,k)= shapes(:,k) / phase        % rotate all the eigenvectors by the same amount
-end
-
-% 3. take the real part
-shapes = real(shapes)
-
-
-modeVector = eigenVectors(:,1);
-% This is what is in plotEigenmode
-[~, idx]   = max(abs(modeVector)); % get the largest eigenvector this column
-% Turn largest eigenvector into a unit phasor
-unitPhasor =  modeVector(idx) / abs(modeVector(idx))
-modeVector= modeVector(:) / unitPhasor % rotate all the eigenvectors by the same amount
+outData = orderPolyEig(outData);
+dataLowP = filterData(outData, 'pressure', .001, 'damping', .05)
+dataHighP = filterData(outData, 'pressure', .2, 'damping', .05)
+head(dataLowP.eigenValues{1})
+head(dataHighP.eigenValues{1})
+plotRealImagEigenValues(outData, [.001, .2], [.05]);
