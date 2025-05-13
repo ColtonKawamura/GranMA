@@ -40,7 +40,7 @@ function plotRealImagEigenValues(plotData, pressure_list, damping_list, options)
 
             pressureLabel = sprintf('$ %.4f, %.4f $', dataPressureDamping.pressure, dataPressureDamping.damping); 
 
-            plot(realEigenValues, imagEigenValues, 'o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+            plot(-realEigenValues, imagEigenValues, 'o', 'MarkerSize', markerSize , 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
             if options.loglog
                 set(gca, 'XScale', 'log', 'YScale', 'log');
             elseif options.semilogx

@@ -75,8 +75,8 @@ end
 outData = orderPolyEig(outData);
 
 % High pressure low damping
-plotRealImagEigenValues(outData, [.001, .01, .1, .5], [.05]);
-slopeLine('loglog' ,2, [1,3], 2E-3, 'TextLocation', [1.4, 2E-3])
+plotRealImagEigenValues(outData, [.001, .01, .1, .5], [.001]);
+slopeLine('loglog' ,1, [1E-3,3E-3], 1.5, 'TextLocation', [1.4E-3, 2])
 slopeLine('loglog' ,.75, [3,24], 2E-2, 'TextLocation', [7, 3E-2])
 
 % High pressure high damping
