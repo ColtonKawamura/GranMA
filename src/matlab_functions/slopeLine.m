@@ -69,7 +69,7 @@ function slopeLine(type, slope, x_bounds, y_center, options)
     slope_string = rats(slope); % Convert slope to fractional string
     text(text_x, text_y, ['$' slope_string '$'], ...
         'HorizontalAlignment', horz_align, 'VerticalAlignment', vert_align, ...
-        'FontSize', 14, 'Interpreter', 'latex');
+        'FontSize', 16, 'Interpreter', 'latex');
 
     plotedit on
 end
