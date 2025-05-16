@@ -1,4 +1,4 @@
-function plotDampedModeDensityPDF(data, pressure_list, damping_list)
+function plotDampedModeDensityPDF(data, pressure_list, damping_list, options)
 % Plots the PDF of Damped Eigen Modes. Input is a struct with fields :
 % 
 % pressure, damping, eigenValues, eigen_vectors
@@ -10,8 +10,12 @@ function plotDampedModeDensityPDF(data, pressure_list, damping_list)
 % Note: usually you want multiple presssures and a single damping constant
 % More note: this assumes that the eigenValues = damping + i frequency
 % plotDampedModeDensityPDF("out/2d_damped_eigenStuff/2D_damped_eigenstuff_N400_K100_M1.mat", [.2, .01, .001], [.1])
-figure(1), clf
-figure(2), clf
+    arguments
+        data % data structure containing eigenvalues and other properties
+        pressure_list (1,:) double % list of pressures to plot
+        damping_list (1,:) double % list of damping constants to plot
+        options.scaling (1,1) logical = false;
+    end
 
 for i = 1:length(pressure_list)
     pressure = pressure_list(i);
@@ -55,16 +59,15 @@ for i = 1:length(pressure_list)
         gammaHalf = .5*damping_constant;
         omegaKnee = sqrt(pressureValue)*sqrt(1-gammaHalf^2);
 
-        figure(1)
-        loglog(binCenters/omegaKnee^(1), normalized_counts/omegaKnee^0, '-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-        xlabel('$\omega/\omega_d$', 'Interpreter', 'latex', 'FontSize', 20)
-        ylabel('$D(\omega)/\omega_d^{1/4}$', 'Interpreter', 'latex', 'FontSize', 20)
-        hold on
-
-        figure(2)
-        plot(binCenters, normalized_counts, '-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-        xlabel('$\omega$', 'Interpreter', 'latex', 'FontSize', 20)
-        ylabel('$D(\omega)$', 'Interpreter', 'latex', 'FontSize', 20)
+        if options.scaling
+            loglog(binCenters/omegaKnee^(1), normalized_counts/omegaKnee^0, '-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+            xlabel('$\omega/\omega_d$', 'Interpreter', 'latex', 'FontSize', 20)
+            ylabel('$D(\omega)/\omega_d^{1/4}$', 'Interpreter', 'latex', 'FontSize', 20)
+        else
+            plot(binCenters, normalized_counts, '-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+            xlabel('$\omega$', 'Interpreter', 'latex', 'FontSize', 20)
+            ylabel('$D(\omega)$', 'Interpreter', 'latex', 'FontSize', 20)
+        end
 
         title(sprintf('$L_x$ by $L_y$: %.2f by %.2f', Lx, Ly), 'Interpreter', 'latex', 'FontSize', 16);
         set(gca, "XScale", "log")

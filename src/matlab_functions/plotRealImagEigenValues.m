@@ -7,6 +7,7 @@ function plotRealImagEigenValues(plotData, pressure_list, damping_list, options)
         options.loglog (1,1) logical = false % whether to use log scale for the axes
         options.semilogx (1,1) logical = false % whether to use semi-log scale for x-axis
         options.semilogy (1,1) logical = false % whether to use semi-log scale for y-axis
+        options.scaling (1,1) logical = false % whether to scale the axes
     end
 
     figure
@@ -39,8 +40,18 @@ function plotRealImagEigenValues(plotData, pressure_list, damping_list, options)
             end
 
             pressureLabel = sprintf('$ %.4f, %.4f $', dataPressureDamping.pressure, dataPressureDamping.damping); 
+            pressureValue = dataPressureDamping.pressure;
 
-            plot(-realEigenValues, imagEigenValues, 'o', 'MarkerSize', markerSize , 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+            if options.scaling
+                plot(imagEigenValues./sqrt(pressureValue), -realEigenValues./(sqrt(pressureValue).*damping_constant), 'o', 'MarkerSize', markerSize , 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+                ylabel('Re$(\lambda)/\sqrt{\hat{P}}=b$', 'Interpreter', 'latex', 'FontSize', 20)
+                xlabel('Im$(\lambda)/(\sqrt{\hat{P}}\hat{\gamma})=\omega_d/\hat{\gamma}$', 'Interpreter', 'latex', 'FontSize', 20)
+            else
+                plot(imagEigenValues, -realEigenValues./damping_constant, 'o', 'MarkerSize', markerSize , 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
+                ylabel('Re$(\lambda)=b$', 'Interpreter', 'latex', 'FontSize', 20)
+                xlabel('Im$(\lambda)/\hat{\gamma}=\omega_i/\hat{\gamma}$', 'Interpreter', 'latex', 'FontSize', 20)
+            end
+
             if options.loglog
                 set(gca, 'XScale', 'log', 'YScale', 'log');
             elseif options.semilogx
@@ -48,9 +59,6 @@ function plotRealImagEigenValues(plotData, pressure_list, damping_list, options)
             elseif options.semilogy
                 set(gca, 'YScale', 'log');
             end
-            % plot(imagEigenValues, realEigenValues, 'o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-            xlabel('Re$(\lambda)$', 'Interpreter', 'latex', 'FontSize', 20)
-            ylabel('Im$(\lambda)$', 'Interpreter', 'latex', 'FontSize', 20)
             hold on
 
             title(sprintf('$L_x$ by $L_y$: %.2f by %.2f', Lx, Ly), 'Interpreter', 'latex', 'FontSize', 16);
