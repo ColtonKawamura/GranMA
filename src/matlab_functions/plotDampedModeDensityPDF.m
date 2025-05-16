@@ -17,6 +17,8 @@ function plotDampedModeDensityPDF(data, pressure_list, damping_list, options)
         options.scaling (1,1) logical = false;
     end
 
+
+    figure
     for i = 1:length(pressure_list)
         pressure = pressure_list(i);
 
