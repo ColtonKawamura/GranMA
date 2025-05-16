@@ -154,6 +154,11 @@ slopeLine('loglog' , .25, [1,9], 30, 'TextLocation', [1, 2])
 slopeLine('loglog' , 2, [1E-1,1], 1E-1, 'TextLocation', [1, 2])
 %% SandBox
 
+plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.001])
+slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
+slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
+slopeLine('loglog' ,1/4, [5,1E3], 1, 'TextLocation', [100, .6]) % for the collapse
+
 plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.25])
 slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
 slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])

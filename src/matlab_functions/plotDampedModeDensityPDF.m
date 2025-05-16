@@ -60,12 +60,12 @@ function plotDampedModeDensityPDF(data, pressure_list, damping_list, options)
 
             if options.scaling
                 loglog(binCenters/omegaKnee^(1), normalized_counts/omegaKnee^0, '-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-                xlabel('$\omega/\omega_d$', 'Interpreter', 'latex', 'FontSize', 20)
-                ylabel('$D(\omega)/\omega_d^{1/4}$', 'Interpreter', 'latex', 'FontSize', 20)
+                xlabel('$\omega/\omega_\gamma$', 'Interpreter', 'latex', 'FontSize', 20)
+                ylabel('$D(\omega)/\omega_\gamma^{1/4}$', 'Interpreter', 'latex', 'FontSize', 20)
             else
                 plot(binCenters, normalized_counts, '-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-                xlabel('$\omega$', 'Interpreter', 'latex', 'FontSize', 20)
-                ylabel('$D(\omega)$', 'Interpreter', 'latex', 'FontSize', 20)
+                xlabel('$\omega_\gamma$', 'Interpreter', 'latex', 'FontSize', 20)
+                ylabel('$D(\omega_\gamma)$', 'Interpreter', 'latex', 'FontSize', 20)
             end
 
             title(sprintf('$L_x$ by $L_y$: %.2f by %.2f', Lx, Ly), 'Interpreter', 'latex', 'FontSize', 16);
