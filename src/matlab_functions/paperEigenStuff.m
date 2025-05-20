@@ -95,6 +95,7 @@ slopeLine('loglog' ,.75, [3,24], 2E-2, 'TextLocation', [7, 3E-2])
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.001] );
 slopeLine('linear' ,1.5, [0,2.5], 1.5, 'TextLocation', [1.4E-3, 2])
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.001], "loglog", true);
+slopeLine('loglog' , .25, [7E-2,4E-1], 1.3, 'TextLocation', [1, 2])
 slopeLine('loglog' , 1, [5E-1,5], 2, 'TextLocation', [1, 2])
 slopeLine('loglog' , 2, [7E-2,4E-1], 1E-1, 'TextLocation', [1, 2])
 
@@ -106,14 +107,12 @@ slopeLine('loglog' , 1, [2,80], 15, 'TextLocation', [1, 2])
 slopeLine('loglog' , .25, [1,9], 30, 'TextLocation', [1, 2])
 slopeLine('loglog' , 2, [1E-1,1], 1E-1, 'TextLocation', [1, 2])
 
-
-
 % MedLow Damping No Scal
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.01] );
 slopeLine('linear' ,1.5, [0,2.5], 1.5, 'TextLocation', [1.4E-3, 2])
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.01], "loglog", true);
 slopeLine('loglog' , 1, [5E-1,5], 2, 'TextLocation', [1, 2])
-slopeLine('loglog' , 2, [7E-2,4E-1], 1E-1, 'TextLocation', [1, 2])
+slopeLine('loglog' , 2, [1E-1,4E-1], 1E-1, 'TextLocation', [1, 2])
 
 % MedLow Damping Scaled
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.01], 'scaling', true );
@@ -129,6 +128,7 @@ slopeLine('linear' ,1.5, [0,2.5], 1.5, 'TextLocation', [1.4E-3, 2])
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.05], "loglog", true);
 slopeLine('loglog' , 1, [5E-1,5], 2, 'TextLocation', [1, 2])
 slopeLine('loglog' , 2, [7E-2,4E-1], 1E-1, 'TextLocation', [1, 2])
+slopeLine('loglog' , .25, [7E-2,4E-1], 1.5, 'TextLocation', [1, 2])
 
 % Med Damping Scaled
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.05], 'scaling', true );
@@ -144,6 +144,7 @@ slopeLine('linear' ,1.5, [0,2.5], 1.5, 'TextLocation', [1.4E-3, 2])
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.1], "loglog", true);
 slopeLine('loglog' , 1, [5E-1,5], 2, 'TextLocation', [1, 2])
 slopeLine('loglog' , 2, [7E-2,4E-1], 1E-1, 'TextLocation', [1, 2])
+slopeLine('loglog' , .25, [7E-2,4E-1], 1.8, 'TextLocation', [1, 2])
 
 % High Damping Scaled
 plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.1], 'scaling', true );
@@ -152,16 +153,54 @@ plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.1], "loglog",
 slopeLine('loglog' , 1, [2,80], 15, 'TextLocation', [1, 2])
 slopeLine('loglog' , .25, [1,9], 30, 'TextLocation', [1, 2])
 slopeLine('loglog' , 2, [1E-1,1], 1E-1, 'TextLocation', [1, 2])
+
+% OverDamped No Scal
+plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.25] );
+slopeLine('linear' ,1.5, [0,2.5], 1.5, 'TextLocation', [1.4E-3, 2])
+plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.25], "loglog", true);
+slopeLine('loglog' , 2, [1E-1,2], 1E-1, 'TextLocation', [1, 2])
+slopeLine('loglog' , .25, [7E-2,4E-1], 1.8, 'TextLocation', [1, 2])
+
+% Overdamped Scaled
+plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.25], 'scaling', true );
+slopeLine('linear' ,1.5, [0,60], 30, 'TextLocation', [1.4E-3, 2])
+plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [.25], "loglog", true, 'scaling', true);
+slopeLine('loglog' , 1, [2,80], 15, 'TextLocation', [1, 2])
+slopeLine('loglog' , .25, [1,9], 30, 'TextLocation', [1, 2])
+slopeLine('loglog' , 2, [1E-1,1], 1E-1, 'TextLocation', [1, 2])
+
+% Way OverDamped No Scal
+plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [2] );
+plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [2], "loglog", true);
+
+% Way Overdamped Scaled
+plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [2], 'scaling', true );
+slopeLine('linear' ,1.5, [0,60], 30, 'TextLocation', [1.4E-3, 2])
+plotRealImagEigenValues(outData, [.001, .005, .01, .05, .1, .5], [2], "loglog", true, 'scaling', true);
+slopeLine('loglog' , 1, [2,80], 15, 'TextLocation', [1, 2])
+slopeLine('loglog' , .25, [1,9], 30, 'TextLocation', [1, 2])
+slopeLine('loglog' , 2, [1E-1,1], 1E-1, 'TextLocation', [1, 2])
 %% SandBox
 
+% Low Damping
 plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.001])
 slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
 slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 
 plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.001], 'scaling', true)
-slopeLine('loglog' ,1/4, [5,1E3], 1, 'TextLocation', [100, .6]) % for the collapse
+% slopeLine('loglog' ,1/4, [5,1E3], 1, 'TextLocation', [100, .6]) % for the collapse
 
+% Med Damping
+plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.1])
+slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
+slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
+
+plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.1], 'scaling', true)
+
+% Over Damping
 plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.25])
 slopeLine('loglog' ,0, [.1,1], .45, 'TextLocation', [.5, .5])
 slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 slopeLine('loglog' ,1/4, [5,1E3], 1, 'TextLocation', [100, .6]) % for the collapse
+
+plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.25], 'scaling', true)

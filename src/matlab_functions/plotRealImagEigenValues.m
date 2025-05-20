@@ -44,12 +44,12 @@ function plotRealImagEigenValues(plotData, pressure_list, damping_list, options)
 
             if options.scaling
                 plot(imagEigenValues./sqrt(pressureValue), -realEigenValues./(sqrt(pressureValue).*damping_constant), 'o', 'MarkerSize', markerSize , 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-                ylabel('Re$(\lambda)/\sqrt{\hat{P}}=b$', 'Interpreter', 'latex', 'FontSize', 20)
-                xlabel('Im$(\lambda)/(\sqrt{\hat{P}}\hat{\gamma})=\omega_d/\hat{\gamma}$', 'Interpreter', 'latex', 'FontSize', 20)
+                ylabel('Re$(\lambda)/(\sqrt{\hat{P}\hat{\gamma}}}$', 'Interpreter', 'latex', 'FontSize', 20)
+                xlabel('Im$(\lambda)/\sqrt{\hat{P}}$', 'Interpreter', 'latex', 'FontSize', 20)
             else
                 plot(imagEigenValues, -realEigenValues./damping_constant, 'o', 'MarkerSize', markerSize , 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-                ylabel('Re$(\lambda)=b$', 'Interpreter', 'latex', 'FontSize', 20)
-                xlabel('Im$(\lambda)/\hat{\gamma}=\omega_i/\hat{\gamma}$', 'Interpreter', 'latex', 'FontSize', 20)
+                ylabel('Re$(\lambda)/\hat{\gamma}$', 'Interpreter', 'latex', 'FontSize', 20)
+                xlabel('Im$(\lambda)$', 'Interpreter', 'latex', 'FontSize', 20)
             end
 
             if options.loglog
