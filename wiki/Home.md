@@ -28,17 +28,5 @@ GranMA/
 └── matlab_commands.txt   # MATLAB commands reference
 ```
 
-## Getting Started
 
-To get started with GranMA:
 
-1. Follow the [Installation Guide](./Installation-Guide.md) to set up your environment
-2. Run a basic simulation using the instructions in [Simulation Workflow](./Simulation-Workflow.md)
-3. Try one of our [Tutorials](./Tutorials.md) to see GranMA in action
-
-## Contact
-
-For questions or feedback about GranMA, please contact:
-
-- Colton Kawamura
-- Naval Postgraduate School
