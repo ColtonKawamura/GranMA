@@ -1,9 +1,17 @@
 function processEigenModesDampedPara(in_path, out_path, dampingConstants, options)
 
-% pressures = ["0.001", "0.01", "0.1"];
-% dampingConstants = [1, 0.1, 0.01, 0.001];
-% processEigenModesDamped("in/2d_eigen_mode_test", "out/2d_damped_eigenStuff", [1, 0.1, 0.01, 0.001]);
-% processEigenModesDamped("in/2d_damped_eigen_small", "out/junkyard", [1, 0.1, 0.01, 0.001]);
+% Processes eigenmodes for damped granular packings with parallel computation
+%
+% This function loads granular packing data from .mat files, calculates the 
+% eigenmodes with various damping constants, and saves the results. Uses 
+% parallel processing to handle multiple files simultaneously.
+%
+% Parameters:
+% in_path - Directory containing .mat files with granular packing data
+% out_path - Directory to save the processed results
+% dampingConstants - Array of damping constants to apply to each packing
+% options.periodic - Boolean flag for periodic boundary conditions (default: false)
+
 arguments
     in_path (1,1) string
     out_path (1,1) string
