@@ -1,5 +1,26 @@
 function plotRealImagEigenValues(plotData, pressure_list, damping_list, options)
-
+% plotRealImagEigenValues - Plot real and imaginary parts of eigenvalues
+%
+% Syntax: plotRealImagEigenValues(plotData, pressure_list, damping_list, options)
+%
+% Inputs:
+%    plotData - data structure containing eigenvalues and other properties
+%    pressure_list - array of pressures to plot
+%    damping_list - array of damping constants to plot
+%    options - structure containing optional parameters
+%        .loglog - whether to use log scale for the axes (default: false)
+%        .semilogx - whether to use semi-log scale for x-axis (default: false)
+%        .semilogy - whether to use semi-log scale for y-axis (default: false)
+%        .scaling - whether to scale the axes (default: false)
+%
+% Outputs:
+%    None
+%
+% Example:
+%    plotRealImagEigenValues(plotData, [0.1, 0.2], [0.5, 1.0], struct('loglog', true))
+%    This will plot the real and imaginary parts of eigenvalues for the specified pressures and damping constants
+%    with log-log scaling.
+%    and the specified options.
     arguments
         plotData % data structure containing eigenvalues and other properties
         pressure_list (1,:) double % list of pressures to plot

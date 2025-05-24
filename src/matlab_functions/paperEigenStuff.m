@@ -204,3 +204,10 @@ slopeLine('loglog' ,1, [.1,1.5], .09, 'TextLocation', [.75, .1])
 slopeLine('loglog' ,1/4, [5,1E3], 1, 'TextLocation', [100, .6]) % for the collapse
 
 plotDampedModeDensityPDF(outData, [.005, .01, .04,.16], [.25], 'scaling', true)
+
+
+matMass = eye(2)
+matDamp = [1 -1; -1 1]
+matSpring = [2 -1; -1 2]
+[eigVec, eigVal] = eig(matSpring, matMass)
+[polyVec, polyVal] = polyeig(matSpring, matDamp, matMass)
