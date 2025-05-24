@@ -11,6 +11,10 @@ function filtered_data_struct = filterData(data_struct, varargin)
     %
     % Returns:
     %   filtered_data_struct: A scalar struct containing filtered data in its fields.
+    % Example:
+    %      plotData = filterData(outData, 'pressure', .1, 'damping', 2)
+    %      plotData = filterData(outData, 'pressure', .1, 'damping', 2, 'omega', [0.5, 1.0]);
+
 
     if ~isscalar(data_struct) || ~isstruct(data_struct)
         error('Input data must be a scalar struct.');
