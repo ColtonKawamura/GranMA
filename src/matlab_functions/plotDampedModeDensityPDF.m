@@ -14,7 +14,8 @@ function plotDampedModeDensityPDF(data, pressure_list, damping_list, options)
         data % data structure containing eigenvalues and other properties
         pressure_list (1,:) double % list of pressures to plot
         damping_list (1,:) double % list of damping constants to plot
-        options.scaling (1,1) logical = false;
+        options.scaling (1,1) logical = false; % whether to scale the plot with pressure
+        options.plotReal (1,1) logical = false; % plot either real or imaginary part of eigenvalues, default is false (imaginary part) 
     end
 
 
@@ -29,10 +30,16 @@ function plotDampedModeDensityPDF(data, pressure_list, damping_list, options)
             dataPressureDamping = filterData(data, 'pressure', pressure,  'damping', damping_constant);
             eigenValues = dataPressureDamping.eigenValues{1};
             keepIdx = imag(eigenValues) > 0; % keep the positive eigenvalues
-            eigenFreqs = abs(imag(eigenValues(keepIdx))); % imag part carries the frequency, abs() because QZ sovler does weird things
+            eigenFreqs = abs(imag(eigenValues(keepIdx))); % imag part carries the frequency, abs() because QZ sovler returns conjugates
+            realEigenVal = real(eigenValues(keepIdx)); % real part carries the damping
             Lx = dataPressureDamping.Lx(1);
             Ly = dataPressureDamping.Ly(1);
 
+            if options.plotReal
+                eigenFreqs = realEigenVal; % Use real part if specified
+            end
+
+            % --- Mode Density Calculation ---
             [edges, normalized_counts] = modeDensity(eigenFreqs, "damped",true);
 
             % --- Verification Step ---
@@ -66,8 +73,12 @@ function plotDampedModeDensityPDF(data, pressure_list, damping_list, options)
                 ylabel('$D(\omega)/\omega_\gamma^{1/4}$', 'Interpreter', 'latex', 'FontSize', 20)
             else
                 plot(binCenters, normalized_counts, '-o', 'MarkerSize', markerSize, 'MarkerFaceColor', marker_color, 'MarkerEdgeColor', marker_color, 'Color', marker_color, 'DisplayName', pressureLabel);
-                xlabel('$\omega_\gamma$', 'Interpreter', 'latex', 'FontSize', 20)
-                ylabel('$D(\omega_\gamma)$', 'Interpreter', 'latex', 'FontSize', 20)
+                xlabel('$|\Im (\lambda)|$', 'Interpreter', 'latex', 'FontSize', 20)
+                if options.plotReal
+                    ylabel('$D\Big(\Re (\lambda)\Big)$', 'Interpreter', 'latex', 'FontSize', 20)
+                else
+                    ylabel('$D\Big(\Im (\lambda)\Big)$', 'Interpreter', 'latex', 'FontSize', 20)
+                end
             end
 
             title(sprintf('$L_x$ by $L_y$: %.2f by %.2f', Lx, Ly), 'Interpreter', 'latex', 'FontSize', 16);
